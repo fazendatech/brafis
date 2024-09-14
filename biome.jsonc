@@ -1,0 +1,21 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "all": true,
+      "style": {
+        // NOTE: Since we're working with external APIs, it's difficult to enforce naming conventions.
+        // Ideally, this rule should be on specific files, but it's not easy to do that right now with Biome.
+        "useNamingConvention": "off"
+      },
+      "correctness": {
+        // NOTE: Biome does not recognize aliased imports.
+        "noUndeclaredDependencies": "off"
+      }
+    }
+  }
+}
