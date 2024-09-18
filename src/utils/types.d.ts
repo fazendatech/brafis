@@ -1,11 +1,11 @@
 export type Primitive =
-	| null
-	| undefined
-	| string
-	| number
-	| boolean
-	| symbol
-	| bigint;
+  | null
+  | undefined
+  | string
+  | number
+  | boolean
+  | symbol
+  | bigint;
 
 /**
  * @description Keep string literal intellisense while allowing any string.
@@ -14,5 +14,5 @@ export type Primitive =
 export type LiteralStringUnion<T> = LiteralUnion<T, string>;
 
 export type LiteralUnion<LiteralType, BaseType extends Primitive> =
-	| LiteralType
-	| (BaseType & Record<never, never>);
+  | LiteralType
+  | (BaseType & Record<never, never>);
