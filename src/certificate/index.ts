@@ -1,6 +1,19 @@
 import forge from "node-forge";
 
 /**
+ * Interface representing the extracted fields from a PEM certificate.
+ */
+interface CertificateFields {
+  subject: { name: string; value: string }[];
+  issuer: { name: string; value: string }[];
+  validFrom: Date;
+  validTo: Date;
+  serialNumber: string;
+  publicKey: string;
+  signatureAlgorithm: string;
+}
+
+/**
  * Interface representing the PEM (Privacy-Enhanced Mail) format.
  * It is used to store both the certificate and the private key in PEM format.
  * PEM is a base64-encoded format commonly used for certificates and keys.
@@ -37,7 +50,24 @@ interface CertBag {
  */
 export class Certificate {
   private readonly pfxData: P12;
-  private pemData: PEM = { cert: "", key: "" };
+  private pemData?: PEM;
+  private certFields?: CertificateFields;
+
+  /**
+   * Getter to retrieve the Certificate fields.
+   * If the Certificate fields are not yet populated, it triggers the extraction from the PEM certificate.
+   *
+   * @returns {CertificateFields} An object containing the certificate fields extracted from the PEM certificate.
+   */
+  public get pemFields(): CertificateFields {
+    if (!this.certFields) {
+      this.extractPemFields();
+      if (!this.certFields) {
+        throw new Error("Certificate fields are not available.");
+      }
+    }
+    return this.certFields;
+  }
 
   /**
    * Getter to retrieve the PEM data (certificate and private key).
@@ -46,8 +76,11 @@ export class Certificate {
    * @returns {PEM} An object containing the certificate and private key in PEM format.
    */
   get pem(): PEM {
-    if (this.pemData.cert === "" && this.pemData.key === "") {
+    if (!this.pemData) {
       this.p12ToPem();
+      if (!this.pemData) {
+        throw new Error("PEM data is not available.");
+      }
     }
     return this.pemData;
   }
@@ -136,5 +169,36 @@ export class Certificate {
 
     // Return the certificate and private key in PEM format
     return this.pemData;
+  }
+
+  /**
+   * Extract fields from the PEM certificate.
+   *
+   * This method takes a PEM certificate and extracts important fields such as
+   * subject, issuer, validity period, serial number, public key, and signature algorithm.
+   *
+   * @returns {CertificateFields} An object containing the extracted fields from the certificate.
+   */
+  private extractPemFields(): CertificateFields {
+    const pki = forge.pki;
+    const cert = pki.certificateFromPem(this.pem.cert);
+
+    this.certFields = {
+      subject: cert.subject.attributes.map((attr) => ({
+        name: attr.name || "",
+        value: typeof attr.value === "string" ? attr.value : "",
+      })),
+      issuer: cert.issuer.attributes.map((attr) => ({
+        name: attr.name || "",
+        value: typeof attr.value === "string" ? attr.value : "",
+      })),
+      validFrom: cert.validity.notBefore,
+      validTo: cert.validity.notAfter,
+      serialNumber: cert.serialNumber,
+      publicKey: forge.util.decodeUtf8(pki.publicKeyToPem(cert.publicKey)),
+      signatureAlgorithm: cert.siginfo.algorithmOid,
+    };
+
+    return this.certFields;
   }
 }
