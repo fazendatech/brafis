@@ -1,23 +1,50 @@
 import forge from "node-forge";
 
+/**
+ * Interface representing the PEM (Privacy-Enhanced Mail) format.
+ * It is used to store both the certificate and the private key in PEM format.
+ * PEM is a base64-encoded format commonly used for certificates and keys.
+ */
 interface PEM {
   cert: string;
   key: string;
 }
 
-interface PFX {
-  p12Buffer: string;
+/**
+ * Interface representing the PFX (PKCS#12) format.
+ * It holds the PFX data in a base64-encoded string (`bufferString`)
+ * and the passphrase (`pass`) used to decrypt the private key.
+ */
+interface P12 {
+  bufferString: string;
   pass: string;
 }
 
+/**
+ * Interface representing a certificate bag used to store certificates.
+ * This bag holds a `forge.pki.Certificate` object, which contains information
+ * about the certificate, such as the subject, issuer, validity, and public key.
+ */
 interface CertBag {
   cert: forge.pki.Certificate;
 }
 
+/**
+ * Class representing a Certificate that can convert PFX (PKCS#12) files to PEM format.
+ * It provides methods to extract certificates and private keys from PFX files and
+ * convert them into PEM format. PEM is often used for importing/exporting certificates
+ * and keys in environments such as web servers or cloud services.
+ */
 export class Certificate {
-  private readonly pfxData: PFX;
+  private readonly pfxData: P12;
   private pemData: PEM = { cert: "", key: "" };
 
+  /**
+   * Getter to retrieve the PEM data (certificate and private key).
+   * If the PEM data is not yet populated, it triggers the conversion from PFX to PEM.
+   *
+   * @returns {PEM} An object containing the certificate and private key in PEM format.
+   */
   get pem(): PEM {
     if (this.pemData.cert === "" && this.pemData.key === "") {
       this.p12ToPem();
@@ -26,50 +53,63 @@ export class Certificate {
   }
 
   /**
-   * Class constructor to initialize the Certificado instance.
-   * @param {Buffer} pfx - The buffer containing the PFX file data
-   * @param {string} passphrase - The passphrase to unlock the private key
+   * Class constructor to initialize the Certificate instance with a PFX file and passphrase.
+   * The PFX file is provided as an `ArrayBuffer`, and the passphrase is used to unlock
+   * the private key contained in the PFX file.
+   *
+   * @param {ArrayBuffer} pfx - The buffer containing the PFX file data, typically from a file.
+   * @param {string} passphrase - The passphrase used to decrypt the PFX file and extract the private key.
    */
-  constructor(pfx: Buffer, passphrase: string) {
-    this.pfxData = { p12Buffer: pfx.toString("base64"), pass: passphrase };
+  constructor(pfx: ArrayBuffer, passphrase: string) {
+    const pfxUint8Array = new Uint8Array(pfx);
+    this.pfxData = {
+      bufferString: forge.util.binary.base64.encode(pfxUint8Array),
+      pass: passphrase,
+    };
   }
 
   /**
    * Converts a PFX (PKCS#12) file to PEM format.
    *
-   * This method decodes the PFX data from base64, extracts the private key and certificate,
-   * and converts them to PEM format. The certificate data is sorted by expiration date,
-   * and the first certificate and private key are returned in PEM format.
+   * This method decodes the PFX data from base64 and extracts the private key and certificate(s).
+   * It then sorts the certificates by expiration date, returning the certificate with the longest
+   * validity and its corresponding private key in PEM format. If no certificates or private keys
+   * are found in the PFX file, an error is thrown.
    *
    * @returns {PEM} An object containing the certificate and private key in PEM format.
    *
    * @throws {Error} If no certificates or private keys are found in the PFX file.
+   *
+   * @private
    */
   private p12ToPem(): PEM {
-    // Decode the p12 from base64
-    const p12Der = forge.util.decode64(this.pfxData.p12Buffer);
-    // Decode the base64 string into ASN.1 structure
+    // Decode the base64-encoded PFX data
+    const p12Der = forge.util.decode64(this.pfxData.bufferString);
+    // Convert the DER-encoded PFX data into an ASN.1 structure
     const p12Asn1 = forge.asn1.fromDer(p12Der);
+    // Parse the ASN.1 structure into a PKCS#12 object
     const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, true, this.pfxData.pass);
 
-    // Extract private key data (both encrypted and unencrypted)
+    const oids = forge.pki.oids;
+    // Extract the encrypted and unencrypted private key data
     const keyBags = p12.getBags({
-      bagType: forge.pki.oids.pkcs8ShroudedKeyBag,
-    })[forge.pki.oids.pkcs8ShroudedKeyBag];
-    const unencryptedKeyBags = p12.getBags({ bagType: forge.pki.oids.keyBag })[
-      forge.pki.oids.keyBag
+      bagType: oids.pkcs8ShroudedKeyBag,
+    })[oids.pkcs8ShroudedKeyBag];
+    const unencryptedKeyBags = p12.getBags({ bagType: oids.keyBag })[
+      oids.keyBag
     ];
     const keyData = (keyBags || []).concat(unencryptedKeyBags || []);
 
-    // Extract the certificate data and sort by expiration date
+    // Extract the certificates from the PFX and sort them by expiration date
     const certBags: CertBag[] = p12.getBags({
-      bagType: forge.pki.oids.certBag,
-    })[forge.pki.oids.certBag] as CertBag[];
+      bagType: oids.certBag,
+    })[oids.certBag] as CertBag[];
 
-    if (!certBags) {
+    if (!certBags || certBags.length === 0) {
       throw new Error("No certificates found in the PFX file.");
     }
 
+    // Sort certificates by expiration date (oldest first)
     certBags.sort((a: CertBag, b: CertBag) => {
       return (
         new Date(a.cert.validity.notAfter).getTime() -
@@ -77,23 +117,24 @@ export class Certificate {
       );
     });
 
-    if (certBags.length === 0) {
-      throw new Error("No certificates found in the PFX file.");
-    }
-
-    // Get the first key and wrap it into RSA Private Key info
+    // Throw an error if no private key is found
     if (!keyData[0]?.key) {
       throw new Error("No private key found in the PFX file.");
     }
-    const rsaPrivateKey = forge.pki.privateKeyToAsn1(keyData[0].key);
-    const privateKeyInfo = forge.pki.wrapRsaPrivateKey(rsaPrivateKey);
+
+    const pki = forge.pki;
+    // Wrap the first private key into an RSA Private Key info structure
+    const rsaPrivateKey = pki.privateKeyToAsn1(keyData[0].key);
+    const privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
 
     // Convert the first certificate and private key to PEM format
-    const cert = forge.pki.certificateToPem(certBags[0].cert);
-    const key = forge.pki.privateKeyInfoToPem(privateKeyInfo);
+    const cert = pki.certificateToPem(certBags[0].cert);
+    const key = pki.privateKeyInfoToPem(privateKeyInfo);
 
+    // Store the PEM data (certificate and private key)
     this.pemData = { cert, key };
-    // Return the certificate and key in PEM format
+
+    // Return the certificate and private key in PEM format
     return this.pemData;
   }
 }
