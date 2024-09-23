@@ -98,4 +98,21 @@ describe("Certificate", () => {
     const cert = new Certificate(autoSignedPfxBuffer, invalidPassphrase);
     expect(() => cert.pem).toThrow();
   });
+
+  test("Extracts certificate fields", () => {
+    const cert = new Certificate(autoSignedPfxBuffer, passphrase);
+    const certInfo = cert.pemFields;
+    expect(certInfo).toHaveProperty("subject");
+    expect(certInfo).toHaveProperty("issuer");
+    expect(certInfo).toHaveProperty("validFrom");
+    expect(certInfo).toHaveProperty("validTo");
+    expect(certInfo).toHaveProperty("publicKey");
+    expect(certInfo).toHaveProperty("serialNumber");
+    expect(certInfo).toHaveProperty("signatureAlgorithm");
+    expect(certInfo.subject).toBeArray();
+    expect(certInfo.issuer).toBeArray();
+    expect(certInfo).toContainValues([
+      "281509806a587f5a74ad144178c320aa93a6a018",
+    ]);
+  });
 });
