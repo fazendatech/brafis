@@ -1,9 +1,9 @@
 import { describe, test, expect } from "bun:test";
-import { Certificate } from "./index.ts";
+import { Certificate, type CertificateOptions } from "./index.ts";
 import { file } from "bun";
 
 /**
- * Utility function to resolve the correct file path based on the directory of the test file.
+ * @description Utility function to resolve the correct file path based on the directory of the test file.
  * It uses `import.meta.url` to dynamically determine the directory of the current module
  * and constructs the full path to the file.
  *
@@ -21,7 +21,7 @@ function resolvePath(filePath: string): string {
 }
 
 /**
- * Reads a PFX file from the file system using Bun's file API.
+ * @description Reads a PFX file from the file system using Bun's file API.
  * It resolves the file path based on the test file's directory and reads the file as an ArrayBuffer,
  * then converts it into a Node.js Buffer for further use.
  *
@@ -40,7 +40,7 @@ async function readPfxFile(filePath: string): Promise<ArrayBuffer> {
 }
 
 /**
- * Reads a PEM file from the file system using Bun's file API.
+ * @description Reads a PEM file from the file system using Bun's file API.
  * It resolves the file path based on the test file's directory and reads the file as text,
  * then replaces all newline characters (`\n`) with carriage return + newline (`\r\n`).
  *
@@ -62,25 +62,22 @@ async function readPemFile(filePath: string): Promise<string> {
   return fileBuffer.replace(/\n/g, "\r\n");
 }
 
-const autoSignedPath: string = "./test/autoSigned";
-const autoSignedPfxBuffer: ArrayBuffer = await readPfxFile(
-  `${autoSignedPath}.cert.pfx`,
-);
-const passphrase: string = "senha";
-const autoSignedPemCert: string = await readPemFile(
-  `${autoSignedPath}.cert.pem`,
-);
-const autoSignedPemKey: string = await readPemFile(`${autoSignedPath}.key.pem`);
+const autoSignedPath = "./test/autoSigned";
+const autoSignedPfxBuffer = await readPfxFile(`${autoSignedPath}.cert.pfx`);
+const passphrase = "senha";
+const autoSignedPemCert = await readPemFile(`${autoSignedPath}.cert.pem`);
+const autoSignedPemKey = await readPemFile(`${autoSignedPath}.key.pem`);
 
 describe("Certificate", () => {
   test("Creates a new instance of Certificate", () => {
-    const passphrase: string = "senha";
-    const cert = new Certificate(autoSignedPfxBuffer, passphrase);
+    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
+    const cert = new Certificate(options);
     expect(cert).toBeInstanceOf(Certificate);
   });
 
   test("Convert PFX to PEM format", () => {
-    const cert = new Certificate(autoSignedPfxBuffer, passphrase);
+    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
+    const cert = new Certificate(options);
     const pem = cert.pem;
     expect(pem.cert).not.toEqual("");
     expect(pem.key).not.toEqual("");
@@ -89,18 +86,22 @@ describe("Certificate", () => {
   });
 
   test("Throws error if no certificates found in PFX file", () => {
-    const cert = new Certificate(new ArrayBuffer(0), "passphrase");
+    const options = { pfx: autoSignedPfxBuffer, passphrase: "passphrase" };
+    const cert = new Certificate(options);
     expect(() => cert.pem).toThrowError();
   });
 
   test("Handles invalid passphrase", async () => {
     const invalidPassphrase = "wrongpass";
-    const cert = new Certificate(autoSignedPfxBuffer, invalidPassphrase);
-    expect(() => cert.pem).toThrow();
+    const options = { pfx: autoSignedPfxBuffer, passphrase: invalidPassphrase };
+    const cert = new Certificate(options);
+    expect(() => cert.pem).toThrowError();
   });
 
   test("Extracts certificate fields", () => {
-    const cert = new Certificate(autoSignedPfxBuffer, passphrase);
+    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
+
+    const cert = new Certificate(options);
     const certInfo = cert.pemFields;
     expect(certInfo).toHaveProperty("subject");
     expect(certInfo).toHaveProperty("issuer");
