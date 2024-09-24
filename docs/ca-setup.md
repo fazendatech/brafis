@@ -6,20 +6,20 @@ Este guia ensina como criar uma Autoridade de Certificação (CA) local para tes
 
 Para executar os comandos abaixo, você precisará ter o **OpenSSL** instalado em seu sistema. Aqui estão as instruções de instalação:
 
-### No Linux (Debian/Ubuntu):
+### No Linux (Debian/Ubuntu)
 
 ```bash
 sudo apt update
 sudo apt install openssl
 ```
 
-### No macOS (usando Homebrew):
+### No macOS (usando Homebrew)
 
 ```bash
 brew install openssl
 ```
 
-### No Windows:
+### No Windows
 
 -   Baixe e instale o OpenSSL para Windows a partir deste [link](https://slproweb.com/products/Win32OpenSSL.html).
 
@@ -31,12 +31,14 @@ Primeiro, crie um diretório para armazenar os arquivos da CA.
 
 ```bash
 mkdir -p my-ca/{certs,crl,newcerts,private}
-chmod 700 my-ca/private
-touch my-ca/index.txt
-echo 1000 > my-ca/serial
+cd my-ca/
+chmod 700 private/
+echo 1000 > serial/
+touch index.txt
 ```
 
 Isso cria as seguintes estruturas:
+
 - `certs/`: Diretório para armazenar certificados emitidos.
 - `crl/`: Diretório para armazenar listas de revogação de certificados.
 - `newcerts/`: Diretório para novos certificados.
@@ -49,30 +51,61 @@ Isso cria as seguintes estruturas:
 Agora, gere uma chave privada de **4096** bits para a sua CA:
 
 ```bash
-openssl genrsa -out my-ca/private/ca.key.pem 4096
-chmod 400 my-ca/private/ca.key.pem
+openssl genrsa -out private/ca.key.pem 4096
+chmod 400 private/ca.key.pem
 ```
 
 ### 3. Criar o Certificado da CA
 
 Com a chave privada da CA criada, o próximo passo é gerar o certificado autoassinado da CA.
 
-```bash
-openssl req -new -x509 -days 3650 -key my-ca/private/ca.key.pem -sha256 -out my-ca/certs/ca.cert.pem
+Crie um arquivo no diretório da CA com nome `ca_config.cnf` e preencha com o seguinte modelo:
+
+```ini
+[ req ]
+default_bits       = 4096
+default_keyfile    = private/ca.key.pem
+distinguished_name = req_distinguished_name
+x509_extensions    = v3_ca
+string_mask        = utf8only
+default_md         = sha256
+
+[ req_distinguished_name ]
+countryName                     = Country Name (2 letter code)
+countryName_default              = BR
+stateOrProvinceName              = State or Province Name (full name)
+stateOrProvinceName_default      = São Paulo
+localityName                     = Locality Name (eg, city)
+localityName_default             = São Paulo
+organizationName                 = Organization Name (eg, company)
+organizationName_default         = My Test CA
+commonName                       = Common Name (e.g. server FQDN or YOUR name)
+commonName_default               = My Test CA Root Certificate
+
+[ v3_ca ]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+basicConstraints = critical,CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 ```
 
-Durante esse processo, você será solicitado a fornecer informações para o certificado, como nome do país, organização, e o "Common Name" da CA (que identifica sua CA).
+Utilize o comando openssl req com a opção -config para referenciar este arquivo de configuração.
+
+```bash
+openssl req -new -x509 -days 3650 -key private/ca.key.pem -sha256 -out certs/ca.cert.pem -config ca_config.cnf
+```
 
 ### 4. Configurar o Arquivo `openssl.cnf`
 
 Crie um arquivo de configuração `openssl.cnf` que sua CA usará para emitir certificados.
+
 ```bash
-touch my-ca/openssl.cnf
+touch openssl.cnf
 ```
 
 Use o seguinte modelo básico:
 
-```bash
+```ini
 [ ca ]
 default_ca = CA_default
 
@@ -163,7 +196,7 @@ openssl x509 -noout -text -in client.cert.pem
 
 ### 7. Criar o Arquivo `.pfx`
 
-Agora, combine o certificado e a chave privada em um arquivo `.pfx`, protegendo-o com uma senha para ser utilizado em sistemas windows.
+Agora, combine o certificado e a chave privada em um arquivo `.pfx`, protegendo-o com uma senha para ser utilizado em sistemas Windows.
 
 ```bash
 openssl pkcs12 -export -out certs/ca.cert.pfx -inkey client.key.pem -in certs/ca.cert.pem
@@ -173,7 +206,54 @@ openssl pkcs12 -export -out certs/ca.cert.pfx -inkey client.key.pem -in certs/ca
 Para garantir que o certificado `.pfx` foi emitido corretamente:
 
 ```bash
-openssl x509 -noout -text -in client.cert.pfx
+openssl pkcs12 -info -in client.cert.pfx
+```
+
+## Automatizando a emissão de Certificado e Criação do Arquivo .pfx
+
+Após ter criado sua CA, a geração de certificados pode ser automatizada com este script que gera a chave privada, cria o CSR, emite o certificado e cria o arquivo `.pfx`.
+
+Crie um arquivo `emitir_certificado.sh` e cole o conteúdo abaixo.
+
+```bash
+#!/bin/bash
+
+# Gerar chave privada para o cliente ou servidor
+echo "Gerando chave privada para o cliente/servidor..."
+openssl genrsa -out client.key.pem 2048
+echo "Chave privada para o cliente/servidor gerada com sucesso!"
+
+# Criar CSR para o cliente ou servidor
+echo "Criando CSR para o cliente/servidor..."
+openssl req -new -key client.key.pem -out client.csr.pem
+echo "CSR para o cliente/servidor gerado com sucesso!"
+
+# Assinar o CSR com a CA
+echo "Assinando CSR com a CA..."
+openssl ca -config openssl.cnf -in client.csr.pem -out client.cert.pem
+echo "Certificado do cliente/servidor assinado com sucesso!"
+
+# Criar arquivo .pfx
+echo "Criando arquivo .pfx..."
+openssl pkcs12 -export -out certs/client.cert.pfx -inkey client.key.pem -in client.cert.pem
+echo "Arquivo .pfx criado com sucesso!"
+
+# Verificar o conteúdo do arquivo .pfx
+echo "Verificando o arquivo .pfx..."
+openssl pkcs12 -info -in certs/client.cert.pfx
+echo "Verificação do arquivo .pfx concluída!"
+```
+
+Dê permissão de execução ao script:
+
+```bash
+chmod +x emitir_certificado.sh
+```
+
+Execute o script:
+
+```bash
+./emitir_certificado.sh
 ```
 
 ---

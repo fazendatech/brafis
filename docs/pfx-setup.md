@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Gerando um Certificado Autoassinado `.pfx`
 
 Este guia ensina como criar um certificado autoassinado no formato `.pfx` (ou `.p12`) para testar e implementar segurança SSL/TLS ou autenticação em servidores ou dispositivos móveis.
@@ -20,39 +18,71 @@ Este guia ensina como criar um certificado autoassinado no formato `.pfx` (ou `.
 
 Para executar os comandos abaixo, você precisará ter o **OpenSSL** instalado em seu sistema. Aqui estão as instruções de instalação:
 
-### No Linux (Debian/Ubuntu):
+### No Linux (Debian/Ubuntu)
 
 ```bash
 sudo apt update
 sudo apt install openssl
 ```
 
-### No macOS (usando Homebrew):
+### No macOS (usando Homebrew)
 
 ```bash
 brew install openssl
 ```
 
-### No Windows:
+### No Windows
 
 -   Baixe e instale o OpenSSL para Windows a partir deste [link](https://slproweb.com/products/Win32OpenSSL.html).
+
+> **Note:** Após a instalação, certifique-se de adicionar o diretório bin do OpenSSL ao PATH do sistema para poder usar o comando `openssl` no prompt de comando.
 
 ## Criando um Certificado Autoassinado `.pfx`
 
 ### 1. Gere uma Chave Privada
 
-Execute o comando abaixo para gerar uma chave privada de **2048** bits.
+Execute o comando abaixo para gerar uma chave privada de **4096** bits.
 
 ```bash
-openssl genrsa -out chave_privada.key 2048
+openssl genrsa -out chave_privada.key 4096
+```
+
+### 2. Crie um arquivo de configuração do certificado
+
+Crie um arquivo `openssl.cnf` com base no modelo a seguir:
+
+```bash
+[ req ]
+default_bits        = 4096
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_req
+prompt              = no
+
+[ req_distinguished_name ]
+C  = BR
+ST = São Paulo
+L  = São Paulo
+O  = Minha Empresa LTDA
+OU = Departamento de TI
+CN = www.exemplo.com.br
+emailAddress = admin@exemplo.com.br
+
+[ v3_req ]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = www.exemplo.com.br
+DNS.2 = exemplo.com.br
 ```
 
 ### 2. Crie o Certificado Autoassinado
 
-Crie o certificado autoassinado usando a chave privada gerada. Esse certificado terá validade de 365 dias.
+Crie o certificado autoassinado usando a chave privada gerada e o arquivo `openssl.cnf`. Esse certificado terá validade de 365 dias.
 
 ```bash
-openssl req -new -x509 -days 365 -key chave_privada.key -out certificado.crt
+openssl req -new -x509 -days 365 -key chave_privada.key -out certificado.crt -config openssl.cnf
 ```
 
 Durante este passo, você será solicitado a fornecer informações como país, organização e nome comum (o domínio ou nome da aplicação).
@@ -78,6 +108,53 @@ openssl x509 -text -noout -in certificado.crt
 ```bash
 openssl x509 -text -noout -in certificado.pfx
 ```
+
+## Script Completo
+
+Para facilitar o processo, você pode usar o seguinte script Bash para realizar todas as etapas automaticamente:
+
+```bash
+#!/bin/bash
+
+# Definir variáveis
+KEY_NAME="chave_privada.key"
+CERT_NAME="certificado.crt"
+PFX_NAME="certificado.pfx"
+VALIDITY_DAYS=365
+
+# 1. Gerar uma chave privada de 2048 bits
+openssl genrsa -out $KEY_NAME 2048
+
+# 2. Criar um certificado autoassinado com validade de 365 dias
+openssl req -new -x509 -days $VALIDITY_DAYS -key $KEY_NAME -out $CERT_NAME
+
+# 3. Criar o arquivo .pfx combinando a chave privada e o certificado
+openssl pkcs12 -export -out $PFX_NAME -inkey $KEY_NAME -in $CERT_NAME
+
+# 4. Verificar o certificado .crt
+echo "Verificando o certificado .crt:"
+openssl x509 -text -noout -in $CERT_NAME
+
+# 5. Verificar o conteúdo do arquivo .pfx (sem exibir o conteúdo sensível)
+echo "Verificando o arquivo .pfx:"
+openssl pkcs12 -info -in $PFX_NAME
+
+echo "Processo concluído! Certificado .pfx criado e verificado."
+```
+
+Salve o script acima em um arquivo, por exemplo criar_certificado.sh e dê a permissão de execução ao script:
+
+```bash
+chmod +x criar_certificado.sh
+```
+
+Por fim, poderá executar o script:
+
+```bash
+./criar_certificado.sh
+```
+
+Durante a execução, você será solicitado a preencher informações sobre o certificado, como o país, organização e nome comum (domínio ou nome da aplicação), além de uma senha para o arquivo .pfx.
 
 ## Conclusão
 
