@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { CertificateP12, type CertificateOptions } from "./index.ts";
+import { CertificateP12 } from "./index.ts";
 import { file } from "bun";
 
 /**
@@ -62,41 +62,44 @@ async function readPemFile(filePath: string): Promise<string> {
   return fileBuffer.replace(/\n/g, "\r\n");
 }
 
-const autoSignedPath = "./test/autoSigned";
-const autoSignedPfxBuffer = await readPfxFile(`${autoSignedPath}.cert.pfx`);
+const selfSignedPath = "./test/autoSigned";
+const selfSignedPfxBuffer = await readPfxFile(`${selfSignedPath}.cert.pfx`);
 const passphrase = "senha";
-const autoSignedPemCert = await readPemFile(`${autoSignedPath}.cert.pem`);
-const autoSignedPemKey = await readPemFile(`${autoSignedPath}.key.pem`);
+const selfSignedPemCert = await readPemFile(`${selfSignedPath}.cert.pem`);
+const selfSignedPemKey = await readPemFile(`${selfSignedPath}.key.pem`);
 
 describe("Certificate", () => {
   test("Convert PFX to PEM format", () => {
-    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
+    const options = { pfx: selfSignedPfxBuffer, passphrase: passphrase };
     const cert = new CertificateP12(options);
     const pem = cert.asPem();
+
     expect(pem.cert).not.toEqual("");
     expect(pem.key).not.toEqual("");
-    expect(pem.cert).toEqual(autoSignedPemCert);
-    expect(pem.key).toEqual(autoSignedPemKey);
+    expect(pem.cert).toEqual(selfSignedPemCert);
+    expect(pem.key).toEqual(selfSignedPemKey);
   });
 
   test("Throws error if no certificates found in PFX file", () => {
-    const options = { pfx: autoSignedPfxBuffer, passphrase: "passphrase" };
+    const options = { pfx: selfSignedPfxBuffer, passphrase: "passphrase" };
     const cert = new CertificateP12(options);
+
     expect(() => cert.asPem()).toThrowError();
   });
 
-  test("Handles invalid passphrase", async () => {
+  test("Handles invalid passphrase", () => {
     const invalidPassphrase = "wrongpass";
-    const options = { pfx: autoSignedPfxBuffer, passphrase: invalidPassphrase };
+    const options = { pfx: selfSignedPfxBuffer, passphrase: invalidPassphrase };
     const cert = new CertificateP12(options);
+
     expect(() => cert.asPem()).toThrowError();
   });
 
   test("Extracts certificate fields", () => {
-    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
-
+    const options = { pfx: selfSignedPfxBuffer, passphrase: passphrase };
     const cert = new CertificateP12(options);
     const certInfo = cert.getPemFields();
+
     expect(certInfo).toHaveProperty("subject");
     expect(certInfo).toHaveProperty("issuer");
     expect(certInfo).toHaveProperty("validFrom");
