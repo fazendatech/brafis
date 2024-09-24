@@ -1,7 +1,7 @@
 import forge from "node-forge";
 
 /**
- * Interface representing the extracted fields from a PEM certificate.
+ * @description Interface que representa os campos extraídos de um certificado PEM.
  */
 interface CertificateFields {
   subject: { name: string; value: string }[];
@@ -14,9 +14,9 @@ interface CertificateFields {
 }
 
 /**
- * Interface representing the PEM (Privacy-Enhanced Mail) format.
- * It is used to store both the certificate and the private key in PEM format.
- * PEM is a base64-encoded format commonly used for certificates and keys.
+ * @description Interface que representa o formato PEM (Privacy-Enhanced Mail).
+ * É usada para armazenar tanto o certificado quanto a chave privada no formato PEM.
+ * PEM é um formato codificado em base64 comumente usado para certificados e chaves.
  */
 interface PEM {
   cert: string;
@@ -24,9 +24,9 @@ interface PEM {
 }
 
 /**
- * Interface representing the PFX (PKCS#12) format.
- * It holds the PFX data in a base64-encoded string (`bufferString`)
- * and the passphrase (`pass`) used to decrypt the private key.
+ * @description Interface que representa o formato PFX (PKCS#12).
+ * Ela contém os dados do PFX em uma string codificada em base64 (`bufferString`)
+ * e a senha (`pass`) usada para descriptografar a chave privada.
  */
 interface P12 {
   bufferString: string;
@@ -34,19 +34,19 @@ interface P12 {
 }
 
 /**
- * Interface representing a certificate bag used to store certificates.
- * This bag holds a `forge.pki.Certificate` object, which contains information
- * about the certificate, such as the subject, issuer, validity, and public key.
+ * @description Interface que representa um "bag" de certificado usado para armazenar certificados.
+ * Este "bag" contém um objeto `forge.pki.Certificate`, que possui informações
+ * sobre o certificado, como o sujeito, emissor, validade e chave pública.
  */
 interface CertBag {
   cert: forge.pki.Certificate;
 }
 
 /**
- * Class representing a Certificate that can convert PFX (PKCS#12) files to PEM format.
- * It provides methods to extract certificates and private keys from PFX files and
- * convert them into PEM format. PEM is often used for importing/exporting certificates
- * and keys in environments such as web servers or cloud services.
+ * @description Classe que representa um Certificado que pode converter arquivos PFX (PKCS#12) para o formato PEM.
+ * Ela fornece métodos para extrair certificados e chaves privadas de arquivos PFX e
+ * convertê-los para o formato PEM. O formato PEM é frequentemente usado para importar/exportar certificados
+ * e chaves em ambientes como servidores web ou serviços em nuvem.
  */
 export class Certificate {
   private readonly pfxData: P12;
@@ -54,10 +54,10 @@ export class Certificate {
   private certFields?: CertificateFields;
 
   /**
-   * Getter to retrieve the Certificate fields.
-   * If the Certificate fields are not yet populated, it triggers the extraction from the PEM certificate.
+   * @description Getter para obter os campos do Certificado.
+   * Se os campos do Certificado ainda não estiverem populados, ele aciona a extração do certificado PEM.
    *
-   * @returns {CertificateFields} An object containing the certificate fields extracted from the PEM certificate.
+   * @returns {CertificateFields} Um objeto contendo os campos do certificado extraídos do certificado PEM.
    */
   public get pemFields(): CertificateFields {
     if (!this.certFields) {
@@ -70,10 +70,10 @@ export class Certificate {
   }
 
   /**
-   * Getter to retrieve the PEM data (certificate and private key).
-   * If the PEM data is not yet populated, it triggers the conversion from PFX to PEM.
+   * @description Getter para obter os dados PEM (certificado e chave privada).
+   * Se os dados PEM ainda não estiverem populados, ele aciona a conversão de PFX para PEM.
    *
-   * @returns {PEM} An object containing the certificate and private key in PEM format.
+   * @returns {PEM} Um objeto contendo o certificado e a chave privada no formato PEM.
    */
   get pem(): PEM {
     if (!this.pemData) {
@@ -86,12 +86,12 @@ export class Certificate {
   }
 
   /**
-   * Class constructor to initialize the Certificate instance with a PFX file and passphrase.
-   * The PFX file is provided as an `ArrayBuffer`, and the passphrase is used to unlock
-   * the private key contained in the PFX file.
+   * @description Construtor da classe para inicializar a instância do Certificado com um arquivo PFX e uma senha.
+   * O arquivo PFX é fornecido como um `ArrayBuffer`, e a senha é usada para desbloquear
+   * a chave privada contida no arquivo PFX.
    *
-   * @param {ArrayBuffer} pfx - The buffer containing the PFX file data, typically from a file.
-   * @param {string} passphrase - The passphrase used to decrypt the PFX file and extract the private key.
+   * @param {ArrayBuffer} pfx - O buffer contendo os dados do arquivo PFX, normalmente de um arquivo.
+   * @param {string} passphrase - A senha usada para descriptografar o arquivo PFX e extrair a chave privada.
    */
   constructor(pfx: ArrayBuffer, passphrase: string) {
     const pfxUint8Array = new Uint8Array(pfx);
@@ -102,16 +102,15 @@ export class Certificate {
   }
 
   /**
-   * Converts a PFX (PKCS#12) file to PEM format.
+   * @description Converte um arquivo PFX (PKCS#12) para o formato PEM.
+   * Este método decodifica os dados PFX de base64 e extrai a chave privada e os certificados.
+   * Em seguida, classifica os certificados por data de expiração, retornando o certificado com a maior
+   * validade e sua respectiva chave privada no formato PEM. Se nenhum certificado ou chave privada
+   * for encontrado no arquivo PFX, um erro é lançado.
    *
-   * This method decodes the PFX data from base64 and extracts the private key and certificate(s).
-   * It then sorts the certificates by expiration date, returning the certificate with the longest
-   * validity and its corresponding private key in PEM format. If no certificates or private keys
-   * are found in the PFX file, an error is thrown.
+   * @returns {PEM} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
-   * @returns {PEM} An object containing the certificate and private key in PEM format.
-   *
-   * @throws {Error} If no certificates or private keys are found in the PFX file.
+   * @throws {Error} Se nenhum certificado ou chave privada for encontrado no arquivo PFX.
    *
    * @private
    */
@@ -172,12 +171,11 @@ export class Certificate {
   }
 
   /**
-   * Extract fields from the PEM certificate.
+   * @description Extrai campos do certificado PEM.
+   * Este método pega um certificado PEM e extrai campos importantes como
+   * sujeito, emissor, período de validade, número de série, chave pública e algoritmo de assinatura.
    *
-   * This method takes a PEM certificate and extracts important fields such as
-   * subject, issuer, validity period, serial number, public key, and signature algorithm.
-   *
-   * @returns {CertificateFields} An object containing the extracted fields from the certificate.
+   * @returns {CertificateFields} Um objeto contendo os campos extraídos do certificado.
    */
   private extractPemFields(): CertificateFields {
     const pki = forge.pki;
