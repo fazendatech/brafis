@@ -1,11 +1,30 @@
 import forge from "node-forge";
 
 /**
- * @description Interface que representa os campos extraídos de um certificado PEM.
+ * @description Options for configuring a certificate.
+ *
+ * @property {ArrayBuffer} pfx - The PFX (Personal Information Exchange) data for the certificate.
+ * @property {string} passphrase - The passphrase to decrypt the PFX data.
+ */
+interface CertificateOptions {
+  pfx: ArrayBuffer;
+  passphrase: string;
+}
+
+/**
+ * @description Represents the fields of a certificate.
+
+ * @property {Array<{ name: string; value: string }>} subject - The subject of the certificate, represented as an array of name-value pairs.
+ * @property {Array<{ name: string; value: string }>} issuer - The issuer of the certificate, represented as an array of name-value pairs.
+ * @property {Date} validFrom - The date from which the certificate is valid.
+ * @property {Date} validTo - The date until which the certificate is valid.
+ * @property {string} serialNumber - The serial number of the certificate.
+ * @property {string} publicKey - The public key associated with the certificate.
+ * @property {string} signatureAlgorithm - The algorithm used to sign the certificate.
  */
 interface CertificateFields {
-  subject: { name: string; value: string }[];
-  issuer: { name: string; value: string }[];
+  subject: Array<{ name: string; value: string }>;
+  issuer: Array<{ name: string; value: string }>;
   validFrom: Date;
   validTo: Date;
   serialNumber: string;
@@ -18,7 +37,7 @@ interface CertificateFields {
  * É usada para armazenar tanto o certificado quanto a chave privada no formato PEM.
  * PEM é um formato codificado em base64 comumente usado para certificados e chaves.
  */
-interface PEM {
+interface PemPayload {
   cert: string;
   key: string;
 }
@@ -28,7 +47,7 @@ interface PEM {
  * Ela contém os dados do PFX em uma string codificada em base64 (`bufferString`)
  * e a senha (`pass`) usada para descriptografar a chave privada.
  */
-interface P12 {
+interface P12Payload {
   bufferString: string;
   pass: string;
 }
@@ -49,8 +68,8 @@ interface CertBag {
  * e chaves em ambientes como servidores web ou serviços em nuvem.
  */
 export class Certificate {
-  private readonly pfxData: P12;
-  private pemData?: PEM;
+  private readonly pfxData: P12Payload;
+  private pemData?: PemPayload;
   private certFields?: CertificateFields;
 
   /**
@@ -73,9 +92,9 @@ export class Certificate {
    * @description Getter para obter os dados PEM (certificado e chave privada).
    * Se os dados PEM ainda não estiverem populados, ele aciona a conversão de PFX para PEM.
    *
-   * @returns {PEM} Um objeto contendo o certificado e a chave privada no formato PEM.
+   * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    */
-  get pem(): PEM {
+  get pem(): PemPayload {
     if (!this.pemData) {
       this.p12ToPem();
       if (!this.pemData) {
@@ -108,13 +127,13 @@ export class Certificate {
    * validade e sua respectiva chave privada no formato PEM. Se nenhum certificado ou chave privada
    * for encontrado no arquivo PFX, um erro é lançado.
    *
-   * @returns {PEM} Um objeto contendo o certificado e a chave privada no formato PEM.
+   * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
    * @throws {Error} Se nenhum certificado ou chave privada for encontrado no arquivo PFX.
    *
    * @private
    */
-  private p12ToPem(): PEM {
+  private p12ToPem(): PemPayload {
     // Decode the base64-encoded PFX data
     const p12Der = forge.util.decode64(this.pfxData.bufferString);
     // Convert the DER-encoded PFX data into an ASN.1 structure
