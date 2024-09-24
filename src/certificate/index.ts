@@ -12,6 +12,26 @@ interface CertificateOptions {
 }
 
 /**
+ * @description Interface que representa o formato PEM (Privacy-Enhanced Mail).
+ * É usada para armazenar tanto o certificado quanto a chave privada no formato PEM.
+ * PEM é um formato codificado em base64 comumente usado para certificados e chaves.
+ */
+interface PemPayload {
+  cert: string;
+  key: string;
+}
+
+/**
+ * @description Interface que representa o formato PFX (PKCS#12).
+ * Ela contém os dados do PFX em uma string codificada em base64 (`bufferString`)
+ * e a senha (`pass`) usada para descriptografar a chave privada.
+ */
+interface P12Payload {
+  bufferString: string;
+  pass: string;
+}
+
+/**
  * @description Represents the fields of a certificate.
 
  * @property {Array<{ name: string; value: string }>} subject - The subject of the certificate, represented as an array of name-value pairs.
@@ -33,26 +53,6 @@ interface CertificateFields {
 }
 
 /**
- * @description Interface que representa o formato PEM (Privacy-Enhanced Mail).
- * É usada para armazenar tanto o certificado quanto a chave privada no formato PEM.
- * PEM é um formato codificado em base64 comumente usado para certificados e chaves.
- */
-interface PemPayload {
-  cert: string;
-  key: string;
-}
-
-/**
- * @description Interface que representa o formato PFX (PKCS#12).
- * Ela contém os dados do PFX em uma string codificada em base64 (`bufferString`)
- * e a senha (`pass`) usada para descriptografar a chave privada.
- */
-interface P12Payload {
-  bufferString: string;
-  pass: string;
-}
-
-/**
  * @description Interface que representa um "bag" de certificado usado para armazenar certificados.
  * Este "bag" contém um objeto `forge.pki.Certificate`, que possui informações
  * sobre o certificado, como o sujeito, emissor, validade e chave pública.
@@ -71,6 +71,22 @@ export class Certificate {
   private readonly pfxData: P12Payload;
   private pemData?: PemPayload;
   private certFields?: CertificateFields;
+
+  /**
+   * @description Construtor da classe para inicializar a instância do Certificado com um arquivo PFX e uma senha.
+   * O arquivo PFX é fornecido como um `ArrayBuffer`, e a senha é usada para desbloquear
+   * a chave privada contida no arquivo PFX.
+   *
+   * @param {ArrayBuffer} pfx - O buffer contendo os dados do arquivo PFX, normalmente de um arquivo.
+   * @param {string} passphrase - A senha usada para descriptografar o arquivo PFX e extrair a chave privada.
+   */
+  constructor(options: CertificateOptions) {
+    const pfxUint8Array = new Uint8Array(options.pfx);
+    this.pfxData = {
+      bufferString: forge.util.binary.base64.encode(pfxUint8Array),
+      pass: options.passphrase,
+    };
+  }
 
   /**
    * @description Getter para obter os campos do Certificado.
@@ -102,22 +118,6 @@ export class Certificate {
       }
     }
     return this.pemData;
-  }
-
-  /**
-   * @description Construtor da classe para inicializar a instância do Certificado com um arquivo PFX e uma senha.
-   * O arquivo PFX é fornecido como um `ArrayBuffer`, e a senha é usada para desbloquear
-   * a chave privada contida no arquivo PFX.
-   *
-   * @param {ArrayBuffer} pfx - O buffer contendo os dados do arquivo PFX, normalmente de um arquivo.
-   * @param {string} passphrase - A senha usada para descriptografar o arquivo PFX e extrair a chave privada.
-   */
-  constructor(pfx: ArrayBuffer, passphrase: string) {
-    const pfxUint8Array = new Uint8Array(pfx);
-    this.pfxData = {
-      bufferString: forge.util.binary.base64.encode(pfxUint8Array),
-      pass: passphrase,
-    };
   }
 
   /**
