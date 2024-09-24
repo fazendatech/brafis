@@ -69,12 +69,6 @@ const autoSignedPemCert = await readPemFile(`${autoSignedPath}.cert.pem`);
 const autoSignedPemKey = await readPemFile(`${autoSignedPath}.key.pem`);
 
 describe("Certificate", () => {
-  test("Creates a new instance of Certificate", () => {
-    const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
-    const cert = new CertificateP12(options);
-    expect(cert).toBeInstanceOf(CertificateP12);
-  });
-
   test("Convert PFX to PEM format", () => {
     const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
     const cert = new CertificateP12(options);
