@@ -58,10 +58,8 @@ export interface CertificateFields {
  * convertê-los para o formato PEM. O formato PEM é frequentemente usado para importar/exportar certificados
  * e chaves em ambientes como servidores web ou serviços em nuvem.
  */
-export class Certificate {
+export class CertificateP12 {
   private readonly pfxData: P12Payload;
-  private pemData?: PemPayload;
-  private certFields?: CertificateFields;
 
   /**
    * @description Construtor da classe para inicializar a instância do Certificado com um arquivo PFX e uma senha.
@@ -80,38 +78,6 @@ export class Certificate {
   }
 
   /**
-   * @description Getter para obter os campos do Certificado.
-   * Se os campos do Certificado ainda não estiverem populados, ele aciona a extração do certificado PEM.
-   *
-   * @returns {CertificateFields} Um objeto contendo os campos do certificado extraídos do certificado PEM.
-   */
-  public get pemFields(): CertificateFields {
-    if (!this.certFields) {
-      this.extractPemFields();
-      if (!this.certFields) {
-        throw new Error("Certificate fields are not available.");
-      }
-    }
-    return this.certFields;
-  }
-
-  /**
-   * @description Getter para obter os dados PEM (certificado e chave privada).
-   * Se os dados PEM ainda não estiverem populados, ele aciona a conversão de PFX para PEM.
-   *
-   * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
-   */
-  get pem(): PemPayload {
-    if (!this.pemData) {
-      this.p12ToPem();
-      if (!this.pemData) {
-        throw new Error("PEM data is not available.");
-      }
-    }
-    return this.pemData;
-  }
-
-  /**
    * @description Converte um arquivo PFX (PKCS#12) para o formato PEM.
    * Este método decodifica os dados PFX de base64 e extrai a chave privada e os certificados.
    * Em seguida, classifica os certificados por data de expiração, retornando o certificado com a maior
@@ -121,10 +87,8 @@ export class Certificate {
    * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
    * @throws {Error} Se nenhum certificado ou chave privada for encontrado no arquivo PFX.
-   *
-   * @private
    */
-  private p12ToPem(): PemPayload {
+  asPem(): PemPayload {
     // Decode the base64-encoded PFX data
     const p12Der = forge.util.decode64(this.pfxData.bufferString);
     // Convert the DER-encoded PFX data into an ASN.1 structure
@@ -176,11 +140,10 @@ export class Certificate {
     const cert = pki.certificateToPem(certBags[0].cert);
     const key = pki.privateKeyInfoToPem(privateKeyInfo);
 
-    // Store the PEM data (certificate and private key)
-    this.pemData = { cert, key };
+    const pem: PemPayload = { cert: cert, key: key };
 
     // Return the certificate and private key in PEM format
-    return this.pemData;
+    return pem;
   }
 
   /**
@@ -190,11 +153,13 @@ export class Certificate {
    *
    * @returns {CertificateFields} Um objeto contendo os campos extraídos do certificado.
    */
-  private extractPemFields(): CertificateFields {
-    const pki = forge.pki;
-    const cert = pki.certificateFromPem(this.pem.cert);
+  getPemFields(): CertificateFields {
+    const pem = this.asPem();
 
-    this.certFields = {
+    const pki = forge.pki;
+    const cert = pki.certificateFromPem(pem.cert);
+
+    const certFields = {
       subject: cert.subject.attributes.map((attr) => ({
         name: attr.name || "",
         value: typeof attr.value === "string" ? attr.value : "",
@@ -210,6 +175,6 @@ export class Certificate {
       signatureAlgorithm: cert.siginfo.algorithmOid,
     };
 
-    return this.certFields;
+    return certFields;
   }
 }

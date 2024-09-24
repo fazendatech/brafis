@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Certificate, type CertificateOptions } from "./index.ts";
+import { CertificateP12, type CertificateOptions } from "./index.ts";
 import { file } from "bun";
 
 /**
@@ -71,14 +71,14 @@ const autoSignedPemKey = await readPemFile(`${autoSignedPath}.key.pem`);
 describe("Certificate", () => {
   test("Creates a new instance of Certificate", () => {
     const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
-    const cert = new Certificate(options);
-    expect(cert).toBeInstanceOf(Certificate);
+    const cert = new CertificateP12(options);
+    expect(cert).toBeInstanceOf(CertificateP12);
   });
 
   test("Convert PFX to PEM format", () => {
     const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
-    const cert = new Certificate(options);
-    const pem = cert.pem;
+    const cert = new CertificateP12(options);
+    const pem = cert.asPem();
     expect(pem.cert).not.toEqual("");
     expect(pem.key).not.toEqual("");
     expect(pem.cert).toEqual(autoSignedPemCert);
@@ -87,22 +87,22 @@ describe("Certificate", () => {
 
   test("Throws error if no certificates found in PFX file", () => {
     const options = { pfx: autoSignedPfxBuffer, passphrase: "passphrase" };
-    const cert = new Certificate(options);
-    expect(() => cert.pem).toThrowError();
+    const cert = new CertificateP12(options);
+    expect(() => cert.asPem()).toThrowError();
   });
 
   test("Handles invalid passphrase", async () => {
     const invalidPassphrase = "wrongpass";
     const options = { pfx: autoSignedPfxBuffer, passphrase: invalidPassphrase };
-    const cert = new Certificate(options);
-    expect(() => cert.pem).toThrowError();
+    const cert = new CertificateP12(options);
+    expect(() => cert.asPem()).toThrowError();
   });
 
   test("Extracts certificate fields", () => {
     const options = { pfx: autoSignedPfxBuffer, passphrase: passphrase };
 
-    const cert = new Certificate(options);
-    const certInfo = cert.pemFields;
+    const cert = new CertificateP12(options);
+    const certInfo = cert.getPemFields();
     expect(certInfo).toHaveProperty("subject");
     expect(certInfo).toHaveProperty("issuer");
     expect(certInfo).toHaveProperty("validFrom");
