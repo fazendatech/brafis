@@ -6,7 +6,7 @@ import forge from "node-forge";
  * @property {ArrayBuffer} pfx - The PFX (Personal Information Exchange) data for the certificate.
  * @property {string} passphrase - The passphrase to decrypt the PFX data.
  */
-interface CertificateOptions {
+export interface CertificateOptions {
   pfx: ArrayBuffer;
   passphrase: string;
 }
@@ -16,7 +16,7 @@ interface CertificateOptions {
  * É usada para armazenar tanto o certificado quanto a chave privada no formato PEM.
  * PEM é um formato codificado em base64 comumente usado para certificados e chaves.
  */
-interface PemPayload {
+export interface PemPayload {
   cert: string;
   key: string;
 }
@@ -26,7 +26,7 @@ interface PemPayload {
  * Ela contém os dados do PFX em uma string codificada em base64 (`bufferString`)
  * e a senha (`pass`) usada para descriptografar a chave privada.
  */
-interface P12Payload {
+export interface P12Payload {
   bufferString: string;
   pass: string;
 }
@@ -42,7 +42,7 @@ interface P12Payload {
  * @property {string} publicKey - The public key associated with the certificate.
  * @property {string} signatureAlgorithm - The algorithm used to sign the certificate.
  */
-interface CertificateFields {
+export interface CertificateFields {
   subject: Array<{ name: string; value: string }>;
   issuer: Array<{ name: string; value: string }>;
   validFrom: Date;
