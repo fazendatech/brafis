@@ -53,15 +53,6 @@ interface CertificateFields {
 }
 
 /**
- * @description Interface que representa um "bag" de certificado usado para armazenar certificados.
- * Este "bag" contém um objeto `forge.pki.Certificate`, que possui informações
- * sobre o certificado, como o sujeito, emissor, validade e chave pública.
- */
-interface CertBag {
-  cert: forge.pki.Certificate;
-}
-
-/**
  * @description Classe que representa um Certificado que pode converter arquivos PFX (PKCS#12) para o formato PEM.
  * Ela fornece métodos para extrair certificados e chaves privadas de arquivos PFX e
  * convertê-los para o formato PEM. O formato PEM é frequentemente usado para importar/exportar certificados
@@ -152,19 +143,19 @@ export class Certificate {
     const keyData = (keyBags || []).concat(unencryptedKeyBags || []);
 
     // Extract the certificates from the PFX and sort them by expiration date
-    const certBags: CertBag[] = p12.getBags({
+    const certBags = p12.getBags({
       bagType: oids.certBag,
-    })[oids.certBag] as CertBag[];
+    })[oids.certBag];
 
     if (!certBags || certBags.length === 0) {
       throw new Error("No certificates found in the PFX file.");
     }
 
     // Sort certificates by expiration date (oldest first)
-    certBags.sort((a: CertBag, b: CertBag) => {
+    certBags.sort((a, b) => {
       return (
-        new Date(a.cert.validity.notAfter).getTime() -
-        new Date(b.cert.validity.notAfter).getTime()
+        new Date(a.cert?.validity.notAfter ?? 0).getTime() -
+        new Date(b.cert?.validity.notAfter ?? 0).getTime()
       );
     });
 
@@ -179,6 +170,9 @@ export class Certificate {
     const privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
 
     // Convert the first certificate and private key to PEM format
+    if (!certBags[0]?.cert) {
+      throw new Error("No valid certificate found in the PFX file.");
+    }
     const cert = pki.certificateToPem(certBags[0].cert);
     const key = pki.privateKeyInfoToPem(privateKeyInfo);
 
