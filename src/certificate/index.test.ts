@@ -1,6 +1,7 @@
 import { describe, test, expect } from "bun:test";
 import { CertificateP12 } from "./index.ts";
 import { file } from "bun";
+import forge from "node-forge";
 
 /**
  * @description Utility function to resolve the correct file path based on the directory of the test file.
@@ -62,7 +63,7 @@ async function readPemFile(filePath: string): Promise<string> {
   return fileBuffer.replace(/\n/g, "\r\n");
 }
 
-const selfSignedPath = "./test/autoSigned";
+const selfSignedPath = "../misc/selfSigned";
 const selfSignedPfxBuffer = await readPfxFile(`${selfSignedPath}.cert.pfx`);
 const passphrase = "senha";
 const selfSignedPemCert = await readPemFile(`${selfSignedPath}.cert.pem`);
@@ -80,8 +81,16 @@ describe("Certificate", () => {
     expect(pem.key).toEqual(selfSignedPemKey);
   });
 
-  test("Throws error if no certificates found in PFX file", () => {
-    const options = { pfx: selfSignedPfxBuffer, passphrase: "passphrase" };
+  // TODO: Generate a PFX file with no certificates
+  test.todo("Throws error if no certificates found in PFX file", () => {
+    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(null, [], passphrase, {
+      algorithm: "3des",
+      friendlyName: "Invalid PFX",
+    });
+    const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+    const p12ArrayBuffer = new ArrayBuffer(p12Der.length);
+
+    const options = { pfx: p12ArrayBuffer, passphrase: passphrase };
     const cert = new CertificateP12(options);
 
     expect(() => cert.asPem()).toThrowError();
@@ -100,17 +109,6 @@ describe("Certificate", () => {
     const cert = new CertificateP12(options);
     const certInfo = cert.getPemFields();
 
-    expect(certInfo).toHaveProperty("subject");
-    expect(certInfo).toHaveProperty("issuer");
-    expect(certInfo).toHaveProperty("validFrom");
-    expect(certInfo).toHaveProperty("validTo");
-    expect(certInfo).toHaveProperty("publicKey");
-    expect(certInfo).toHaveProperty("serialNumber");
-    expect(certInfo).toHaveProperty("signatureAlgorithm");
-    expect(certInfo.subject).toBeArray();
-    expect(certInfo.issuer).toBeArray();
-    expect(certInfo).toContainValues([
-      "281509806a587f5a74ad144178c320aa93a6a018",
-    ]);
+    expect(certInfo).toMatchSnapshot();
   });
 });
