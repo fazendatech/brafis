@@ -1,4 +1,9 @@
 import forge from "node-forge";
+import {
+  NoBagsFoundError,
+  NoPrivateKeyFoundError,
+  NoCertificatesFoundError,
+} from "./indexErrors.ts";
 
 /**
  * @description Opções para configurar um certificado.
@@ -79,10 +84,7 @@ export class CertificateP12 {
   ): forge.pkcs12.Bag[] {
     const bags = p12.getBags({ bagType })[bagType];
     if (!bags) {
-      //TODO: Criar classe de erro personalizada
-      throw new Error(
-        `No bags of type ${forge.pki.oids[bagType]} found in the PFX file.`,
-      );
+      throw new NoBagsFoundError(forge.pki.oids[bagType]);
     }
     return bags;
   }
@@ -98,7 +100,7 @@ export class CertificateP12 {
 
     if (!keyData?.key) {
       //TODO: Criar classe de erro personalizada
-      throw new Error("No private key found in the PFX file.");
+      throw new NoPrivateKeyFoundError();
     }
 
     return keyData.key;
@@ -120,8 +122,7 @@ export class CertificateP12 {
       );
 
     if (!certBag?.cert) {
-      //TODO: Criar classe de erro personalizada
-      throw new Error("No valid certificates found in the PFX file.");
+      throw new NoCertificatesFoundError();
     }
 
     return certBag.cert;
