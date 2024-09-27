@@ -33,9 +33,10 @@ brew install openssl
 
 ### No Windows
 
--   Baixe e instale o OpenSSL para Windows a partir deste [link](https://slproweb.com/products/Win32OpenSSL.html).
+- Baixe e instale o OpenSSL para Windows a partir deste [link](https://slproweb.com/products/Win32OpenSSL.html).
 
-> **Note:** Após a instalação, certifique-se de adicionar o diretório bin do OpenSSL ao PATH do sistema para poder usar o comando `openssl` no prompt de comando.
+> [!NOTE]
+> Após a instalação, certifique-se de adicionar o diretório bin do OpenSSL ao PATH do sistema para poder usar o comando `openssl` no prompt de comando.
 
 ## Criando um Certificado Autoassinado `.pfx`
 
@@ -44,7 +45,8 @@ brew install openssl
 Execute o comando abaixo para gerar uma chave privada de **4096** bits.
 
 ```bash
-openssl genrsa -out chave_privada.key 4096
+openssl genrsa -out cert.key.pem 4096
+chmod 400 cert.key.pem
 ```
 
 ### 2. Crie um arquivo de configuração do certificado
@@ -59,22 +61,14 @@ x509_extensions     = v3_req
 prompt              = no
 
 [ req_distinguished_name ]
-C  = BR
-ST = São Paulo
-L  = São Paulo
-O  = Minha Empresa LTDA
-OU = Departamento de TI
 CN = www.exemplo.com.br
-emailAddress = admin@exemplo.com.br
+OU = Departamento de TI
+O  = Minha Empresa LTDA
+C  = BR
 
 [ v3_req ]
 keyUsage = keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = www.exemplo.com.br
-DNS.2 = exemplo.com.br
 ```
 
 ### 2. Crie o Certificado Autoassinado
@@ -82,17 +76,15 @@ DNS.2 = exemplo.com.br
 Crie o certificado autoassinado usando a chave privada gerada e o arquivo `openssl.cnf`. Esse certificado terá validade de 365 dias.
 
 ```bash
-openssl req -new -x509 -days 365 -key chave_privada.key -out certificado.crt -config openssl.cnf
+openssl req -new -x509 -days 365 -key cert.key.pem -out cert.pem -config openssl.cnf
 ```
-
-Durante este passo, você será solicitado a fornecer informações como país, organização e nome comum (o domínio ou nome da aplicação).
 
 ### 3. Criar o Arquivo `.pfx`
 
 Agora, combine o certificado e a chave privada em um arquivo `.pfx`, protegendo-o com uma senha.
 
 ```bash
-openssl pkcs12 -export -out certificado.pfx -inkey chave_privada.key -in certificado.crt
+openssl pkcs12 -export -out cert.pfx -inkey cert.key.pem -in cert.pem
 ```
 
 Você será solicitado a definir uma senha para o arquivo `.pfx`. Esta senha será necessária sempre que você utilizar o certificado.
@@ -102,12 +94,11 @@ Você será solicitado a definir uma senha para o arquivo `.pfx`. Esta senha ser
 Verifique a criação dos certificados com os comandos:
 
 ```bash
-openssl x509 -text -noout -in certificado.crt
+openssl x509 -text -noout -in cert.pem
+openssl x509 -info -in cert.pfx
 ```
 
-```bash
-openssl x509 -text -noout -in certificado.pfx
-```
+Ambos comandos devem exibir informações detalhadas sobre os certificados gerados.
 
 ## Script Completo
 
@@ -116,51 +107,41 @@ Para facilitar o processo, você pode usar o seguinte script Bash para realizar 
 ```bash
 #!/bin/bash
 
-# Definir variáveis
-KEY_NAME="chave_privada.key"
-CERT_NAME="certificado.crt"
-PFX_NAME="certificado.pfx"
+KEY_NAME="cert.key.pem"
+CERT_NAME="cert.pem"
+PFX_NAME="cert.pfx"
+CONFIG_FILE="openssl.cnf"
 VALIDITY_DAYS=365
 
-# 1. Gerar uma chave privada de 2048 bits
-openssl genrsa -out $KEY_NAME 2048
+echo "Gerando uma chave privada de 4096 bits"
+openssl genrsa -out $KEY_NAME 4096
+chmod 400 $KEY_NAME
 
-# 2. Criar um certificado autoassinado com validade de 365 dias
-openssl req -new -x509 -days $VALIDITY_DAYS -key $KEY_NAME -out $CERT_NAME
+echo "Criando um certificado autoassinado com validade de 365 dias"
+openssl req -new -x509 -days $VALIDITY_DAYS -key $KEY_NAME -out $CERT_NAME -config $CONFIG_FILE
 
-# 3. Criar o arquivo .pfx combinando a chave privada e o certificado
+echo "Criando o arquivo .pfx combinando a chave privada e o certificado"
 openssl pkcs12 -export -out $PFX_NAME -inkey $KEY_NAME -in $CERT_NAME
 
-# 4. Verificar o certificado .crt
 echo "Verificando o certificado .crt:"
 openssl x509 -text -noout -in $CERT_NAME
 
-# 5. Verificar o conteúdo do arquivo .pfx (sem exibir o conteúdo sensível)
 echo "Verificando o arquivo .pfx:"
 openssl pkcs12 -info -in $PFX_NAME
 
 echo "Processo concluído! Certificado .pfx criado e verificado."
 ```
 
-Salve o script acima em um arquivo, por exemplo criar_certificado.sh e dê a permissão de execução ao script:
+Salve o script acima em um arquivo, por exemplo criar-certificado.sh e dê a permissão de execução ao script:
 
 ```bash
-chmod +x criar_certificado.sh
+chmod +x criar-certificado.sh
 ```
 
 Por fim, poderá executar o script:
 
 ```bash
-./criar_certificado.sh
+./criar-certificado.sh
 ```
 
-Durante a execução, você será solicitado a preencher informações sobre o certificado, como o país, organização e nome comum (domínio ou nome da aplicação), além de uma senha para o arquivo .pfx.
-
-## Conclusão
-
-Agora você tem um certificado `.pfx` que contém tanto a chave privada quanto o certificado público, protegido por uma senha. Ele pode ser utilizado para:
-
--   **Configurar SSL/TLS** em servidores que aceitam o formato `.pfx`.
--   **Autenticação de cliente** ou **dispositivos móveis** que necessitam de um arquivo contendo chave privada e certificado.
-
-Este processo é ideal para **ambientes de desenvolvimento** ou **testes internos** onde um certificado público validado por uma CA não é necessário.
+Durante a execução, você será solicitado a preencher uma senha para o arquivo .pfx.
