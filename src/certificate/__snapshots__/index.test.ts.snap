@@ -2,80 +2,26 @@
 
 exports[`Certificate Extracts certificate fields 1`] = `
 {
-  "issuer": [
-    {
-      "name": "countryName",
-      "value": "BR",
-    },
-    {
-      "name": "stateOrProvinceName",
-      "value": "MG",
-    },
-    {
-      "name": "localityName",
-      "value": "UberlÃÂ¢ndia",
-    },
-    {
-      "name": "organizationName",
-      "value": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
-    },
-    {
-      "name": "organizationalUnitName",
-      "value": "Departamento de TI",
-    },
-    {
-      "name": "commonName",
-      "value": "efic.dev.com",
-    },
-    {
-      "name": "emailAddress",
-      "value": "contact@eficticia.com.br",
-    },
-  ],
-  "publicKey": 
-"-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqil0fl0vFCRxh7J0d0HG
-aeJANEg/0//FoZUZHwncQHZ6c8tKwpYC2BLjKQQPfWIxontWOqQAyMmFBIFm+Xv1
-C258F55wrAonXssfNeCc+q5CjHZw8yxQy82gId0TpPLcs8uLPnzCS6Pk9rKBnjlf
-tlcekXU1cDAoakANCWVdDJPKY4n+cyVU4WR/3LiSxqvCSxGC42QiOGx5rpfwUE4z
-nndSe0CDwYDi1vTQF50QqYnLskSmqL0J0gj5o81pbxkhH0UDsTzce1FdG7Upp0dZ
-WMP/U2ulrx/GciF6+ZAoarnFICucxgAVUki3/dgInrc+pdKR1lBCXztBxwPFEzgz
-CwIDAQAB
------END PUBLIC KEY-----
-"
-,
+  "issuer": {
+    "commonName": "efic.dev.com",
+    "countryName": "BR",
+    "emailAddress": "contact@eficticia.com.br",
+    "localityName": "UberlÃÂ¢ndia",
+    "organizationName": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
+    "organizationalUnitName": "Departamento de TI",
+    "stateOrProvinceName": "MG",
+  },
   "serialNumber": "281509806a587f5a74ad144178c320aa93a6a018",
-  "signatureAlgorithm": "1.2.840.113549.1.1.11",
-  "subject": [
-    {
-      "name": "countryName",
-      "value": "BR",
-    },
-    {
-      "name": "stateOrProvinceName",
-      "value": "MG",
-    },
-    {
-      "name": "localityName",
-      "value": "UberlÃÂ¢ndia",
-    },
-    {
-      "name": "organizationName",
-      "value": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
-    },
-    {
-      "name": "organizationalUnitName",
-      "value": "Departamento de TI",
-    },
-    {
-      "name": "commonName",
-      "value": "efic.dev.com",
-    },
-    {
-      "name": "emailAddress",
-      "value": "contact@eficticia.com.br",
-    },
-  ],
+  "signatureAlgorithm": "sha256WithRSAEncryption",
+  "subject": {
+    "commonName": "efic.dev.com",
+    "countryName": "BR",
+    "emailAddress": "contact@eficticia.com.br",
+    "localityName": "UberlÃÂ¢ndia",
+    "organizationName": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
+    "organizationalUnitName": "Departamento de TI",
+    "stateOrProvinceName": "MG",
+  },
   "validFrom": 2024-09-21T02:02:49.000Z,
   "validTo": 2025-09-21T02:02:49.000Z,
 }
