@@ -1,5 +1,10 @@
 import forge from "node-forge";
-import { NoPrivateKeyFoundError, NoCertificatesFoundError } from "./errors.ts";
+import {
+  InvalidPfxError,
+  InvalidPassphraseError,
+  NoPrivateKeyFoundError,
+  NoCertificatesFoundError,
+} from "./errors.ts";
 import type {
   CertificateP12Options,
   P12Payload,
@@ -15,8 +20,20 @@ export class CertificateP12 {
 
   /**
    * @param {CertificateP12Options} options
+   *
+   * @throws {InvalidPfxError, InvalidPassphraseError}
    */
   constructor(options: CertificateP12Options) {
+    if (!(options.pfx instanceof Uint8Array) || options.pfx.length === 0) {
+      throw new InvalidPfxError();
+    }
+    if (
+      typeof options.passphrase !== "string" ||
+      options.passphrase.length === 0
+    ) {
+      throw new InvalidPassphraseError();
+    }
+
     this.pfxData = {
       bufferString: forge.util.binary.base64.encode(options.pfx),
       pass: options.passphrase,
