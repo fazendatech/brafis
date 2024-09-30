@@ -1,7 +1,12 @@
-import { describe, test, expect } from "bun:test";
-import { CertificateP12 } from "./index.ts";
 import { file } from "bun";
+import { describe, test, expect } from "bun:test";
 import forge from "node-forge";
+import { CertificateP12 } from "./index.ts";
+import {
+  NoBagsFoundError,
+  NoCertificatesFoundError,
+  NoPrivateKeyFoundError,
+} from "./errors.ts";
 
 describe("Certificate", async () => {
   const selfSignedPath = "./src/misc/sample-certificates/";
@@ -16,33 +21,8 @@ describe("Certificate", async () => {
     const cert = new CertificateP12(options);
     const pem = cert.asPem();
 
-    expect(pem.cert).not.toEqual("");
-    expect(pem.key).not.toEqual("");
     expect(pem.cert).toEqual(selfSignedPemCert);
     expect(pem.key).toEqual(selfSignedPemKey);
-  });
-
-  // TODO: Generate a PFX file with no certificates
-  test.todo("Throws error if no certificates found in PFX file", () => {
-    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(null, [], passphrase, {
-      algorithm: "3des",
-      friendlyName: "Invalid PFX",
-    });
-    const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
-    const p12ArrayBuffer = new ArrayBuffer(p12Der.length);
-    const p12View = new Uint8Array(p12ArrayBuffer);
-
-    const options = { pfx: p12View, passphrase: passphrase };
-    const cert = new CertificateP12(options);
-
-    expect(cert.asPem()).toThrowError();
-  });
-
-  test("Throws error on invalid passphrase", () => {
-    const options = { pfx: selfSignedPfxBuffer, passphrase: "wrongpass" };
-    const cert = new CertificateP12(options);
-
-    expect(() => cert.asPem()).toThrowError();
   });
 
   test("Extracts certificate fields", () => {
@@ -50,5 +30,39 @@ describe("Certificate", async () => {
     const certInfo = cert.getPemFields();
 
     expect(certInfo).toMatchSnapshot();
+  });
+
+  // TODO: Generate a PFX file with no certificates
+  test.todo(
+    "Throws NoBagsFoundError if no certificates found in PFX file",
+    () => {
+      // Criar um contêiner PKCS#12 vazio
+      const pfx = forge.pkcs12.toPkcs12Asn1(null, [], "", {});
+      const pfxDer = forge.asn1.toDer(pfx).getBytes();
+      const p12View = new Uint8Array(new ArrayBuffer(pfxDer.length));
+      const cert = new CertificateP12({ pfx: p12View, passphrase: passphrase });
+
+      expect(() => cert.asPem()).toThrowError(NoBagsFoundError);
+    },
+  );
+
+  //TODO: Generate a PFX file with no private key
+  test.todo(
+    "Throws NoPrivateKeyFoundError if no private key found in PFX file",
+    () => {
+      expect().toThrowError(NoPrivateKeyFoundError);
+    },
+  );
+
+  //TODO: Generate a PFX file with no certificates
+  test.todo("Throws NoCertificatesFoundError if no certificates found", () => {
+    expect().toThrowError(NoCertificatesFoundError);
+  });
+
+  test("Throws error on invalid passphrase", () => {
+    const options = { pfx: selfSignedPfxBuffer, passphrase: "wrongpass" };
+    const cert = new CertificateP12(options);
+
+    expect(() => cert.asPem()).toThrowError();
   });
 });

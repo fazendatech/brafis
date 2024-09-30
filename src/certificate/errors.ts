@@ -1,5 +1,3 @@
-// src/errors/CertificateErrors.ts
-
 export class NoBagsFoundError extends Error {
   constructor(bagType: string) {
     super(`No bags of type ${bagType} found in the PFX file.`);
