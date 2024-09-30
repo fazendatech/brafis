@@ -59,7 +59,7 @@ chmod 400 private/ca.key.pem
 
 Com a chave privada da CA criada, o próximo passo é gerar o certificado autoassinado da CA.
 
-Crie um arquivo no diretório da CA com nome `ca.config.cnf` e preencha com o seguinte modelo:
+Crie um arquivo no diretório da CA com nome `ca.cnf` e preencha com o seguinte modelo:
 
 ```ini
 [ req ]
@@ -92,10 +92,10 @@ keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 Utilize o seguinte comando para criar o certificado da CA em `certs/ca.cert.pem`
 
 ```bash
-openssl req -new -x509 -days 3650 -key private/ca.key.pem -sha256 -out certs/ca.cert.pem -config ca.config.cnf
+openssl req -new -x509 -days 3650 -key private/ca.key.pem -sha256 -out certs/ca.cert.pem -config ca.cnf
 ```
 
-Durante a utilização do comando, você será solicitado a inserir alguns campos de informações. Preencha-os conforme desejar, deixando em branco será usado os valores default do arquivo `ca.config.cnf`, esses serão as informações da CA que será criada.
+Durante a utilização do comando, você será solicitado a inserir alguns campos de informações. Preencha-os conforme desejar, deixando em branco será usado os valores default do arquivo `ca.cnf`, esses serão as informações da CA que será criada.
 
 Verifique se o arquivo foi criado corretamente:
 
