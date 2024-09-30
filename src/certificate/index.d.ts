@@ -34,15 +34,14 @@ export interface P12Payload {
 /**
  * @description Representa os campos de um certificado.
 
- * @property {Array<{ name: string; value: string }>} subject - Dados do requerente do certificado
- * @property {Array<{ name: string; value: string }>} issuer - Dados do emissor do certificado
+ * @property {Record<string, string>} subject - Dados do requerente do certificado
+ * @property {Record<string, string>} issuer - Dados do emissor do certificado
  * @property {Date} validFrom - A data a partir da qual o certificado é válido.
  * @property {Date} validTo - A data até a qual o certificado é válido.
  * @property {string} serialNumber - O número de série do certificado.
- * @property {string} publicKey - A chave pública associada ao certificado.
  * @property {string} signatureAlgorithm - O algoritmo usado para assinar o certificado. E.g. `sha256WithRSAEncryption`, `rsaEncryption`, ...
  */
-export interface CertificateP12Fields {
+export interface CertificateFields {
   subject: Record<string, string>;
   issuer: Record<string, string>;
   validFrom: Date;

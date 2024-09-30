@@ -9,7 +9,7 @@ import type {
   CertificateP12Options,
   P12Payload,
   PemPayload,
-  CertificateP12Fields,
+  CertificateFields,
 } from "./index.d";
 
 /**
@@ -133,7 +133,7 @@ export class CertificateP12 {
    *
    * @returns {CertificateFields}
    */
-  getPemFields(): CertificateP12Fields {
+  getPemFields(): CertificateFields {
     const pem = this.asPem();
     const cert = forge.pki.certificateFromPem(pem.cert);
 
