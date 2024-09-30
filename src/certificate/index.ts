@@ -1,9 +1,5 @@
 import forge from "node-forge";
-import {
-  NoBagsFoundError,
-  NoPrivateKeyFoundError,
-  NoCertificatesFoundError,
-} from "./errors.ts";
+import { NoPrivateKeyFoundError, NoCertificatesFoundError } from "./errors.ts";
 import type {
   CertificateP12Options,
   P12Payload,
@@ -28,42 +24,34 @@ export class CertificateP12 {
   }
 
   /**
-   * @description Retrieves bags of a specified type from a PKCS#12 PFX file.
-   * @private
+   * @description Recupera o conteúdo bags de um tipo especifico de um arquivo PKCS#12 PFX.
    */
   private getBags(
     p12: forge.pkcs12.Pkcs12Pfx,
     bagType: string,
   ): forge.pkcs12.Bag[] {
-    const bags = p12.getBags({ bagType })[bagType];
-    if (!bags) {
-      throw new NoBagsFoundError(forge.pki.oids[bagType]);
-    }
-    return bags;
+    return p12.getBags({ bagType })[bagType] || [];
   }
 
   /**
-   * @description Retrieves the private key from a PKCS#12 PFX file.
-   * @private
+   * @description Recupera a chave privada de um arquivo PKCS#12 PFX.
    */
-  private getPrivateKey(p12: forge.pkcs12.Pkcs12Pfx): forge.pki.PrivateKey {
+  private getPrivateKey(
+    p12: forge.pkcs12.Pkcs12Pfx,
+  ): forge.pki.PrivateKey | null {
     const keyBags = this.getBags(p12, forge.pki.oids.pkcs8ShroudedKeyBag);
     const unencryptedKeyBags = this.getBags(p12, forge.pki.oids.keyBag);
     const [keyData] = keyBags.concat(unencryptedKeyBags);
 
-    if (!keyData?.key) {
-      //TODO: Criar classe de erro personalizada
-      throw new NoPrivateKeyFoundError();
-    }
-
-    return keyData.key;
+    return keyData?.key ?? null;
   }
 
   /**
-   * @description Retrieves the certificate from a PKCS#12 PFX file.
-   * @private
+   * @description Recupera o certificado de um arquivo PKCS#12 PFX.
    */
-  private getCertificate(p12: forge.pkcs12.Pkcs12Pfx): forge.pki.Certificate {
+  private getCertificate(
+    p12: forge.pkcs12.Pkcs12Pfx,
+  ): forge.pki.Certificate | null {
     const certBags = this.getBags(p12, forge.pki.oids.certBag);
 
     const [certBag] = certBags
@@ -74,11 +62,7 @@ export class CertificateP12 {
           (b.cert?.validity.notAfter.getTime() ?? 0),
       );
 
-    if (!certBag?.cert) {
-      throw new NoCertificatesFoundError();
-    }
-
-    return certBag.cert;
+    return certBag?.cert ?? null;
   }
 
   /**
@@ -86,7 +70,7 @@ export class CertificateP12 {
    *
    * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
-   * @throws {Error} Se nenhum certificado ou chave privada for encontrado no arquivo PFX.
+   * @throws {NoPrivateKeyFoundError, NoCertificatesFoundError}
    */
   asPem(): PemPayload {
     const p12Der = forge.util.decode64(this.pfxData.bufferString);
@@ -94,7 +78,14 @@ export class CertificateP12 {
     const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, true, this.pfxData.pass);
 
     const privateKey = this.getPrivateKey(p12);
+    if (!privateKey) {
+      throw new NoPrivateKeyFoundError();
+    }
+
     const certificate = this.getCertificate(p12);
+    if (!certificate) {
+      throw new NoCertificatesFoundError();
+    }
 
     const rsaPrivateKey = forge.pki.privateKeyToAsn1(privateKey);
     const privateKeyInfo = forge.pki.wrapRsaPrivateKey(rsaPrivateKey);
@@ -106,6 +97,21 @@ export class CertificateP12 {
   }
 
   /**
+   * @description Mapeia os atributos do issuer e subject de um certificado
+   */
+  private mapCertificateFieldAttributes(
+    attributes: forge.pki.CertificateField[],
+  ): Record<string, string> {
+    const mappedAttributes: Record<string, string> = {};
+    for (const attr of attributes) {
+      if (attr.name && typeof attr.value === "string") {
+        mappedAttributes[attr.name] = attr.value;
+      }
+    }
+    return mappedAttributes;
+  }
+
+  /**
    * @description Extrai campos do certificado PEM.
    *
    * @returns {CertificateFields}
@@ -114,20 +120,9 @@ export class CertificateP12 {
     const pem = this.asPem();
     const cert = forge.pki.certificateFromPem(pem.cert);
 
-    function mapAttributes(
-      attributes: forge.pki.CertificateField[],
-    ): Record<string, string> {
-      return attributes.reduce((acc: Record<string, string>, attr) => {
-        if (attr.name && typeof attr.value === "string") {
-          acc[attr.name] = attr.value;
-        }
-        return acc;
-      }, {});
-    }
-
     return {
-      subject: mapAttributes(cert.subject.attributes),
-      issuer: mapAttributes(cert.issuer.attributes),
+      subject: this.mapCertificateFieldAttributes(cert.subject.attributes),
+      issuer: this.mapCertificateFieldAttributes(cert.issuer.attributes),
       validFrom: cert.validity.notBefore,
       validTo: cert.validity.notAfter,
       serialNumber: cert.serialNumber,
