@@ -1,5 +1,6 @@
+import forge from "node-forge";
 import { file } from "bun";
-import { describe, test, expect } from "bun:test";
+import { describe, test, expect, spyOn } from "bun:test";
 import { CertificateP12 } from "./index.ts";
 import {
   InvalidPasswordError,
@@ -65,22 +66,43 @@ describe("CertificateP12", async () => {
     expect(() => certificate.asPem()).toThrowError(InvalidPasswordError);
   });
 
-  test.todo("Throws NoCertificatesFoundError if file has expired certificates");
+  test("Throws NoPrivateKeyFoundError if no private key found in PFX file", () => {
+    spyOn(forge.pkcs12, "pkcs12FromAsn1").mockReturnValueOnce({
+      version: "",
+      safeContents: [],
+      getBags: () => ({}),
+      getBagsByFriendlyName: () => [],
+      getBagsByLocalKeyId: () => [],
+    });
 
-  test.todo(
-    "Throws NoPrivateKeyFoundError if no private key found in PFX file",
-    () => {
-      const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
-        password,
-      });
+    const certificate = new CertificateP12({
+      pfx: selfSignedPfxBuffer,
+      password,
+    });
 
-      expect().toThrowError(NoPrivateKeyFoundError);
-    },
-  );
+    expect(() => certificate.asPem()).toThrowError(NoPrivateKeyFoundError);
+  });
 
-  //TODO: Generate a PFX file with no certificates
-  test.todo("Throws NoCertificatesFoundError if no certificates found", () => {
-    expect().toThrowError(NoCertificatesFoundError);
+  test("Throws NoCertificatesFoundError if no certificates found", () => {
+    spyOn(forge.pkcs12, "pkcs12FromAsn1").mockImplementationOnce((...args) => {
+      // @ts-ignore: Compiler error is pointless
+      const p12 = forge.pkcs12.pkcs12FromAsn1(...args);
+      const getBags = p12.getBags;
+
+      // NOTE: Skip the first two calls used by `getPrivateKey`
+      spyOn(p12, "getBags")
+        .mockImplementationOnce(getBags)
+        .mockImplementationOnce(getBags)
+        .mockImplementationOnce(() => ({}));
+
+      return p12;
+    });
+
+    const certificate = new CertificateP12({
+      pfx: selfSignedPfxBuffer,
+      password,
+    });
+
+    expect(() => certificate.asPem()).toThrowError(NoCertificatesFoundError);
   });
 });
