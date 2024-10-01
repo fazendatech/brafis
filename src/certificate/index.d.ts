@@ -2,11 +2,11 @@
  * @description Opções para configurar um certificado.
  *
  * @property {Uint8Array} pfx - Dados PFX (Personal Information Exchange) para o certificado.
- * @property {string} passphrase - Senha para descriptografar os dados PFX.
+ * @property {string} password - Senha para descriptografar os dados PFX.
  */
 export interface CertificateP12Options {
   pfx: Uint8Array;
-  passphrase: string;
+  password: string;
 }
 
 /**
@@ -21,28 +21,27 @@ export interface PemPayload {
 }
 
 /**
- * @description Rrepresenta o formato PFX (PKCS#12).
+ * @description Representa o formato PFX (PKCS#12).
  *
- * @property {string} bufferString - Os dados PFX (Personal Information Exchange) em uma string base64.
- * @property {string} pass - A senha para descriptografar os dados PFX.
+ * @property {Uint8Array} raw - Os dados PFX (Personal Information Exchange).
+ * @property {string} password - A senha para descriptografar os dados PFX.
  */
 export interface P12Payload {
-  bufferString: string;
-  pass: string;
+  raw: Uint8Array;
+  password: string;
 }
 
 /**
  * @description Representa os campos de um certificado.
 
- * @property {Array<{ name: string; value: string }>} subject - Dados do requerente do certificado
- * @property {Array<{ name: string; value: string }>} issuer - Dados do emissor do certificado
+ * @property {Record<string, string>} subject - Dados do requerente do certificado
+ * @property {Record<string, string>} issuer - Dados do emissor do certificado
  * @property {Date} validFrom - A data a partir da qual o certificado é válido.
  * @property {Date} validTo - A data até a qual o certificado é válido.
  * @property {string} serialNumber - O número de série do certificado.
- * @property {string} publicKey - A chave pública associada ao certificado.
  * @property {string} signatureAlgorithm - O algoritmo usado para assinar o certificado. E.g. `sha256WithRSAEncryption`, `rsaEncryption`, ...
  */
-export interface CertificateP12Fields {
+export interface CertificateFields {
   subject: Record<string, string>;
   issuer: Record<string, string>;
   validFrom: Date;

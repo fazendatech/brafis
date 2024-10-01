@@ -5,12 +5,13 @@ export class InvalidPfxError extends Error {
   }
 }
 
-export class InvalidPassphraseError extends Error {
+export class InvalidPasswordError extends Error {
   constructor() {
-    super("Passphrase must be a non-empty string");
-    this.name = "InvalidPassphraseError";
+    super("Password must be a non-empty string");
+    this.name = "InvalidPasswordError";
   }
 }
+
 export class NoPrivateKeyFoundError extends Error {
   constructor() {
     super("No private key found in the PFX file.");
