@@ -1,6 +1,6 @@
 import forge from "node-forge";
 import { file } from "bun";
-import { describe, test, expect, spyOn } from "bun:test";
+import { describe, test, expect, spyOn, afterEach, mock } from "bun:test";
 import { CertificateP12 } from "./index.ts";
 import {
   InvalidPasswordError,
@@ -16,6 +16,10 @@ describe("CertificateP12", async () => {
 
   const selfSignedPemCert = await file(`${selfSignedPath}cert.pem`).text();
   const selfSignedPemKey = await file(`${selfSignedPath}key.pem`).text();
+
+  afterEach(() => {
+    mock.restore();
+  });
 
   test("Convert PFX to PEM format", () => {
     const certificate = new CertificateP12({
