@@ -3,26 +3,20 @@
 exports[`CertificateP12 Extracts certificate fields 1`] = `
 {
   "issuer": {
-    "commonName": "efic.dev.com",
+    "commonName": "fazendatech.com.br",
     "countryName": "BR",
-    "emailAddress": "contact@eficticia.com.br",
-    "localityName": "UberlÃÂ¢ndia",
-    "organizationName": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
-    "organizationalUnitName": "Departamento de TI",
-    "stateOrProvinceName": "MG",
+    "organizationName": "FazendaTech",
+    "organizationalUnitName": "Dev Team",
   },
-  "serialNumber": "281509806a587f5a74ad144178c320aa93a6a018",
+  "serialNumber": "04d4ebda664c5e6ab7f316fad375f68cae8ea018",
   "signatureAlgorithm": "sha256WithRSAEncryption",
   "subject": {
-    "commonName": "efic.dev.com",
+    "commonName": "fazendatech.com.br",
     "countryName": "BR",
-    "emailAddress": "contact@eficticia.com.br",
-    "localityName": "UberlÃÂ¢ndia",
-    "organizationName": "FEmpresa FictÃÂ­cia de Desenvolvimento de Software Ltda",
-    "organizationalUnitName": "Departamento de TI",
-    "stateOrProvinceName": "MG",
+    "organizationName": "FazendaTech",
+    "organizationalUnitName": "Dev Team",
   },
-  "validFrom": 2024-09-21T02:02:49.000Z,
-  "validTo": 2025-09-21T02:02:49.000Z,
+  "validFrom": 2024-10-01T21:07:24.000Z,
+  "validTo": 2025-10-01T21:07:24.000Z,
 }
 `;
