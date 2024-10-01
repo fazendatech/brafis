@@ -75,13 +75,13 @@ export class CertificateP12 {
   ): forge.pki.Certificate | null {
     const certBags = this.getBags(p12, forge.pki.oids.certBag);
 
-    // NOTE: Certificado escolhido é sempre o que expira primeiro
+    // NOTE: Certificado escolhido é sempre o que expira por último
     const [certBag] = certBags
       .filter((bag) => bag.cert)
       .sort(
         (a, b) =>
-          (a.cert?.validity.notAfter.getTime() ?? 0) -
-          (b.cert?.validity.notAfter.getTime() ?? 0),
+          (b.cert?.validity.notAfter.getTime() ?? 0) -
+          (a.cert?.validity.notAfter.getTime() ?? 0),
       );
 
     return certBag?.cert ?? null;
