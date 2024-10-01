@@ -1,6 +1,6 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Certificate Extracts certificate fields 1`] = `
+exports[`CertificateP12 Extracts certificate fields 1`] = `
 {
   "issuer": {
     "commonName": "efic.dev.com",

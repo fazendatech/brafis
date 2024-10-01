@@ -39,8 +39,7 @@ describe("CertificateP12", async () => {
     expect(pem.key).toEqual(selfSignedPemKey);
   });
 
-  // biome-ignore lint/suspicious/noSkippedTests:
-  test.skip("Extracts certificate fields - Skip: Waiting on issue #7 (https://github.com/fazendatech/brafis/issues/7)", () => {
+  test("Extracts certificate fields", () => {
     const certificate = new CertificateP12({
       pfx: selfSignedPfxBuffer,
       password,
