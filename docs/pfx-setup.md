@@ -67,7 +67,7 @@ extendedKeyUsage = serverAuth
 Crie o certificado autoassinado usando a chave privada gerada e o arquivo `openssl.cnf`. Esse certificado terá validade de 365 dias.
 
 ```bash
-openssl req -new -x509 -days 365 -newkey rsa:4096 -keyout key.pem -out cert.pem -noenc -config openssl.cnf
+openssl req -new -x509 -days 365 -newkey rsa:4096 -keyout key.pem -out cert.pem -nodes -config openssl.cnf
 ```
 
 ### 3. Criar o Arquivo `.pfx`
