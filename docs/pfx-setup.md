@@ -40,16 +40,7 @@ brew install openssl
 
 ## Criando um Certificado Autoassinado `.pfx`
 
-### 1. Gere uma Chave Privada
-
-Execute o comando abaixo para gerar uma chave privada de **4096** bits.
-
-```bash
-openssl genrsa -out cert.key.pem 4096
-chmod 400 cert.key.pem
-```
-
-### 2. Crie um arquivo de configuração do certificado
+### 1. Crie um arquivo de configuração do certificado
 
 Crie um arquivo `openssl.cnf` com base no modelo a seguir:
 
@@ -76,7 +67,7 @@ extendedKeyUsage = serverAuth
 Crie o certificado autoassinado usando a chave privada gerada e o arquivo `openssl.cnf`. Esse certificado terá validade de 365 dias.
 
 ```bash
-openssl req -new -x509 -days 365 -key cert.key.pem -out cert.pem -config openssl.cnf
+openssl req -new -x509 -days 365 -newkey rsa:4096 -keyout key.pem -out cert.pem -noenc -config openssl.cnf
 ```
 
 ### 3. Criar o Arquivo `.pfx`
@@ -84,7 +75,7 @@ openssl req -new -x509 -days 365 -key cert.key.pem -out cert.pem -config openssl
 Agora, combine o certificado e a chave privada em um arquivo `.pfx`, protegendo-o com uma senha.
 
 ```bash
-openssl pkcs12 -export -out cert.pfx -inkey cert.key.pem -in cert.pem
+openssl pkcs12 -export -out cert.pfx -inkey key.pem -in cert.pem
 ```
 
 Você será solicitado a definir uma senha para o arquivo `.pfx`. Esta senha será necessária sempre que você utilizar o certificado.
@@ -95,7 +86,7 @@ Verifique a criação dos certificados com os comandos:
 
 ```bash
 openssl x509 -text -noout -in cert.pem
-openssl x509 -info -in cert.pfx
+openssl pkcs12 -info -in cert.pfx
 ```
 
 Ambos comandos devem exibir informações detalhadas sobre os certificados gerados.
@@ -107,7 +98,7 @@ Para facilitar o processo, você pode usar o seguinte script Bash para realizar 
 ```bash
 #!/bin/bash
 
-KEY_NAME="cert.key.pem"
+KEY_NAME="key.pem"
 CERT_NAME="cert.pem"
 PFX_NAME="cert.pfx"
 CONFIG_FILE="openssl.cnf"
