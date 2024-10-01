@@ -9,7 +9,7 @@ import {
 } from "./errors.ts";
 
 describe("CertificateP12", async () => {
-  const selfSignedPath = "./src/misc/sample-certificates/";
+  const selfSignedPath = "./misc/sample-certificates/";
   const selfSignedPfxBuffer = await file(`${selfSignedPath}cert.pfx`).bytes();
   const password = "senha";
 
