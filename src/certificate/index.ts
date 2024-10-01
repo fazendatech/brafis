@@ -1,57 +1,61 @@
+import { file } from "bun";
 import forge from "node-forge";
+import { errorHasMessage } from "@/utils";
 import {
+  InvalidPasswordError,
   InvalidPfxError,
-  InvalidPassphraseError,
-  NoPrivateKeyFoundError,
   NoCertificatesFoundError,
-} from "./errors.ts";
+  NoPrivateKeyFoundError,
+} from "@/certificate/errors";
 import type {
   CertificateP12Options,
   P12Payload,
   PemPayload,
-  CertificateP12Fields,
+  CertificateFields,
 } from "./index.d";
 
 /**
  * @description Representa um Certificado PFX (PKCS#12).
  */
 export class CertificateP12 {
-  private readonly pfxData: P12Payload;
+  private readonly payload: P12Payload;
 
   /**
    * @param {CertificateP12Options} options
-   *
-   * @throws {InvalidPfxError, InvalidPassphraseError}
    */
   constructor(options: CertificateP12Options) {
-    if (!(options.pfx instanceof Uint8Array) || options.pfx.length === 0) {
-      throw new InvalidPfxError();
-    }
-    if (
-      typeof options.passphrase !== "string" ||
-      options.passphrase.length === 0
-    ) {
-      throw new InvalidPassphraseError();
-    }
-
-    this.pfxData = {
-      bufferString: forge.util.binary.base64.encode(options.pfx),
-      pass: options.passphrase,
+    this.payload = {
+      raw: options.pfx,
+      password: options.password,
     };
   }
 
   /**
-   * @description Recupera o conteúdo bags de um tipo especifico de um arquivo PKCS#12 PFX.
+   * @description Cria uma instância de CertificateP12 a partir de um arquivo PFX.
+   *
+   * @param options - Caminho do arquivo e senha para descriptografar os dados PFX.
+   * @returns
+   */
+  static async fromFilepath(options: {
+    filepath: string;
+    password: string;
+  }): Promise<CertificateP12> {
+    const pfx = await file(options.filepath).bytes();
+    return new CertificateP12({ pfx, password: options.password });
+  }
+
+  /**
+   * @description Recupera o conteúdo bags de um tipo especifico de um arquivo PKCS#12.
    */
   private getBags(
     p12: forge.pkcs12.Pkcs12Pfx,
     bagType: string,
   ): forge.pkcs12.Bag[] {
-    return p12.getBags({ bagType })[bagType] || [];
+    return p12.getBags({ bagType })[bagType] ?? [];
   }
 
   /**
-   * @description Recupera a chave privada de um arquivo PKCS#12 PFX.
+   * @description Recupera a chave privada de um arquivo PKCS#12.
    */
   private getPrivateKey(
     p12: forge.pkcs12.Pkcs12Pfx,
@@ -64,13 +68,14 @@ export class CertificateP12 {
   }
 
   /**
-   * @description Recupera o certificado de um arquivo PKCS#12 PFX.
+   * @description Recupera o certificado de um arquivo PKCS#12.
    */
   private getCertificate(
     p12: forge.pkcs12.Pkcs12Pfx,
   ): forge.pki.Certificate | null {
     const certBags = this.getBags(p12, forge.pki.oids.certBag);
 
+    // NOTE: Certificado escolhido é sempre o que expira primeiro
     const [certBag] = certBags
       .filter((bag) => bag.cert)
       .sort(
@@ -83,23 +88,46 @@ export class CertificateP12 {
   }
 
   /**
-   * @description Converte um arquivo PFX (PKCS#12) para o formato PEM.
+   * @description Converte um certificado PKCS#12 para o formato PEM.
    *
    * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
-   * @throws {NoPrivateKeyFoundError, NoCertificatesFoundError}
+   * @throws {NoPrivateKeyFoundError} Quando o arquivo não contém qualquer chave privada.
+   * @throws {NoCertificatesFoundError} Quando o arquivo não possui qualquer certificado válido.
    */
   asPem(): PemPayload {
-    const p12Der = forge.util.decode64(this.pfxData.bufferString);
-    const p12Asn1 = forge.asn1.fromDer(p12Der);
-    const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, true, this.pfxData.pass);
+    // NOTE: Uint8Array -> base64 -> forge.Bytes
+    const base64 = forge.util.binary.base64.encode(this.payload.raw);
+    const p12Der = forge.util.decode64(base64);
+    let privateKey: forge.pki.PrivateKey | null = null;
+    let certificate: forge.pki.Certificate | null = null;
+    try {
+      const p12Asn1 = forge.asn1.fromDer(p12Der);
+      const p12 = forge.pkcs12.pkcs12FromAsn1(
+        p12Asn1,
+        true,
+        this.payload.password,
+      );
+      privateKey = this.getPrivateKey(p12);
+      certificate = this.getCertificate(p12);
+    } catch (e) {
+      if (errorHasMessage(e, "Too few bytes to parse DER.")) {
+        throw new InvalidPfxError();
+      }
+      if (
+        errorHasMessage(
+          e,
+          "PKCS#12 MAC could not be verified. Invalid password?",
+        )
+      ) {
+        throw new InvalidPasswordError();
+      }
+    }
 
-    const privateKey = this.getPrivateKey(p12);
     if (!privateKey) {
       throw new NoPrivateKeyFoundError();
     }
 
-    const certificate = this.getCertificate(p12);
     if (!certificate) {
       throw new NoCertificatesFoundError();
     }
@@ -133,7 +161,7 @@ export class CertificateP12 {
    *
    * @returns {CertificateFields}
    */
-  getPemFields(): CertificateP12Fields {
+  getPemFields(): CertificateFields {
     const pem = this.asPem();
     const cert = forge.pki.certificateFromPem(pem.cert);
 
