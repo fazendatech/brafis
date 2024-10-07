@@ -79,10 +79,10 @@ export class NfeWebServices {
         "@_version": "1.0",
         "@_encoding": "UTF-8",
       },
-      "soap12:Envelope": {
+      "soapenv:Envelope": {
         "@_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
         "@_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@_xmlns:soap12": "http://www.w3.org/2003/05/soap-envelope",
+        "@_xmlns:soapenv": "http://www.w3.org/2003/05/soap-envelope",
         "soapenv:Body": {
           xmlData,
         },
