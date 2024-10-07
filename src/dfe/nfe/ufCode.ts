@@ -1,6 +1,5 @@
 import type { UF } from "@/dfe/nfe/types";
 
-// Mapeamento de siglas das UFs para os respectivos códigos numéricos IBGE
 const ufCodeMap: Record<UF, number> = {
   AC: 12,
   AL: 27,
@@ -31,6 +30,10 @@ const ufCodeMap: Record<UF, number> = {
   TO: 17,
 };
 
+const ufCodeMapInverse: Record<number, UF> = Object.fromEntries(
+  Object.entries(ufCodeMap).map(([uf, code]) => [code, uf]),
+);
+
 // Retorna o código numérico de uma UF
 export function getUfCode(uf: UF): number | undefined {
   return ufCodeMap[uf];
@@ -38,7 +41,5 @@ export function getUfCode(uf: UF): number | undefined {
 
 // Retorna a sigla de uma UF a partir do seu código numérico
 export function getUfFromCode(code: number): UF | undefined {
-  return Object.entries(ufCodeMap).find(
-    ([, ufCode]) => ufCode === code,
-  )?.[0] as UF;
+  return ufCodeMapInverse[code];
 }
