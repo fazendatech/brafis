@@ -1,8 +1,14 @@
-import { Certificate } from "@/certificate";
-import { NfeWebServices } from "@/dfe/nfe";
+import { CertificateP12 } from "./certificate";
+import { NfeWebServices } from "./dfe/nfe";
 
-const nfe = new NfeWebServices({
-  env: "qa",
-  uf: "DF",
-  certificate: new Certificate(),
+const certificate = await CertificateP12.fromFilepath({
+  filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
+  password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
 });
+
+const service = new NfeWebServices({
+  uf: "DF",
+  env: "qa",
+  certificate: certificate,
+});
+await service.statusServico();
