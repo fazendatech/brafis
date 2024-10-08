@@ -11,4 +11,4 @@ const service = new NfeWebServices({
   env: "qa",
   certificate: certificate,
 });
-await service.statusServico();
+// await service.statusServico();
