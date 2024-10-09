@@ -1,11 +1,11 @@
 import type { CertificateP12 } from "@/certificate";
 import type { Environment, UF } from "@/dfe/nfe/types";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
-import { errorHasMessage } from "@/utils/errors.ts";
 import { getUfCode } from "./ufCode.ts";
-import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import { fetchWithTls } from "@/utils/index.ts";
 import { loadNfeCa } from "./ca.ts";
+import { UnableToGetStatusError } from "./errors.ts";
 
 export interface NfeWebServicesOptions {
   uf: UF;
@@ -21,10 +21,12 @@ export class NfeWebServices {
   private builder = new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: "@_",
-    format: true,
   });
 
-  private parser = new XMLParser({});
+  private parser = new XMLParser({
+    ignoreAttributes: false,
+    removeNSPrefix: true,
+  });
 
   constructor(options: NfeWebServicesOptions) {
     this.uf = options.uf;
@@ -46,9 +48,17 @@ export class NfeWebServices {
           ca: await loadNfeCa(),
         },
       });
-      const jsonResp = this.parser.parse(await response.text());
 
-      return jsonResp["soap:Envelope"]["soap:Body"];
+      if (!response.ok) {
+        return undefined;
+      }
+
+      const xmlData = await response.text();
+      if (!XMLValidator.validate(xmlData)) {
+        return undefined;
+      }
+
+      return this.parser.parse(xmlData).Envelope.Body;
     } catch (error) {
       // NOTE: This is a temporary solution to handle warnings
       throw new Error((error as Error).message);
@@ -77,24 +87,40 @@ export class NfeWebServices {
   }
 
   async statusServico() {
-    const baseUrl = getWebServiceUrl({
-      uf: this.uf,
-      service: "NfeStatusServico",
-      env: this.env,
-    });
-
-    const xmlObj = {
+    const data = this.packAndBuild({
       consStatServ: {
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
         "@_versao": "4.00",
-        tpAmb: this.env === "production" ? 1 : 2,
+        tpAmb: this.env === "produção" ? 1 : 2,
         cUF: getUfCode(this.uf),
         xServ: "STATUS",
       },
-    };
+    });
 
-    const data = this.packAndBuild(xmlObj);
+    let url = getWebServiceUrl({
+      uf: this.uf,
+      service: "NfeStatusServico",
+      env: this.env,
+      contingencia: false,
+    });
 
-    return await this.request(baseUrl, data);
+    let request = await this.request(url, data);
+    if (!request) {
+      url = getWebServiceUrl({
+        uf: this.uf,
+        service: "NfeStatusServico",
+        env: this.env,
+        contingencia: true,
+      });
+
+      request = await this.request(url, data);
+    }
+
+    if (!request) {
+      throw new UnableToGetStatusError();
+    }
+
+    return request;
   }
 
   autorizacao() {

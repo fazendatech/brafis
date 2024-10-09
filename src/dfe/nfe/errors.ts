@@ -12,3 +12,10 @@ export class WebServiceNotFoundError extends Error {
     this.name = "WebServiceNotFoundError";
   }
 }
+
+export class UnableToGetStatusError extends Error {
+  constructor() {
+    super("Unable to get status from the response");
+    this.name = "UnableToGetStatusError";
+  }
+}
