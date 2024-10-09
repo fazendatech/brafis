@@ -1,6 +1,6 @@
 import type { LiteralStringUnion } from "@/utils/types";
 
-export type Environment = "production" | "qa";
+export type Environment = "produção" | "homologação";
 
 export type UF = LiteralStringUnion<
   | "AC"
@@ -31,3 +31,30 @@ export type UF = LiteralStringUnion<
   | "SE"
   | "TO"
 >;
+
+export type AuthServer =
+  | "AM"
+  | "BA"
+  | "GO"
+  | "MG"
+  | "MS"
+  | "MT"
+  | "PE"
+  | "PR"
+  | "RS"
+  | "SP"
+  | "SVAN"
+  | "SVRS"
+  | "SVCAN"
+  | "SVCRS"
+  | "AN";
+
+export type WebService =
+  | "NfeInutilizacao"
+  | "NfeConsultaProtocolo"
+  | "NfeStatusServico"
+  | "NfeConsultaCadastro"
+  | "RecepcaoEvento"
+  | "NFeAutorizacao"
+  | "NFeRetAutorizacao"
+  | "NFeDistribuicaoDFe";
