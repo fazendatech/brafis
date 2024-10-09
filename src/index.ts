@@ -8,7 +8,7 @@ const certificate = await CertificateP12.fromFilepath({
 
 const service = new NfeWebServices({
   uf: "DF",
-  env: "qa",
+  env: "homologação",
   certificate: certificate,
 });
 
