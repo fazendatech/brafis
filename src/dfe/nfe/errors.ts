@@ -13,9 +13,18 @@ export class WebServiceNotFoundError extends Error {
   }
 }
 
-export class UnableToGetStatusError extends Error {
+export class NfeStatusServiceError extends Error {
   constructor() {
     super("Unable to get status from the response");
-    this.name = "UnableToGetStatusError";
+    this.name = "NfeStatusServiceError";
+  }
+}
+
+export class ServiceRequestError extends Error {
+  constructor(error: Error, url: string, xml: string) {
+    super(
+      `Original Error: ${error.message}\nResquest to ${url} failed with XML: ${xml}`,
+    );
+    this.name = "ServiceRequestError";
   }
 }

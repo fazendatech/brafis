@@ -5,7 +5,7 @@ import { getUfCode } from "./ufCode.ts";
 import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import { fetchWithTls } from "@/utils/index.ts";
 import { loadNfeCa } from "./ca.ts";
-import { UnableToGetStatusError } from "./errors.ts";
+import { NfeStatusServiceError, ServiceRequestError } from "./errors.ts";
 
 export interface NfeWebServicesOptions {
   uf: UF;
@@ -60,8 +60,10 @@ export class NfeWebServices {
 
       return this.parser.parse(xmlData).Envelope.Body;
     } catch (error) {
-      // NOTE: This is a temporary solution to handle warnings
-      throw new Error((error as Error).message);
+      // NOTE: This is a temporary solution to handle errors
+      if (error instanceof Error) {
+        throw new ServiceRequestError(error, url, xml);
+      }
     }
   }
 
@@ -117,7 +119,7 @@ export class NfeWebServices {
     }
 
     if (!request) {
-      throw new UnableToGetStatusError();
+      throw new NfeStatusServiceError();
     }
 
     return request;
