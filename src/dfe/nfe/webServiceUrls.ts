@@ -469,7 +469,7 @@ export function getWebServiceUrl({
     : getWebServiceUrlNormal(uf, service, env);
 
   if (!url) {
-    throw new WebServiceNotFoundError(uf, service, env, contingencia);
+    throw new WebServiceNotFoundError({ uf, service, env, contingencia });
   }
   return url;
 }
