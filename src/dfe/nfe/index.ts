@@ -1,128 +1,116 @@
 import type { CertificateP12 } from "@/certificate";
-import type { Environment, UF } from "@/dfe/nfe/types";
+import type { Environment, UF, ConsultaCadastroOptions } from "@/dfe/nfe/types";
+import { build, fetchWithTls, parse } from "@/utils/index.ts";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
-import { getUfCode } from "./ufCode.ts";
-import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
-import { fetchWithTls } from "@/utils/index.ts";
 import { loadNfeCa } from "./ca.ts";
-import { NfeStatusServiceError, ServiceRequestError } from "./errors.ts";
+import { getUfCode } from "./ufCode.ts";
+import { NfeStatusServiceError } from "./errors.ts";
 
 export interface NfeWebServicesOptions {
   uf: UF;
   env: Environment;
   certificate: CertificateP12;
+  contingency?: boolean;
+
+  statusServicoTimeout?: number;
+  consultaCadastroTimeout?: number;
 }
 
 export class NfeWebServices {
   private uf: UF;
   private env: Environment;
   private certificate: CertificateP12;
+  private contingency: boolean;
 
-  private builder = new XMLBuilder({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-  });
+  private statusServicoTimeout?: number;
+  private consultaCadastroTimeout?: number;
 
-  private parser = new XMLParser({
-    ignoreAttributes: false,
-    removeNSPrefix: true,
-  });
+  private ca?: string;
+  private tpAmb: string;
+  private cUF?: string;
 
-  constructor(options: NfeWebServicesOptions) {
-    this.uf = options.uf;
-    this.env = options.env;
-    this.certificate = options.certificate;
+  constructor(opt: NfeWebServicesOptions) {
+    this.uf = opt.uf;
+    this.env = opt.env;
+    this.certificate = opt.certificate;
+    this.contingency = opt.contingency ?? false;
+
+    this.statusServicoTimeout = opt.statusServicoTimeout;
+    this.consultaCadastroTimeout = opt.consultaCadastroTimeout;
+
+    this.tpAmb = opt.env === "producao" ? "1" : "2";
+    this.cUF = getUfCode(opt.uf);
   }
 
-  async request(url: string, xml: string) {
+  private async getCa(): Promise<string> {
+    if (!this.ca) {
+      this.ca = await loadNfeCa();
+    }
+    return this.ca;
+  }
+
+  private async request(
+    url: string,
+    xml: string,
+    timeout = 15000,
+  ): Promise<object> {
     const { cert, key } = this.certificate.asPem();
 
-    try {
-      const response = await fetchWithTls(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
-        body: xml,
-        tls: {
-          cert,
-          key,
-          ca: await loadNfeCa(),
-        },
+    return await fetchWithTls(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
+      body: xml,
+      tls: {
+        cert,
+        key,
+        ca: await this.getCa(),
+      },
+      signal: AbortSignal.timeout(timeout),
+    })
+      .then((res) => {
+        return res.text();
+      })
+      .catch((err) => {
+        throw err;
+      })
+      .then((xml) => {
+        return parse(xml);
       });
-
-      if (!response.ok) {
-        return undefined;
-      }
-
-      const xmlData = await response.text();
-      if (!XMLValidator.validate(xmlData)) {
-        return undefined;
-      }
-
-      return this.parser.parse(xmlData).Envelope.Body;
-    } catch (error) {
-      // NOTE: This is a temporary solution to handle errors
-      if (error instanceof Error) {
-        throw new ServiceRequestError(error, url, xml);
-      }
-    }
   }
 
-  packAndBuild(xmlData: object): string {
-    return this.builder.build({
-      "?xml": {
-        "@_version": "1.0",
-        "@_encoding": "UTF-8",
-      },
-      "soapenv:Envelope": {
-        "@_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "@_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@_xmlns:soapenv": "http://www.w3.org/2003/05/soap-envelope",
-        "soapenv:Body": {
-          nfeDadosMsg: {
-            "@_xmlns":
-              "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
-            ...xmlData,
-          },
-        },
-      },
-    });
+  private withNameSpace<Obj>(obj: Obj): Obj {
+    return {
+      "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
+      "@_versao": "4.00",
+      ...obj,
+    };
   }
 
-  async statusServico() {
-    const data = this.packAndBuild({
-      consStatServ: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
-        "@_versao": "4.00",
-        tpAmb: this.env === "produção" ? 1 : 2,
-        cUF: getUfCode(this.uf),
+  statusServico() {
+    const data = build({
+      consStatServ: this.withNameSpace({
+        tpAmb: this.tpAmb,
+        cUF: this.cUF,
         xServ: "STATUS",
-      },
+      }),
     });
 
-    let url = getWebServiceUrl({
-      uf: this.uf,
+    const url = getWebServiceUrl({
       service: "NfeStatusServico",
+      uf: this.uf,
       env: this.env,
-      contingencia: false,
+      contingency: this.contingency,
     });
 
-    let request = await this.request(url, data);
-    if (!request) {
-      url = getWebServiceUrl({
-        uf: this.uf,
-        service: "NfeStatusServico",
-        env: this.env,
-        contingencia: true,
-      });
-
-      request = await this.request(url, data);
-    }
-
-    if (!request) {
+    try {
+      return this.request(url, data, this.statusServicoTimeout);
+    } catch {
       throw new NfeStatusServiceError();
     }
+  }
 
-    return request;
+  consultaCadastro() {
+    throw new Error("Method not implemented.");
   }
 
   autorizacao() {
