@@ -1,19 +1,20 @@
-import type { Environment, UF, AuthServer, WebService } from "@/dfe/nfe/types";
-import { WebServiceNotFoundError } from "./errors.ts";
+import type {
+  Environment,
+  UF,
+  AuthServer,
+  WebService,
+  UrlWebServices,
+  GetWebServiceUrlOptions,
+} from "@/dfe/nfe/types";
+import { WebServiceNotFoundError, WebServiceUfError } from "./errors.ts";
 
 /**
- * @description More info at
- *      https://www.nfe.fazenda.gov.br/portal/webServices.aspx?tipoConteudo=OUC/YVNWZfo=
- *      https://hom.nfe.fazenda.gov.br/PORTAL/webServices.aspx?tipoConteudo=OUC/YVNWZfo=
+ * @description Mais informações
+ * Produção: https://www.nfe.fazenda.gov.br/portal/webServices.aspx?tipoConteudo=OUC/YVNWZfo=
+ * Homologação: https://hom.nfe.fazenda.gov.br/PORTAL/webServices.aspx?tipoConteudo=OUC/YVNWZfo=
  */
-const webServices: {
-  [env in Environment]: {
-    [server in AuthServer]: {
-      [service in WebService]?: string;
-    };
-  };
-} = {
-  produção: {
+const webServices: UrlWebServices = {
+  producao: {
     AM: {
       NfeInutilizacao:
         "https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao4",
@@ -224,7 +225,7 @@ const webServices: {
         "https://www.nfe.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx",
     },
   },
-  homologação: {
+  homologacao: {
     AM: {
       NfeInutilizacao:
         "https://homnfe.sefaz.am.gov.br/services2/services/NfeInutilizacao4",
@@ -444,39 +445,35 @@ const webServices: {
   },
 };
 
-interface GetWebServiceUrl {
-  uf: UF;
-  service: WebService;
-  env: Environment;
-  contingencia: boolean;
-}
-
 /**
- * @returns The URL of the web service, for that UF.
+ * @description Retorna a URL do WebService de acordo com a UF, serviço, ambiente e se o servidor está, ou não, em contingência.
  */
-export function getWebServiceUrl({
-  uf,
-  service,
-  env,
-  contingencia,
-}: GetWebServiceUrl): string {
+export function getWebServiceUrl(opt: GetWebServiceUrlOptions): string {
+  const { uf, service, env, contingency } = opt;
   if (service === "NFeDistribuicaoDFe") {
-    return webServices[env].AN.NFeDistribuicaoDFe || "";
+    const url = webServices[env].AN.NFeDistribuicaoDFe;
+    if (!url) {
+      throw new WebServiceNotFoundError();
+    }
+    return url;
   }
 
-  const url = contingencia
+  if (!uf) {
+    throw new WebServiceUfError();
+  }
+
+  const url = contingency
     ? getWebServiceUrlForContigencia(uf, service, env)
     : getWebServiceUrlNormal(uf, service, env);
 
   if (!url) {
-    throw new WebServiceNotFoundError({ uf, service, env, contingencia });
+    throw new WebServiceNotFoundError();
   }
   return url;
 }
 
 /**
- * @description
- * Autorizadores em contingência:
+ * @description Autorizadores em contingência:
  * - UF que utilizam a SVC-AN - Sefaz Virtual de Contingência Ambiente Nacional: AC, AL, AP, CE, DF, ES, MG, PA, PB, PI (Produção), RJ, RN, RO, RR, RS, SC, SE, SP, TO
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
@@ -484,11 +481,13 @@ function getWebServiceUrlForContigencia(
   uf: UF,
   service: WebService,
   env: Environment,
-): string | undefined {
+): string | null {
   if (uf === "PI") {
-    return env === "produção"
-      ? webServices[env].SVCAN[service]
-      : webServices[env].SVCRS[service];
+    return (
+      (env === "producao"
+        ? webServices[env].SVCAN[service]
+        : webServices[env].SVCRS[service]) ?? null
+    );
   }
 
   if (
@@ -513,19 +512,18 @@ function getWebServiceUrlForContigencia(
       "TO",
     ].includes(uf)
   ) {
-    return webServices[env].SVCAN[service];
+    return webServices[env].SVCAN[service] ?? null;
   }
 
   if (["AM", "BA", "GO", "MA", "MS", "MT", "PE", "PR"].includes(uf)) {
-    return webServices[env].SVCRS[service];
+    return webServices[env].SVCRS[service] ?? null;
   }
 
-  return undefined;
+  return null;
 }
 
 /**
- * @description
- * UF que tem seu próprio ambiente Sefaz: AM, BA, GO, MT, MS, MG, PR, PE, RS, SP
+ * @description UF que tem seu próprio ambiente Sefaz: AM, BA, GO, MT, MS, MG, PR, PE, RS, SP
  * UF que utilizam a SVAN - Sefaz Virtual do Ambiente Nacional: MA
  * UF que utilizam a SVRS - Sefaz Virtual do RS:
  * - Para serviço de Consulta Cadastro: AC, ES, RN, PB, SC
@@ -535,22 +533,22 @@ function getWebServiceUrlNormal(
   uf: UF,
   service: WebService,
   env: Environment,
-): string | undefined {
+): string | null {
   if (
     ["AM", "BA", "GO", "MT", "MS", "MG", "PR", "PE", "RS", "SP"].includes(uf)
   ) {
-    return webServices[env][uf as AuthServer][service];
+    return webServices[env][uf as AuthServer][service] ?? null;
   }
 
   if (uf === "MA") {
-    return webServices[env].SVAN[service];
+    return webServices[env].SVAN[service] ?? null;
   }
 
   if (
     ["AC", "ES", "RN", "PB", "SC"].includes(uf) &&
     service === "NfeConsultaCadastro"
   ) {
-    return webServices[env].SVRS[service];
+    return webServices[env].SVRS[service] ?? null;
   }
 
   if (
@@ -573,8 +571,8 @@ function getWebServiceUrlNormal(
       "TO",
     ].includes(uf)
   ) {
-    return webServices[env].SVRS[service];
+    return webServices[env].SVRS[service] ?? null;
   }
 
-  return undefined;
+  return null;
 }
