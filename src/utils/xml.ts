@@ -30,5 +30,5 @@ export function parse<Obj>(xml: string): Obj {
     ignoreAttributes: false,
     removeNSPrefix: true,
   });
-  return xmlParser.parse(xml).Envelope.Body;
+  return xmlParser.parse(xml).Envelope.Body.nfeResultMsg;
 }
