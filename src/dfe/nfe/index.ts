@@ -1,10 +1,18 @@
 import type { CertificateP12 } from "@/certificate";
-import type { Environment, UF, ConsultaCadastroOptions } from "@/dfe/nfe/types";
+import type {
+  Environment,
+  UF,
+  StatusServicoResponse,
+  StatusServicoOptions,
+  Status,
+  StatusRaw,
+  ConsultaCadastroOptions,
+} from "@/dfe/nfe/types";
 import { build, fetchWithTls, parse } from "@/utils/index.ts";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
 import { loadNfeCa } from "./ca.ts";
 import { getUfCode } from "./ufCode.ts";
-import { NfeStatusServiceError } from "./errors.ts";
+import { NfeConsultaCadastroError, NfeStatusServicoError } from "./errors.ts";
 
 export interface NfeWebServicesOptions {
   uf: UF;
@@ -29,17 +37,17 @@ export class NfeWebServices {
   private tpAmb: string;
   private cUF?: string;
 
-  constructor(opt: NfeWebServicesOptions) {
-    this.uf = opt.uf;
-    this.env = opt.env;
-    this.certificate = opt.certificate;
-    this.contingency = opt.contingency ?? false;
+  constructor(options: NfeWebServicesOptions) {
+    this.uf = options.uf;
+    this.env = options.env;
+    this.certificate = options.certificate;
+    this.contingency = options.contingency ?? false;
 
-    this.statusServicoTimeout = opt.statusServicoTimeout;
-    this.consultaCadastroTimeout = opt.consultaCadastroTimeout;
+    this.statusServicoTimeout = options.statusServicoTimeout;
+    this.consultaCadastroTimeout = options.consultaCadastroTimeout;
 
-    this.tpAmb = opt.env === "producao" ? "1" : "2";
-    this.cUF = getUfCode(opt.uf);
+    this.tpAmb = options.env === "producao" ? "1" : "2";
+    this.cUF = getUfCode(options.uf);
   }
 
   private async getCa(): Promise<string> {
@@ -49,17 +57,17 @@ export class NfeWebServices {
     return this.ca;
   }
 
-  private async request(
+  private async request<Body extends BodyInit, Response>(
     url: string,
-    xml: string,
+    body: Body,
     timeout = 15000,
-  ): Promise<object> {
+  ): Promise<Response> {
     const { cert, key } = this.certificate.asPem();
 
     return await fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
-      body: xml,
+      body: body,
       tls: {
         cert,
         key,
@@ -67,8 +75,8 @@ export class NfeWebServices {
       },
       signal: AbortSignal.timeout(timeout),
     })
-      .then((res) => {
-        return res.text();
+      .then(async (res) => {
+        return await res.text();
       })
       .catch((err) => {
         throw err;
@@ -86,8 +94,20 @@ export class NfeWebServices {
     };
   }
 
-  statusServico() {
+  /**
+   * @description Verifica o status do serviço NFe.
+   *
+   * @param {StatusServicoOptions} [options] - Parâmetros opcionais para a solicitação do serviço de status.
+   *
+   * @returns Uma promise com status do serviço.
+   *
+   * @throws {NfeStatusServicoError} Se a solicitação falhar.
+   */
+  async statusServico(
+    options?: StatusServicoOptions,
+  ): Promise<Status | StatusRaw> {
     const data = build({
+      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
       consStatServ: this.withNameSpace({
         tpAmb: this.tpAmb,
         cUF: this.cUF,
@@ -103,14 +123,42 @@ export class NfeWebServices {
     });
 
     try {
-      return this.request(url, data, this.statusServicoTimeout);
+      const serviceResponse: StatusServicoResponse = await this.request(
+        url,
+        data,
+        options?.timeout ?? this.statusServicoTimeout,
+      );
+
+      return options?.raw
+        ? serviceResponse.nfeResultMsg.retConsStatServ
+        : (serviceResponse.nfeResultMsg.retConsStatServ as Status);
     } catch {
-      throw new NfeStatusServiceError();
+      throw new NfeStatusServicoError();
     }
   }
 
-  consultaCadastro() {
-    throw new Error("Method not implemented.");
+  async consultaCadastro(options: ConsultaCadastroOptions) {
+    const data = build({
+      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaCadastro4",
+      ConsCad: this.withNameSpace({
+        infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
+      }),
+    });
+
+    console.log(data);
+
+    const url = getWebServiceUrl({
+      uf: this.uf,
+      service: "NfeConsultaCadastro",
+      env: this.env,
+      contingency: this.contingency,
+    });
+
+    try {
+      return await this.request(url, data, this.consultaCadastroTimeout);
+    } catch {
+      throw new NfeConsultaCadastroError();
+    }
   }
 
   autorizacao() {

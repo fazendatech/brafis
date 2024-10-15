@@ -8,8 +8,9 @@ const certificate = await CertificateP12.fromFilepath({
 
 const service = new NfeWebServices({
   uf: "DF",
-  env: "homologação",
+  env: "homologacao",
   certificate: certificate,
+  statusServicoTimeout: 1000,
 });
 
 const stautsServicoResponse = await service.statusServico();

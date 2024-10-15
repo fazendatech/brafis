@@ -43,9 +43,19 @@ export class ServiceRequestError extends Error {
 /**
  * @description Falha ao obter o status a partir da resposta do servidor.
  */
-export class NfeStatusServiceError extends Error {
+export class NfeStatusServicoError extends Error {
   constructor() {
     super("Unable to get status from the server's response");
     this.name = "NfeStatusServiceError";
+  }
+}
+
+/**
+ * @description Falha ao consultar cadastro partir da resposta do servidor.
+ */
+export class NfeConsultaCadastroError extends Error {
+  constructor() {
+    super("Unable to get register info from the server's response");
+    this.name = "NfeConsultaCadastroError";
   }
 }

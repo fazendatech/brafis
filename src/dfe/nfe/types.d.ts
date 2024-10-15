@@ -115,6 +115,65 @@ export type GetWebServiceUrlOptions = {
   contingency?: boolean;
 };
 
+/**
+ * Opções para configurar o serviço de status.
+ *
+ * @property {boolean} [raw] - Se verdadeiro, retorna a resposta completa do serviço.
+ * @property {number} [timeout] - Especifica a duração do timeout em milissegundos.
+ */
+export type StatusServicoOptions = {
+  raw?: boolean;
+  timeout?: number;
+};
+
+/**
+ * @description Retorno do serviço de consulta de status
+ *
+ * @property cStat - Código do status da resposta.
+ * @property xMotivo - Descrição da resposta.
+ * @property cUF - código da UF que atendeu a solicitação
+ * @property dhRetorno - Data e hora previstas para o retorno do serviço.
+ * @property xObs - Informações adicionais para o contribuinte.
+ */
+export type Status = {
+  cStat?: string;
+  xMotivo?: string;
+  cUF?: string;
+  dhRetorno?: string;
+  xObs?: string;
+};
+
+/**
+ * @description Retorno do serviço de consulta de status
+ *
+ * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação
+ * @property verAplic - Versão do aplicativo que processou a consulta.
+ * @property cStat - Código do status da resposta.
+ * @property xMotivo - Descrição da resposta.
+ * @property cUF - código da UF que atendeu a solicitação
+ * @property dhRecbto - Data e hora do processamento.
+ * @property tMed - Tempo médio de resposta do serviço (em segundos).
+ * @property dhRetorno - Data e hora previstas para o retorno do serviço.
+ * @property xObs - Informações adicionais para o contribuinte.
+ */
+export type StatusRaw = {
+  tpAmb?: string;
+  verAplic?: string;
+  cStat?: string;
+  xMotivo?: string;
+  cUF?: string;
+  dhRecbto?: string;
+  tMed?: string;
+  dhRetorno?: string;
+  xObs?: string;
+};
+
+export type StatusServicoResponse = {
+  nfeResultMsg: {
+    retConsStatServ: StatusRaw;
+  };
+};
+
 export type ConsultaCadastroOptions = {
   IE?: string;
   CNPJ?: string;
