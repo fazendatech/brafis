@@ -1,5 +1,7 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
+// function soapEnvelope<Obj>(obj: Obj): Obj {}
+
 export function build<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
     ignoreAttributes: false,
@@ -16,8 +18,6 @@ export function build<Obj>(obj: Obj): string {
       "@_xmlns:soapenv": "http://www.w3.org/2003/05/soap-envelope",
       "soapenv:Body": {
         nfeDadosMsg: {
-          "@_xmlns":
-            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
           ...obj,
         },
       },
@@ -30,5 +30,5 @@ export function parse<Obj>(xml: string): Obj {
     ignoreAttributes: false,
     removeNSPrefix: true,
   });
-  return xmlParser.parse(xml).Envelope.Body.nfeResultMsg;
+  return xmlParser.parse(xml).Envelope.Body;
 }
