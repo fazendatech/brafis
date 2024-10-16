@@ -1,7 +1,5 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
-// function soapEnvelope<Obj>(obj: Obj): Obj {}
-
 export function build<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
     ignoreAttributes: false,

@@ -175,7 +175,96 @@ export type StatusServicoResponse = {
 };
 
 export type ConsultaCadastroOptions = {
+  raw?: boolean;
+  timeout?: number;
+  uf?: UF;
   IE?: string;
   CNPJ?: string;
   CPF?: string;
+};
+
+export type ConsultaCad = {
+  infCons: {
+    verAplic?: string;
+    cStat?: string;
+    xMotivo?: string;
+    UF?: string;
+    CPF?: string;
+    dhCons?: string;
+    cUF?: string;
+    infCad?: {
+      IE?: string;
+      CNPJ?: string;
+      CPF?: string;
+      UF?: string;
+      cSit?: string;
+      indCredNFe?: string;
+      indCredCTe?: string;
+      xNome?: string;
+      xFant?: string;
+      xRegApur?: string;
+      CNAE?: string;
+      dIniAtiv?: string;
+      dUltSit?: string;
+      dBaixa?: string;
+      IEUnica?: string;
+      IEAtual?: string;
+      Ender?: {
+        xLgr?: string;
+        Nro?: string;
+        xCpl?: string;
+        xBairro?: string;
+        cMun?: string;
+        xMun?: string;
+        CEP?: string;
+      };
+    };
+  };
+};
+
+export type ConsultaCadRaw = {
+  infCons: {
+    verAplic?: string;
+    cStat?: number;
+    xMotivo?: string;
+    UF?: string;
+    IE?: string;
+    CNPJ?: number;
+    CPF?: number;
+    dhCons?: string;
+    cUF?: number;
+    infCad?: {
+      IE?: string;
+      CNPJ?: number;
+      CPF?: number;
+      UF?: string;
+      cSit?: number;
+      indCredNFe?: number;
+      indCredCTe?: number;
+      xNome?: string;
+      xFant?: string;
+      xRegApur?: string;
+      CNAE?: number;
+      dIniAtiv?: string;
+      dUltSit?: string;
+      dBaixa?: string;
+      IEUnica?: string;
+      IEAtual?: string;
+      Ender?: {
+        xLgr?: string;
+        Nro?: string;
+        xCpl?: string;
+        xBairro?: string;
+        cMun?: number;
+        xMun?: string;
+        CEP?: number;
+      };
+    };
+  };
+};
+
+export type ConsultaCadastroResponse = {
+  nfeResultMsg: {
+    retConsCad: ConsultaCadRaw;
+  };
 };

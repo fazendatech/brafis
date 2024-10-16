@@ -15,3 +15,9 @@ const service = new NfeWebServices({
 
 const stautsServicoResponse = await service.statusServico();
 console.log(stautsServicoResponse);
+
+const consultaCadastroResponse = await service.consultaCadastro({
+  CPF: "03216801977",
+});
+// console.log(JSON.stringify(consultaCadastroResponse, null, 2));
+console.log(consultaCadastroResponse);
