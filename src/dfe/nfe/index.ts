@@ -2,11 +2,14 @@ import type { CertificateP12 } from "@/certificate";
 import type {
   Environment,
   UF,
-  StatusServicoResponse,
   StatusServicoOptions,
+  StatusServicoResponse,
   Status,
   StatusRaw,
   ConsultaCadastroOptions,
+  ConsultaCadastroResponse,
+  ConsultaCad,
+  ConsultaCadRaw,
 } from "@/dfe/nfe/types";
 import { build, fetchWithTls, parse } from "@/utils/index.ts";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
@@ -89,7 +92,6 @@ export class NfeWebServices {
   private withNameSpace<Obj>(obj: Obj): Obj {
     return {
       "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
-      "@_versao": "4.00",
       ...obj,
     };
   }
@@ -109,6 +111,7 @@ export class NfeWebServices {
     const data = build({
       "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
       consStatServ: this.withNameSpace({
+        "@_versao": "4.00",
         tpAmb: this.tpAmb,
         cUF: this.cUF,
         xServ: "STATUS",
@@ -139,23 +142,29 @@ export class NfeWebServices {
 
   async consultaCadastro(options: ConsultaCadastroOptions) {
     const data = build({
-      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaCadastro4",
+      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
       ConsCad: this.withNameSpace({
+        "@_versao": "2.00",
         infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
       }),
     });
 
-    console.log(data);
-
     const url = getWebServiceUrl({
-      uf: this.uf,
+      uf: options.uf ?? this.uf,
       service: "NfeConsultaCadastro",
       env: this.env,
       contingency: this.contingency,
     });
 
     try {
-      return await this.request(url, data, this.consultaCadastroTimeout);
+      const serviceResponse: ConsultaCadastroResponse = await this.request(
+        url,
+        data,
+        options.timeout ?? this.consultaCadastroTimeout,
+      );
+      return options?.raw
+        ? serviceResponse.nfeResultMsg.retConsCad
+        : (serviceResponse.nfeResultMsg.retConsCad as ConsultaCad);
     } catch {
       throw new NfeConsultaCadastroError();
     }
