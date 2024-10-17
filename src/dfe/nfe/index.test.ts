@@ -1,11 +1,9 @@
 import { describe, test, expect, afterEach, spyOn } from "bun:test";
 import { mock, clearMocks } from "bun-bagel";
-import type { MockOptions } from "bun-bagel";
 import { CertificateP12 } from "@/certificate";
 import { NfeWebServices } from "./index.ts";
 import { XMLBuilder } from "fast-xml-parser";
-import { NfeConsultaCadastroError, NfeStatusServicoError } from "./errors.ts";
-import type { ConsultaCadRaw } from "./types.ts";
+import { ServiceRequestError } from "./errors.ts";
 
 function buildMockResponse<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
@@ -33,84 +31,65 @@ describe("NfeWebServices", async () => {
     clearMocks();
   });
 
+  const certificate = new CertificateP12({
+    pfx: new Uint8Array(),
+    password: "",
+  });
+
+  spyOn(certificate, "asPem").mockReturnValue({
+    cert: "",
+    key: "",
+  });
+
   const service = new NfeWebServices({
     uf: "DF",
     env: "homologacao",
-    certificate: new CertificateP12({ pfx: new Uint8Array(), password: "" }),
+    certificate,
   });
 
-  test("Nfe get status sucess", async () => {
+  const urlStatusServico =
+    "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
+  const urlConsultaCadastro = "";
+
+  test("Nfe get status success", async () => {
     const testObj = {
-      tpAmb: 2,
-      cStat: 107,
+      tpAmb: "2",
+      cStat: "107",
       xMotivo: "Servico em Operacao",
-      cUF: 53,
+      cUF: "53",
     };
 
-    spyOn(CertificateP12.prototype, "asPem").mockReturnValueOnce({
-      cert: "",
-      key: "",
-    });
-
-    const opt: MockOptions = {
+    mock(urlStatusServico, {
       method: "POST",
       response: {
         status: 200,
         headers: {
           "content-type": "application/soap+xml; charset=utf-8",
         },
-        data: buildMockResponse({ nfeResultMsg: { retConsStatServ: testObj } }),
+        data: buildMockResponse({
+          nfeResultMsg: {
+            retConsStatServ: testObj,
+          },
+        }),
       },
-    };
-
-    mock(
-      "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx",
-      opt,
-    );
-
-    expect(await service.statusServico()).toMatchObject(testObj);
-  });
-
-  test("Nfe throws error when try get status", async () => {
-    spyOn(CertificateP12.prototype, "asPem").mockReturnValueOnce({
-      cert: "",
-      key: "",
     });
 
-    const opt: MockOptions = {
-      method: "POST",
-      response: {
-        headers: {
-          "content-type": "application/soap+xml; charset=utf-8",
-        },
-        data: {},
-      },
-    };
-
-    mock(
-      "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx",
-      opt,
-    );
-
-    await expect(service.statusServico()).rejects.toThrowError(
-      NfeStatusServicoError,
-    );
+    expect(await service.statusServico()).toMatchObject({
+      status: "operando",
+      description: testObj.xMotivo,
+      raw: testObj,
+    });
   });
 
-  test("Nfe get status consult sucess", async () => {
-    const testObj: ConsultaCadRaw = {
+  test("Nfe get register consult success", async () => {
+    const testObj = {
       infCons: {
-        cStat: 111,
+        cStat: "111",
         xMotivo: "Consulta cadastro com uma ocorrência",
       },
     };
 
-    spyOn(CertificateP12.prototype, "asPem").mockReturnValueOnce({
-      cert: "",
-      key: "",
-    });
-
-    const opt: MockOptions = {
+    mock(urlConsultaCadastro, {
       method: "POST",
       response: {
         headers: {
@@ -118,38 +97,21 @@ describe("NfeWebServices", async () => {
         },
         data: buildMockResponse({ nfeResultMsg: { retConsCad: testObj } }),
       },
-    };
-    mock(
-      "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx",
-      opt,
-    );
-
-    expect(await service.consultaCadastro({})).toMatchObject(testObj);
-  });
-
-  test("Nfe throws error when try get status consult", async () => {
-    spyOn(CertificateP12.prototype, "asPem").mockReturnValueOnce({
-      cert: "",
-      key: "",
     });
 
-    const opt: MockOptions = {
+    expect(await service.consultaCadastro({})).toMatchObject({
+      status: "uma-ocorrência",
+      description: testObj.infCons.xMotivo,
+      raw: testObj,
+    });
+  });
+
+  test("Nfe request throw ServiceRequestError", () => {
+    mock(urlStatusServico, {
       method: "POST",
-      response: {
-        headers: {
-          "content-type": "application/soap+xml; charset=utf-8",
-        },
-        data: {},
-      },
-    };
+      throw: new Error("TimeoutError"),
+    });
 
-    mock(
-      "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx",
-      opt,
-    );
-
-    await expect(service.consultaCadastro({})).rejects.toThrowError(
-      NfeConsultaCadastroError,
-    );
+    expect(() => service.statusServico()).toThrowError(ServiceRequestError);
   });
 });

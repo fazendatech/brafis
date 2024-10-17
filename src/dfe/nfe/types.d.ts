@@ -100,7 +100,7 @@ export type WebService =
   | "NFeRetAutorizacao"
   | "NFeDistribuicaoDFe";
 
-export type UrlWebServices = {
+export type WebServiceUrls = {
   [env in Environment]: {
     [server in AuthServer]: {
       [service in WebService]?: string;
@@ -109,55 +109,47 @@ export type UrlWebServices = {
 };
 
 export type GetWebServiceUrlOptions = {
-  uf?: UF;
+  uf: UF;
   service: WebService;
   env: Environment;
   contingency?: boolean;
 };
 
-/**
- * Opções para configurar o serviço de status.
- *
- * @property {boolean} [raw] - Se verdadeiro, retorna a resposta completa do serviço.
- * @property {number} [timeout] - Especifica a duração do timeout em milissegundos.
- */
-export type StatusServicoOptions = {
-  raw?: boolean;
-  timeout?: number;
-};
+export interface NfeRequestOptions<Body> {
+  body: Body;
+  timeout: number;
+}
 
 /**
- * @description Retorno do serviço de consulta de status
+ * @description Retorno do serviço de consulta de status serviço.
  *
- * @property cStat - Código do status da resposta.
- * @property xMotivo - Descrição da resposta.
- * @property cUF - código da UF que atendeu a solicitação
- * @property dhRetorno - Data e hora previstas para o retorno do serviço.
- * @property xObs - Informações adicionais para o contribuinte.
+ * @property {"operando" | "paralisado-temporariamente" | "paralisado" | "outro"} [status] - Status do serviço.
+ * @property {string} [description] - Descrição do status (xMotivo).
+ * @property {StatusRaw} [raw] (Opcional) - Resposta completa do serviço.
  */
-export type Status = {
-  cStat?: string;
-  xMotivo?: string;
-  cUF?: string;
-  dhRetorno?: string;
-  xObs?: string;
-};
+export interface NfeStatusServicoResponse {
+  status: LiteralStringUnion<
+    "operando" | "paralisado-temporariamente" | "paralisado" | "outro"
+  >;
+  description: string;
+  raw?: NfeStatusServicoRaw;
+}
 
 /**
- * @description Retorno do serviço de consulta de status
+ * @description Resposta completa da consulta de status serviço.
  *
- * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação
+ * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
  * @property cStat - Código do status da resposta.
  * @property xMotivo - Descrição da resposta.
- * @property cUF - código da UF que atendeu a solicitação
+ * @property cUF - código da UF que atendeu a solicitação.
  * @property dhRecbto - Data e hora do processamento.
  * @property tMed - Tempo médio de resposta do serviço (em segundos).
  * @property dhRetorno - Data e hora previstas para o retorno do serviço.
  * @property xObs - Informações adicionais para o contribuinte.
  */
-export type StatusRaw = {
-  tpAmb?: string;
+export interface NfeStatusServicoRaw {
+  tpAmb?: "1" | "2";
   verAplic?: string;
   cStat?: string;
   xMotivo?: string;
@@ -166,29 +158,43 @@ export type StatusRaw = {
   tMed?: string;
   dhRetorno?: string;
   xObs?: string;
-};
+}
 
-export type StatusServicoResponse = {
-  nfeResultMsg: {
-    retConsStatServ: StatusRaw;
-  };
-};
-
-export type ConsultaCadastroOptions = {
+/**
+ * @description Opções para configurar o web service de consulta cadastro.
+ *
+ * @property {boolean} [raw] - Se verdadeiro, a resposta terá o parâmetro raw com a resposta completa do serviço.
+ */
+export interface NfeConsultaCadastroOptions {
   raw?: boolean;
-  timeout?: number;
-  uf?: UF;
   IE?: string;
   CNPJ?: string;
   CPF?: string;
-};
+}
 
-export type ConsultaCad = {
-  infCons: {
+/**
+ * @description Retorno do serviço consulta cadastro.
+ *
+ * @property {StatusRaw} [raw] - Resposta completa do serviço, se passado o parâmetro raw.
+ */
+export interface NfeConsultaCadastroResponse {
+  status: LiteralStringUnion<
+    "uma-ocorrencia",
+    "multiplas-ocorrencias",
+    "outro"
+  >;
+  description: string;
+  raw?: NfeConsultaCadadastroRaw;
+}
+
+export interface NfeConsultaCadadastroRaw {
+  infCons?: {
     verAplic?: string;
     cStat?: string;
     xMotivo?: string;
     UF?: string;
+    IE?: string;
+    CNPJ?: string;
     CPF?: string;
     dhCons?: string;
     cUF?: string;
@@ -220,51 +226,4 @@ export type ConsultaCad = {
       };
     };
   };
-};
-
-export type ConsultaCadRaw = {
-  infCons: {
-    verAplic?: string;
-    cStat?: number;
-    xMotivo?: string;
-    UF?: string;
-    IE?: string;
-    CNPJ?: number;
-    CPF?: number;
-    dhCons?: string;
-    cUF?: number;
-    infCad?: {
-      IE?: string;
-      CNPJ?: number;
-      CPF?: number;
-      UF?: string;
-      cSit?: number;
-      indCredNFe?: number;
-      indCredCTe?: number;
-      xNome?: string;
-      xFant?: string;
-      xRegApur?: string;
-      CNAE?: number;
-      dIniAtiv?: string;
-      dUltSit?: string;
-      dBaixa?: string;
-      IEUnica?: string;
-      IEAtual?: string;
-      Ender?: {
-        xLgr?: string;
-        Nro?: string;
-        xCpl?: string;
-        xBairro?: string;
-        cMun?: number;
-        xMun?: string;
-        CEP?: number;
-      };
-    };
-  };
-};
-
-export type ConsultaCadastroResponse = {
-  nfeResultMsg: {
-    retConsCad: ConsultaCadRaw;
-  };
-};
+}

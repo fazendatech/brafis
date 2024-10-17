@@ -1,30 +1,39 @@
 import type { CertificateP12 } from "@/certificate";
 import type {
   Environment,
+  NfeRequestOptions,
+  NfeStatusServicoRaw,
+  NfeStatusServicoResponse,
+  NfeConsultaCadastroOptions,
+  NfeConsultaCadadastroRaw,
+  NfeConsultaCadastroResponse,
   UF,
-  StatusServicoOptions,
-  StatusServicoResponse,
-  Status,
-  StatusRaw,
-  ConsultaCadastroOptions,
-  ConsultaCadastroResponse,
-  ConsultaCad,
-  ConsultaCadRaw,
+  UFCode,
+  WebService,
 } from "@/dfe/nfe/types";
-import { build, fetchWithTls, parse } from "@/utils/index.ts";
+import { buildSoap, fetchWithTls, parseSoap } from "@/utils";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
 import { loadNfeCa } from "./ca.ts";
 import { getUfCode } from "./ufCode.ts";
-import { NfeConsultaCadastroError, NfeStatusServicoError } from "./errors.ts";
+import { ServiceRequestError } from "./errors.ts";
 
+/**
+ * Opções para configurar um nfe web service.
+ *
+ * @interface NfeWebServicesOptions
+ *
+ * @property {UF} uf - A unidade federativa (estado) para a NFe.
+ * @property {Environment} env - "producao" ou "homologacao".
+ * @property {CertificateP12} certificate - O certificado P12 para autenticação.
+ * @property {boolean} [contingency] - Se True, será usado o servidor de contingência.
+ * @property {number} [timeout] - Timeout da requisição em ms, o valor padrão é 15 segundos.
+ */
 export interface NfeWebServicesOptions {
   uf: UF;
   env: Environment;
   certificate: CertificateP12;
   contingency?: boolean;
-
-  statusServicoTimeout?: number;
-  consultaCadastroTimeout?: number;
+  timeout?: number;
 }
 
 export class NfeWebServices {
@@ -32,25 +41,26 @@ export class NfeWebServices {
   private env: Environment;
   private certificate: CertificateP12;
   private contingency: boolean;
-
-  private statusServicoTimeout?: number;
-  private consultaCadastroTimeout?: number;
-
-  private ca?: string;
-  private tpAmb: string;
-  private cUF?: string;
+  private timeout: number;
+  private ca: string;
+  private tpAmb: "1" | "2";
+  private cUF: UFCode;
+  private namespace: { "@_xmlns": string };
 
   constructor(options: NfeWebServicesOptions) {
     this.uf = options.uf;
     this.env = options.env;
     this.certificate = options.certificate;
     this.contingency = options.contingency ?? false;
-
-    this.statusServicoTimeout = options.statusServicoTimeout;
-    this.consultaCadastroTimeout = options.consultaCadastroTimeout;
+    this.timeout = options.timeout ?? 15000;
+    this.ca = "";
 
     this.tpAmb = options.env === "producao" ? "1" : "2";
     this.cUF = getUfCode(options.uf);
+
+    this.namespace = {
+      "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
+    };
   }
 
   private async getCa(): Promise<string> {
@@ -60,17 +70,26 @@ export class NfeWebServices {
     return this.ca;
   }
 
-  private async request<Body extends BodyInit, Response>(
+  private getUrl(service: WebService): string {
+    return getWebServiceUrl({
+      service,
+      uf: this.uf,
+      env: this.env,
+      contingency: this.contingency,
+    });
+  }
+
+  private async request<Body, NfeRequestResponse>(
     url: string,
-    body: Body,
-    timeout = 15000,
-  ): Promise<Response> {
+    options: NfeRequestOptions<Body>,
+  ): Promise<NfeRequestResponse> {
+    const { body, timeout } = options;
     const { cert, key } = this.certificate.asPem();
 
     return await fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
-      body: body,
+      body: buildSoap(body),
       tls: {
         cert,
         key,
@@ -81,93 +100,87 @@ export class NfeWebServices {
       .then(async (res) => {
         return await res.text();
       })
-      .catch((err) => {
-        throw err;
-      })
       .then((xml) => {
-        return parse(xml);
+        return parseSoap<NfeRequestResponse>(xml);
+      })
+      .catch((error) => {
+        throw new ServiceRequestError(error, { url, xml: buildSoap(body) });
       });
   }
 
-  private withNameSpace<Obj>(obj: Obj): Obj {
+  /**
+   * @description Consulta do status do serviço prestado pelo Portal da Secretaria de Fazenda Estadual.
+   *
+   * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
+   */
+  async statusServico(): Promise<NfeStatusServicoResponse> {
+    const reqResponse: { retConsStatServ: NfeStatusServicoRaw } =
+      await this.request(this.getUrl("NfeStatusServico"), {
+        timeout: this.timeout,
+        body: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
+          consStatServ: {
+            ...this.namespace,
+            "@_versao": "4.00",
+            tpAmb: this.tpAmb,
+            cUF: this.cUF,
+            xServ: "STATUS",
+          },
+        },
+      });
+
+    let status = "outro";
+    if (reqResponse.retConsStatServ.cStat === "107") {
+      status = "operando";
+    } else if (reqResponse.retConsStatServ.cStat === "108") {
+      status = "paralisado-temporariamente";
+    } else if (reqResponse.retConsStatServ.cStat === "109") {
+      status = "paralisado";
+    }
+
     return {
-      "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
-      ...obj,
+      status,
+      description: reqResponse.retConsStatServ.xMotivo ?? "",
+      raw: reqResponse.retConsStatServ,
     };
   }
 
   /**
-   * @description Verifica o status do serviço NFe.
+   * @description Consulta o cadastro de contribuintes do ICMS da unidade federada.
    *
-   * @param {StatusServicoOptions} [options] - Parâmetros opcionais para a solicitação do serviço de status.
-   *
-   * @returns Uma promise com status do serviço.
-   *
-   * @throws {NfeStatusServicoError} Se a solicitação falhar.
+   * @param {NfeConsultaCadastroOptions} options - Opções para a consulta.
+   * @returns {Promise<NfeConsultaCadastroResponse>} Informações sobre o cadastro do contribuinte.
    */
-  async statusServico(
-    options?: StatusServicoOptions,
-  ): Promise<Status | StatusRaw> {
-    const data = build({
-      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
-      consStatServ: this.withNameSpace({
-        "@_versao": "4.00",
-        tpAmb: this.tpAmb,
-        cUF: this.cUF,
-        xServ: "STATUS",
-      }),
-    });
+  async consultaCadastro(
+    options: NfeConsultaCadastroOptions,
+  ): Promise<NfeConsultaCadastroResponse> {
+    const serviceResponse: { retConsCad: NfeConsultaCadadastroRaw } =
+      await this.request(this.getUrl("NfeConsultaCadastro"), {
+        timeout: this.timeout,
+        body: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
+          ConsCad: {
+            ...this.namespace,
+            "@_versao": "2.00",
+            infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
+          },
+        },
+      });
 
-    const url = getWebServiceUrl({
-      service: "NfeStatusServico",
-      uf: this.uf,
-      env: this.env,
-      contingency: this.contingency,
-    });
-
-    try {
-      const serviceResponse: StatusServicoResponse = await this.request(
-        url,
-        data,
-        options?.timeout ?? this.statusServicoTimeout,
-      );
-
-      return options?.raw
-        ? serviceResponse.nfeResultMsg.retConsStatServ
-        : (serviceResponse.nfeResultMsg.retConsStatServ as Status);
-    } catch {
-      throw new NfeStatusServicoError();
+    let status = "outro";
+    if (serviceResponse.retConsCad.infCons?.cStat === "111") {
+      status = "uma-ocorrência";
+    } else if (serviceResponse.retConsCad.infCons?.cStat === "112") {
+      status = "multiplas-ocorrencias";
     }
-  }
 
-  async consultaCadastro(options: ConsultaCadastroOptions) {
-    const data = build({
-      "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
-      ConsCad: this.withNameSpace({
-        "@_versao": "2.00",
-        infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
-      }),
-    });
-
-    const url = getWebServiceUrl({
-      uf: options.uf ?? this.uf,
-      service: "NfeConsultaCadastro",
-      env: this.env,
-      contingency: this.contingency,
-    });
-
-    try {
-      const serviceResponse: ConsultaCadastroResponse = await this.request(
-        url,
-        data,
-        options.timeout ?? this.consultaCadastroTimeout,
-      );
-      return options?.raw
-        ? serviceResponse.nfeResultMsg.retConsCad
-        : (serviceResponse.nfeResultMsg.retConsCad as ConsultaCad);
-    } catch {
-      throw new NfeConsultaCadastroError();
-    }
+    return {
+      status,
+      description: serviceResponse.retConsCad.infCons?.xMotivo ?? "",
+      raw: serviceResponse.retConsCad,
+    };
   }
 
   autorizacao() {
