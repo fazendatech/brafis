@@ -29,5 +29,6 @@ export function parseSoap<Obj>(xml: string): Obj {
     removeNSPrefix: true,
     parseTagValue: false,
   });
-  return xmlParser.parse(xml).Envelope.Body.nfeResultMsg;
+  const parsed = xmlParser.parse(xml);
+  return parsed.Envelope?.Body?.nfeResultMsg;
 }
