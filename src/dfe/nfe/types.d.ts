@@ -125,7 +125,7 @@ export interface NfeRequestOptions<Body> {
  *
  * @property {"operando" | "paralisado-temporariamente" | "paralisado" | "outro"} [status] - Status do serviço.
  * @property {string} [description] - Descrição do status (xMotivo).
- * @property {StatusRaw} [raw] (Opcional) - Resposta completa do serviço.
+ * @property {NfeStatusServicoRaw} [raw] (Opcional) - Resposta completa do serviço.
  */
 export interface NfeStatusServicoResponse {
   status: LiteralStringUnion<
@@ -175,7 +175,7 @@ export interface NfeConsultaCadastroOptions {
 /**
  * @description Retorno do serviço consulta cadastro.
  *
- * @property {StatusRaw} [raw] - Resposta completa do serviço, se passado o parâmetro raw.
+ * @property {NfeConsultaCadastroRaw} [raw] - Resposta completa do serviço, se passado o parâmetro raw.
  */
 export interface NfeConsultaCadastroResponse {
   status: LiteralStringUnion<
@@ -184,10 +184,11 @@ export interface NfeConsultaCadastroResponse {
     "outro"
   >;
   description: string;
-  raw?: NfeConsultaCadadastroRaw;
+
+  raw?: NfeConsultaCadastroRaw;
 }
 
-export interface NfeConsultaCadadastroRaw {
+export interface NfeConsultaCadastroRaw {
   infCons?: {
     verAplic?: string;
     cStat?: string;

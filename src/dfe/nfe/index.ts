@@ -5,7 +5,7 @@ import type {
   NfeStatusServicoRaw,
   NfeStatusServicoResponse,
   NfeConsultaCadastroOptions,
-  NfeConsultaCadadastroRaw,
+  NfeConsultaCadastroRaw,
   NfeConsultaCadastroResponse,
   UF,
   UFCode,
@@ -155,7 +155,7 @@ export class NfeWebServices {
   async consultaCadastro(
     options: NfeConsultaCadastroOptions,
   ): Promise<NfeConsultaCadastroResponse> {
-    const serviceResponse: { retConsCad: NfeConsultaCadadastroRaw } =
+    const serviceResponse: { retConsCad: NfeConsultaCadastroRaw } =
       await this.request(this.getUrl("NfeConsultaCadastro"), {
         timeout: this.timeout,
         body: {
