@@ -1,6 +1,6 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
-export function build<Obj>(obj: Obj): string {
+export function buildSoap<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: "@_",
@@ -23,10 +23,11 @@ export function build<Obj>(obj: Obj): string {
   });
 }
 
-export function parse<Obj>(xml: string): Obj {
+export function parseSoap<Obj>(xml: string): Obj {
   const xmlParser = new XMLParser({
-    ignoreAttributes: false,
+    ignoreDeclaration: true,
     removeNSPrefix: true,
+    parseTagValue: false,
   });
-  return xmlParser.parse(xml).Envelope.Body;
+  return xmlParser.parse(xml).Envelope.Body.nfeResultMsg;
 }
