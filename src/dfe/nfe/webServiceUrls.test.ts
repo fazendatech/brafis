@@ -6,6 +6,7 @@ describe("getWebServiceUrl", () => {
   test("should return correct url for NFeDistribuicaoDFe service", () => {
     expect(
       getWebServiceUrl({
+        uf: "",
         service: "NFeDistribuicaoDFe",
         env: "producao",
       }),
