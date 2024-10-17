@@ -26,7 +26,7 @@ function buildMockResponse<Obj>(obj: Obj): string {
   });
 }
 
-describe("NfeWebServices", async () => {
+describe("NfeWebServices", () => {
   afterEach(() => {
     clearMocks();
   });
@@ -47,72 +47,82 @@ describe("NfeWebServices", async () => {
     certificate,
   });
 
-  const urlStatusServico =
-    "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
-  const urlConsultaCadastro =
-    "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx";
+  describe("statusServico", () => {
+    const url =
+      "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
 
-  test("Nfe get status success", async () => {
-    const testObj = {
-      tpAmb: "2",
-      cStat: "107",
-      xMotivo: "Servico em Operacao",
-      cUF: "53",
-    };
+    test("Nfe get status success", async () => {
+      const mockResponse = {
+        tpAmb: "2",
+        cStat: "107",
+        xMotivo: "Servico em Operacao",
+        cUF: "53",
+      };
 
-    mock(urlStatusServico, {
-      method: "POST",
-      response: {
-        status: 200,
-        headers: {
-          "content-type": "application/soap+xml; charset=utf-8",
-        },
-        data: buildMockResponse({
-          nfeResultMsg: {
-            retConsStatServ: testObj,
+      mock(url, {
+        method: "POST",
+        response: {
+          status: 200,
+          headers: {
+            "content-type": "application/soap+xml; charset=utf-8",
           },
-        }),
-      },
-    });
-
-    expect(await service.statusServico()).toMatchObject({
-      status: "operando",
-      description: testObj.xMotivo,
-      raw: testObj,
-    });
-  });
-
-  test("Nfe get register consult success", async () => {
-    const testObj = {
-      infCons: {
-        cStat: "111",
-        xMotivo: "Consulta cadastro com uma ocorrência",
-      },
-    };
-
-    mock(urlConsultaCadastro, {
-      method: "POST",
-      response: {
-        headers: {
-          "content-type": "application/soap+xml; charset=utf-8",
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retConsStatServ: mockResponse,
+            },
+          }),
         },
-        data: buildMockResponse({ nfeResultMsg: { retConsCad: testObj } }),
-      },
-    });
-
-    expect(await service.consultaCadastro({})).toMatchObject({
-      status: "uma-ocorrência",
-      description: testObj.infCons.xMotivo,
-      raw: testObj,
+      });
+      expect(await service.statusServico()).toMatchObject({
+        status: "operando",
+        description: mockResponse.xMotivo,
+        raw: mockResponse,
+      });
     });
   });
 
-  test("Nfe request throw ServiceRequestError", () => {
-    mock(urlStatusServico, {
-      method: "POST",
-      throw: new Error("TimeoutError"),
-    });
+  describe("consultaCadastro", () => {
+    const url =
+      "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx";
+    test("Nfe get register consult success", async () => {
+      const mockResponse = {
+        infCons: {
+          cStat: "111",
+          xMotivo: "Consulta cadastro com uma ocorrência",
+        },
+      };
 
-    expect(() => service.statusServico()).toThrowError(ServiceRequestError);
+      mock(url, {
+        method: "POST",
+        response: {
+          headers: {
+            "content-type": "application/soap+xml; charset=utf-8",
+          },
+          data: buildMockResponse({
+            nfeResultMsg: { retConsCad: mockResponse },
+          }),
+        },
+      });
+
+      expect(await service.consultaCadastro({})).toMatchObject({
+        status: "uma-ocorrencia",
+        description: mockResponse.infCons.xMotivo,
+        raw: mockResponse,
+      });
+    });
+  });
+
+  describe("request", () => {
+    test("Request throw ServiceRequestError", () => {
+      const url =
+        "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
+
+      mock(url, {
+        method: "POST",
+        throw: new Error("TimeoutError"),
+      });
+
+      expect(() => service.statusServico()).toThrowError(ServiceRequestError);
+    });
   });
 });
