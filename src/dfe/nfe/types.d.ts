@@ -108,6 +108,31 @@ export type WebServiceUrls = {
   };
 };
 
+/**
+ * @description Códigos de status da resposta do serviço.
+ */
+export type CodStats = LiteralStringUnion<
+  "107" | "108" | "109" | "111" | "112"
+>;
+
+/**
+ * @description Valores possíveis:
+ * - Status Serviço ["operando", "paralisado-temporariamente", "paralisado"]
+ * - Consulta Cadastro ["uma-ocorrencia", "multiplas-ocorrencias"]
+ * - Sem Sucesso ["sem-sucesso"]
+ */
+export type InfoStats =
+  | "sem-sucesso"
+  // Status Serviço
+  | "operando"
+  | "paralisado-temporariamente"
+  | "paralisado"
+  // Consulta Cadastro
+  | "uma-ocorrencia"
+  | "multiplas-ocorrencias";
+
+export type CStatsMap = { [cStat in CodStats]: InfoStats };
+
 export type GetWebServiceUrlOptions = {
   uf: UF;
   service: WebService;
@@ -128,9 +153,7 @@ export interface NfeRequestOptions<Body> {
  * @property {NfeStatusServicoRaw} [raw] (Opcional) - Resposta completa do serviço.
  */
 export interface NfeStatusServicoResponse {
-  status: LiteralStringUnion<
-    "operando" | "paralisado-temporariamente" | "paralisado" | "outro"
-  >;
+  status: InfoStats;
   description: string;
   raw?: NfeStatusServicoRaw;
 }
@@ -151,7 +174,7 @@ export interface NfeStatusServicoResponse {
 export interface NfeStatusServicoRaw {
   tpAmb?: "1" | "2";
   verAplic?: string;
-  cStat?: string;
+  cStat?: CodStats;
   xMotivo?: string;
   cUF?: string;
   dhRecbto?: string;
@@ -178,11 +201,7 @@ export interface NfeConsultaCadastroOptions {
  * @property {NfeConsultaCadastroRaw} [raw] - Resposta completa do serviço, se passado o parâmetro raw.
  */
 export interface NfeConsultaCadastroResponse {
-  status: LiteralStringUnion<
-    "uma-ocorrencia",
-    "multiplas-ocorrencias",
-    "outro"
-  >;
+  status: InfoStats;
   description: string;
 
   raw?: NfeConsultaCadastroRaw;
@@ -191,7 +210,7 @@ export interface NfeConsultaCadastroResponse {
 export interface NfeConsultaCadastroRaw {
   infCons?: {
     verAplic?: string;
-    cStat?: string;
+    cStat?: CodStats;
     xMotivo?: string;
     UF?: string;
     IE?: string;

@@ -16,6 +16,7 @@ import { getWebServiceUrl } from "./webServiceUrls.ts";
 import { loadNfeCa } from "./ca.ts";
 import { getUfCode } from "./ufCode.ts";
 import { ServiceRequestError } from "./errors.ts";
+import { getInfoStatus } from "./infoStatus.ts";
 
 /**
  * Opções para configurar um nfe web service.
@@ -130,17 +131,8 @@ export class NfeWebServices {
         },
       });
 
-    let status = "outro";
-    if (reqResponse.retConsStatServ.cStat === "107") {
-      status = "operando";
-    } else if (reqResponse.retConsStatServ.cStat === "108") {
-      status = "paralisado-temporariamente";
-    } else if (reqResponse.retConsStatServ.cStat === "109") {
-      status = "paralisado";
-    }
-
     return {
-      status,
+      status: getInfoStatus(reqResponse.retConsStatServ.cStat),
       description: reqResponse.retConsStatServ.xMotivo ?? "",
       raw: reqResponse.retConsStatServ,
     };
@@ -169,15 +161,8 @@ export class NfeWebServices {
         },
       });
 
-    let status = "outro";
-    if (serviceResponse.retConsCad.infCons?.cStat === "111") {
-      status = "uma-ocorrência";
-    } else if (serviceResponse.retConsCad.infCons?.cStat === "112") {
-      status = "multiplas-ocorrencias";
-    }
-
     return {
-      status,
+      status: getInfoStatus(serviceResponse.retConsCad.infCons?.cStat),
       description: serviceResponse.retConsCad.infCons?.xMotivo ?? "",
       raw: serviceResponse.retConsCad,
     };
