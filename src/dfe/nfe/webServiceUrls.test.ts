@@ -1,59 +1,50 @@
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import { describe, test, expect } from "bun:test";
+import { WebServiceNotFoundError } from "./errors.ts";
 
 describe("getWebServiceUrl", () => {
-  test("should return the correct URL for production environment", () => {
+  test("should return correct url for NFeDistribuicaoDFe service", () => {
     expect(
       getWebServiceUrl({
-        uf: "MA",
-        service: "NfeInutilizacao",
-        env: "production",
+        uf: "",
+        service: "NFeDistribuicaoDFe",
+        env: "producao",
       }),
     ).toBe(
-      "https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx",
-    );
-    expect(
-      getWebServiceUrl({
-        uf: "AC",
-        service: "NfeConsultaCadastro",
-        env: "production",
-      }),
-    ).toBe(
-      "https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx",
-    );
-    expect(
-      getWebServiceUrl({
-        uf: "AC",
-        service: "NfeStatusServico",
-        env: "production",
-      }),
-    ).toBe(
-      "https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx",
+      "https://www1.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx",
     );
   });
 
-  test("should return the correct URL for QA environment", () => {
-    expect(
-      getWebServiceUrl({ uf: "AC", service: "NfeInutilizacao", env: "qa" }),
-    ).toBe(
-      "https://www.svc.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx",
-    );
+  test("should return the correct URL", () => {
     expect(
       getWebServiceUrl({
-        uf: "AM",
-        service: "NfeConsultaProtocolo",
-        env: "qa",
+        uf: "MG",
+        service: "NfeStatusServico",
+        env: "producao",
       }),
-    ).toBe("https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx");
+    ).toBe("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeStatusServico4");
+  });
+
+  test("should return the correct URL in contingency", () => {
+    expect(
+      getWebServiceUrl({
+        uf: "MG",
+        service: "NfeStatusServico",
+        env: "producao",
+        contingency: true,
+      }),
+    ).toBe(
+      "https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx",
+    );
   });
 
   test("should throw an error if the web service is not found", () => {
     expect(() =>
       getWebServiceUrl({
-        uf: "EX",
-        service: "NfeInutilizacao",
-        env: "production",
+        uf: "AM",
+        service: "NfeConsultaCadastro",
+        env: "producao",
       }),
-    ).toThrow("Web service not found for NfeInutilizacao/EX (production)");
+    ).toThrowError(WebServiceNotFoundError);
   });
 });
