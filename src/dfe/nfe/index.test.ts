@@ -49,7 +49,8 @@ describe("NfeWebServices", async () => {
 
   const urlStatusServico =
     "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
-  const urlConsultaCadastro = "";
+  const urlConsultaCadastro =
+    "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx";
 
   test("Nfe get status success", async () => {
     const testObj = {
