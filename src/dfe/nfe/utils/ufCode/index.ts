@@ -1,4 +1,4 @@
-import type { UF, UFCode } from "@/dfe/nfe/types";
+import type { UF, UFCode } from "@nfe/types";
 
 const ufCodeMap: Record<UF, UFCode> = {
   AC: "12",

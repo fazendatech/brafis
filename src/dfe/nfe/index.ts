@@ -2,25 +2,30 @@ import type { CertificateP12 } from "@/certificate";
 import type {
   Environment,
   NfeRequestOptions,
-  NfeConsultaCadastroOptions,
   UF,
   UFCode,
   WebService,
-  NfeStatusServicoResponseRaw,
-  NfeConsultaCadastroResponseRaw,
-  NfeStatusServicoRequest,
-  NfeConsultaCadastroRequest,
-  NfeWebServiceResponse,
-  NfeStatusServicoStatus,
-  NfeConsultaCadastroStatus,
   WithXmlns,
-} from "@/dfe/nfe/types";
+} from "@nfe/types";
+import type {
+  NfeStatusServicoRequest,
+  NfeStatusServicoResponseRaw,
+  NfeStatusServicoStatus,
+  NfeWebServiceResponse,
+} from "@nfe/types/statusServico";
+import type {
+  NfeConsultaCadastroOptions,
+  NfeConsultaCadastroRequest,
+  NfeConsultaCadastroResponseRaw,
+  NfeConsultaCadastroStatus,
+} from "@nfe/types/consultaCadastro";
+
 import { buildSoap, fetchWithTls, parseSoap } from "@/utils";
 
-import { getWebServiceUrl } from "./webServiceUrls.ts";
-import { loadNfeCa } from "./ca.ts";
-import { getUfCode } from "./ufCode.ts";
-import { ServiceRequestError } from "./errors.ts";
+import { getWebServiceUrl } from "@nfe/utils/webServiceUrls";
+import { getUfCode } from "@nfe/utils/ufCode";
+import { loadNfeCa } from "@nfe/utils/ca";
+import { ServiceRequestError } from "@nfe/errors";
 
 /**
  * @description Opções do `NfeWebServices`.
