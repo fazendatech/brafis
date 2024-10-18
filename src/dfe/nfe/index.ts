@@ -96,12 +96,8 @@ export class NfeWebServices {
       },
       signal: AbortSignal.timeout(timeout),
     })
-      .then(async (res) => {
-        return await res.text();
-      })
-      .then((xml) => {
-        return parseSoap<NfeRequestResponse>(xml);
-      })
+      .then(async (res) => await res.text())
+      .then((xml) => parseSoap<NfeRequestResponse>(xml))
       .catch((error: Error) => {
         if (error.name === "TimeoutError") {
           throw error;
