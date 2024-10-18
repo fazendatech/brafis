@@ -138,7 +138,7 @@ export class NfeWebServices {
   }
 
   /**
-   * @description Consulta o cadastro de contribuintes do ICMS da unidade federada.
+   * @description Consulta o cadastro de contribuintes do ICMS em uma UF.
    *
    * @param {NfeConsultaCadastroOptions} options - Opções para a consulta.
    * @returns {Promise<NfeConsultaCadastroResponse>} Informações sobre o cadastro do contribuinte.
