@@ -27,24 +27,21 @@ function buildMockResponse<Obj>(obj: Obj): string {
 }
 
 describe("NfeWebServices", () => {
-  afterEach(() => {
-    clearMocks();
-  });
-
   const certificate = new CertificateP12({
     pfx: new Uint8Array(),
     password: "",
   });
 
-  spyOn(certificate, "asPem").mockReturnValue({
-    cert: "",
-    key: "",
-  });
+  spyOn(certificate, "asPem").mockReturnValue({ cert: "", key: "" });
 
   const service = new NfeWebServices({
     uf: "DF",
     env: "homologacao",
     certificate,
+  });
+
+  afterEach(() => {
+    clearMocks();
   });
 
   describe("statusServico", () => {
