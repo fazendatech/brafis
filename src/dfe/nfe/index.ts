@@ -112,7 +112,7 @@ export class NfeWebServices {
    * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
    */
   async statusServico(): Promise<NfeStatusServicoResponse> {
-    const reqResponse: { retConsStatServ: NfeStatusServicoRaw } =
+    const response: { retConsStatServ: NfeStatusServicoRaw } =
       await this.request(this.getUrl("NfeStatusServico"), {
         timeout: this.timeout,
         body: {
@@ -129,9 +129,9 @@ export class NfeWebServices {
       });
 
     return {
-      status: getInfoStatus(reqResponse.retConsStatServ.cStat),
-      description: reqResponse.retConsStatServ.xMotivo ?? "",
-      raw: reqResponse.retConsStatServ,
+      status: getInfoStatus(response.retConsStatServ.cStat),
+      description: response.retConsStatServ.xMotivo ?? "",
+      raw: response.retConsStatServ,
     };
   }
 
@@ -144,8 +144,9 @@ export class NfeWebServices {
   async consultaCadastro(
     options: NfeConsultaCadastroOptions,
   ): Promise<NfeConsultaCadastroResponse> {
-    const serviceResponse: { retConsCad: NfeConsultaCadastroRaw } =
-      await this.request(this.getUrl("NfeConsultaCadastro"), {
+    const response: { retConsCad: NfeConsultaCadastroRaw } = await this.request(
+      this.getUrl("NfeConsultaCadastro"),
+      {
         timeout: this.timeout,
         body: {
           "@_xmlns":
@@ -156,12 +157,13 @@ export class NfeWebServices {
             infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
           },
         },
-      });
+      },
+    );
 
     return {
-      status: getInfoStatus(serviceResponse.retConsCad.infCons?.cStat),
-      description: serviceResponse.retConsCad.infCons?.xMotivo ?? "",
-      raw: serviceResponse.retConsCad,
+      status: getInfoStatus(response.retConsCad.infCons?.cStat),
+      description: response.retConsCad.infCons?.xMotivo ?? "",
+      raw: response.retConsCad,
     };
   }
 
