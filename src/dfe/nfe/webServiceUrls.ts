@@ -18,8 +18,8 @@ import { WebServiceNotFoundError } from "./errors.ts";
  * - UF que utilizam a SVC-AN - Sefaz Virtual de Contingência Ambiente Nacional: AC, AL, AP, CE, DF, ES, MG, PA, PB, PI (Produção), RJ, RN, RO, RR, RS, SC, SE, SP, TO
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
-const UFEnv = {
-  Proprios: new Set<UF>([
+const ufEnvMap = {
+  self: new Set<UF>([
     "AM",
     "BA",
     "GO",
@@ -550,11 +550,11 @@ function getWebServiceUrlForContingencia(
     );
   }
 
-  if (UFEnv.SVCAN.has(uf)) {
+  if (ufEnvMap.SVCAN.has(uf)) {
     return webServices[env].SVCAN[service] ?? null;
   }
 
-  if (UFEnv.SVCRS.has(uf)) {
+  if (ufEnvMap.SVCRS.has(uf)) {
     return webServices[env].SVCRS[service] ?? null;
   }
 
@@ -573,19 +573,19 @@ function getWebServiceUrlNormal(
   service: WebService,
   env: Environment,
 ): string | null {
-  if (UFEnv.Proprios.has(uf)) {
+  if (ufEnvMap.self.has(uf)) {
     return webServices[env][uf as AuthServer][service] ?? null;
   }
 
-  if (UFEnv.SVAN.has(uf)) {
+  if (ufEnvMap.SVAN.has(uf)) {
     return webServices[env].SVAN[service] ?? null;
   }
 
-  if (UFEnv.SVRS_CC.has(uf) && service === "NfeConsultaCadastro") {
+  if (ufEnvMap.SVRS_CC.has(uf) && service === "NfeConsultaCadastro") {
     return webServices[env].SVRS[service] ?? null;
   }
 
-  if (UFEnv.SVRS.has(uf)) {
+  if (ufEnvMap.SVRS.has(uf)) {
     return webServices[env].SVRS[service] ?? null;
   }
 
