@@ -514,8 +514,12 @@ const webServices: WebServiceUrls = {
 /**
  * @description Retorna a URL do WebService de acordo com a UF, serviço, ambiente e se o servidor está, ou não, em contingência.
  */
-export function getWebServiceUrl(options: GetWebServiceUrlOptions): string {
-  const { uf, service, env, contingency } = options;
+export function getWebServiceUrl({
+  uf,
+  service,
+  env,
+  contingency,
+}: GetWebServiceUrlOptions): string {
   let url: string | null;
   if (service === "NFeDistribuicaoDFe") {
     url = webServices[env].AN.NFeDistribuicaoDFe ?? null;
@@ -527,7 +531,7 @@ export function getWebServiceUrl(options: GetWebServiceUrlOptions): string {
   }
 
   if (!url) {
-    throw new WebServiceNotFoundError(options);
+    throw new WebServiceNotFoundError({ uf, service, env, contingency });
   }
   return url;
 }
