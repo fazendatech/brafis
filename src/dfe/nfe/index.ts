@@ -88,11 +88,12 @@ export class NfeWebServices {
     { body, timeout }: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
     const { cert, key } = this.certificate.asPem();
+    const soapBody = buildSoap({ nfeDadosMsg: body });
 
     return fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
-      body: buildSoap({ nfeDadosMsg: body }),
+      body: soapBody,
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
     })
@@ -105,7 +106,7 @@ export class NfeWebServices {
         if (error.name === "TimeoutError") {
           throw error;
         }
-        throw new ServiceRequestError(error, { url, xml: buildSoap(body) });
+        throw new ServiceRequestError(error, { url, xml: soapBody });
       });
   }
 
