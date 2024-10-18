@@ -12,5 +12,5 @@ const service = new NfeWebServices({
   certificate: certificate,
 });
 
-const stautsServicoResponse = await service.statusServico();
-console.log(stautsServicoResponse);
+const statusServicoResponse = await service.statusServico();
+console.log(statusServicoResponse);
