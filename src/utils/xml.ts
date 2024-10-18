@@ -32,3 +32,7 @@ export function parseSoap<Obj>(xml: string): Obj {
   const parsed = xmlParser.parse(xml);
   return parsed.Envelope?.Body?.nfeResultMsg;
 }
+
+export interface XMLNamespace {
+  "@_xmlns": string;
+}

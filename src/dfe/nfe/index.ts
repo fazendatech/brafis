@@ -11,7 +11,7 @@ import type {
   UFCode,
   WebService,
 } from "@/dfe/nfe/types";
-import { buildSoap, fetchWithTls, parseSoap } from "@/utils";
+import { buildSoap, fetchWithTls, parseSoap, type XMLNamespace } from "@/utils";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
 import { loadNfeCa } from "./ca.ts";
 import { getUfCode } from "./ufCode.ts";
@@ -19,15 +19,13 @@ import { ServiceRequestError } from "./errors.ts";
 import { getInfoStatus } from "./infoStatus.ts";
 
 /**
- * Opções para configurar um nfe web service.
+ * @description Opções do "NfeWebServices".
  *
- * @interface NfeWebServicesOptions
- *
- * @property {UF} uf - A unidade federativa (estado) para a NFe.
- * @property {Environment} env - "producao" ou "homologacao".
+ * @property {UF} uf - A unidade federativa (estado) para a NF-e.
+ * @property {Environment} env - `producao` -> `tpAmb = 1`. `homologacao` -> `tpAmb = 2`.
  * @property {CertificateP12} certificate - O certificado P12 para autenticação.
- * @property {boolean} [contingency] - Se True, será usado o servidor de contingência.
- * @property {number} [timeout] - Timeout da requisição em ms, o valor padrão é 15 segundos.
+ * @property {boolean} [contingency] - Habilitar uso do servidor de contingência.
+ * @property {number} [timeout] - Timeout da requisição em ms, padrão 15000ms.
  */
 export interface NfeWebServicesOptions {
   uf: UF;
@@ -46,7 +44,7 @@ export class NfeWebServices {
   private ca: string;
   private tpAmb: "1" | "2";
   private cUF: UFCode;
-  private namespace: { "@_xmlns": string };
+  private xmlNamespace: XMLNamespace;
 
   constructor(options: NfeWebServicesOptions) {
     this.uf = options.uf;
@@ -59,7 +57,7 @@ export class NfeWebServices {
     this.tpAmb = options.env === "producao" ? "1" : "2";
     this.cUF = getUfCode(options.uf);
 
-    this.namespace = {
+    this.xmlNamespace = {
       "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
     };
   }
@@ -125,7 +123,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
           consStatServ: {
-            ...this.namespace,
+            ...this.xmlNamespace,
             "@_versao": "4.00",
             tpAmb: this.tpAmb,
             cUF: this.cUF,
@@ -157,7 +155,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
           ConsCad: {
-            ...this.namespace,
+            ...this.xmlNamespace,
             "@_versao": "2.00",
             infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
           },
