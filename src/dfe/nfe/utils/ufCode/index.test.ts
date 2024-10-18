@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { getUfCode, getUfFromCode } from ".";
+import { getUfCode, getUfFromCode } from "@nfe/utils/ufCode";
 
 describe("getUfCode", () => {
   test("Return the UF Code for a valid UF", () => {

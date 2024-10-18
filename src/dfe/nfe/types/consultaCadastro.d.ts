@@ -1,4 +1,4 @@
-import type { WithXmlns, WithXmlnsVersao, UFCode } from "./index";
+import type { WithXmlns, WithXmlnsVersao, UFCode } from "@nfe/types";
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
