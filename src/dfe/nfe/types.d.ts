@@ -222,8 +222,8 @@ export interface Ender {
  * @description Informações do cadastro.
  *
  * @property IE - Inscrição Estadual.
- * @property CNPJ - CNPJ.
- * @property CPF - CPF.
+ * @property [CNPJ] - CNPJ.
+ * @property [CPF] - CPF.
  * @property UF - Sigla da UF.
  * @property cSit - Código da situação cadastral: `0=não habilitado` ou `1=habilitado`.
  * @property indCredNFe - `0=Não credenciado para emissão da NF-e`, `1=Credenciado`, `2=Credenciado com obrigatoriedade para todas operações`, `3=Credenciado com obrigatoriedade parcial`, `4=a SEFAZ não fornece a informação`.
@@ -240,7 +240,7 @@ export interface Ender {
  * @property [Ender] - Endereço.
  */
 export interface InfCad {
-  IE?: string;
+  IE: string;
   CNPJ?: string;
   CPF?: string;
   UF: string;
@@ -266,9 +266,9 @@ export interface InfCad {
  * @property cStat - `111->"uma-ocorrencia"`, `112->"multiplas-ocorrencias"`.
  * @property xMotivo - Descrição da resposta.
  * @property UF - Sigla da UF consultada.
- * @property IE - Inscrição Estadual.
- * @property CNPJ - CNPJ.
- * @property CPF - CPF.
+ * @property [IE] - Inscrição Estadual.
+ * @property [CNPJ] - CNPJ.
+ * @property [CPF] - CPF.
  * @property dhCons - Data e hora da consulta.
  * @property cUF - Código da UF consultada.
  * @property infCad - Informações do cadastro.
@@ -279,9 +279,9 @@ export interface NfeConsultaCadastroResponseRaw {
     cStat: string;
     xMotivo: string;
     UF: string;
-    IE: string;
-    CNPJ: string;
-    CPF: string;
+    IE?: string;
+    CNPJ?: string;
+    CPF?: string;
     dhCons: string;
     cUF: string;
     infCad: InfCad[];
