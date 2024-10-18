@@ -108,31 +108,6 @@ export type WebServiceUrls = {
   };
 };
 
-/**
- * @description Códigos de status da resposta do serviço.
- */
-export type CodStats = LiteralStringUnion<
-  "107" | "108" | "109" | "111" | "112"
->;
-
-/**
- * @description Valores possíveis:
- * - Status Serviço ["operando", "paralisado-temporariamente", "paralisado"]
- * - Consulta Cadastro ["uma-ocorrencia", "multiplas-ocorrencias"]
- * - Sem Sucesso ["sem-sucesso"]
- */
-export type InfoStats =
-  | "sem-sucesso"
-  // Status Serviço
-  | "operando"
-  | "paralisado-temporariamente"
-  | "paralisado"
-  // Consulta Cadastro
-  | "uma-ocorrencia"
-  | "multiplas-ocorrencias";
-
-export type CStatsMap = { [cStat in CodStats]: InfoStats };
-
 export interface GetWebServiceUrlOptions {
   uf: UF;
   service: WebService;
@@ -145,22 +120,28 @@ export interface NfeRequestOptions<Body> {
   timeout: number;
 }
 
-/**
- * @description Retorno do serviço de consulta de status serviço.
- *
- * @property {"operando" | "paralisado-temporariamente" | "paralisado" | "outro"} [status] - Status do serviço.
- * @property {string} [description] - Descrição do status (xMotivo).
- * @property {NfeStatusServicoRaw} [raw] (Opcional) - Resposta completa do serviço.
- */
-export interface NfeStatusServicoResponse {
-  status: InfoStats;
-  description: string;
-  raw?: NfeStatusServicoRaw;
-}
+type WithXmlns<T = unknown> = { "@_xmlns": string } & T;
+type WithVersao<T = unknown> = { "@_versao": string } & T;
+type WithXmlnsVersao<T = unknown> = WithXmlns<WithVersao<T>>;
 
-export interface NfeStatusServicoResponseRaw {
-  retConsStatServ: NfeStatusServicoRaw;
-}
+export type NfeWebServiceResponse<Status, Raw> = {
+  status: Status | "outro";
+  description: string;
+  raw: Raw;
+};
+
+export type NfeStatusServicoRequest = WithXmlns<{
+  consStatServ: WithXmlnsVersao<{
+    tpAmb: "1" | "2";
+    cUF: UFCode;
+    xServ: "STATUS";
+  }>;
+}>;
+
+export type NfeStatusServicoStatus =
+  | "operando"
+  | "paralisado-temporariamente"
+  | "paralisado";
 
 /**
  * @description Resposta completa da consulta de status serviço.
@@ -171,14 +152,14 @@ export interface NfeStatusServicoResponseRaw {
  * @property xMotivo - Descrição da resposta.
  * @property cUF - Código da UF que atendeu a solicitação.
  * @property dhRecbto - Data e hora do processamento.
- * @property tMed - Tempo médio de resposta do serviço (em segundos).
- * @property dhRetorno - Data e hora previstas para o retorno do serviço.
- * @property xObs - Informações adicionais para o contribuinte.
+ * @property [tMed] - Tempo médio de resposta do serviço (em segundos).
+ * @property [dhRetorno] - Data e hora previstas para o retorno do serviço.
+ * @property [xObs] - Informações adicionais para o contribuinte.
  */
-export interface NfeStatusServicoRaw {
+export interface NfeStatusServicoResponseRaw {
   tpAmb: "1" | "2";
   verAplic: string;
-  cStat: CodStats;
+  cStat: string;
   xMotivo: string;
   cUF: string;
   dhRecbto: string;
@@ -200,32 +181,32 @@ export interface NfeConsultaCadastroOptions {
   CPF?: string;
 }
 
-/**
- * @description Retorno do serviço consulta cadastro.
- *
- * @property {NfeConsultaCadastroRaw} [raw] - Resposta completa do serviço, se passado o parâmetro raw.
- */
-export interface NfeConsultaCadastroResponse {
-  status: InfoStats;
-  description: string;
+export type NfeConsultaCadastroStatus =
+  | "uma-ocorrencia"
+  | "multiplas-ocorrencias";
 
-  raw?: NfeConsultaCadastroRaw;
-}
-
-export interface NfeConsultaCadastroResponseRaw {
-  retConsCad: NfeConsultaCadastroRaw;
-}
+export type NfeConsultaCadastroRequest = WithXmlns<{
+  ConsCad: WithXmlnsVersao<{
+    infCons: {
+      xServ: "CONS-CAD";
+      UF: UFCode;
+      IE?: string;
+      CNPJ?: string;
+      CPF?: string;
+    };
+  }>;
+}>;
 
 /**
  * @description Endereço do contribuinte.
  *
- * @property xLgr - Logradouro.
- * @property Nro - Número.
- * @property xCpl - Complemento.
- * @property xBairro - Bairro.
- * @property cMun - Código do Município.
- * @property xMun - Nome do Município.
- * @property CEP - CEP.
+ * @property [xLgr] - Logradouro.
+ * @property [Nro] - Número.
+ * @property [xCpl] - Complemento.
+ * @property [xBairro] - Bairro.
+ * @property [cMun] - Código do Município.
+ * @property [xMun] - Nome do Município.
+ * @property [CEP] - CEP.
  */
 export interface Ender {
   xLgr?: string;
@@ -248,15 +229,15 @@ export interface Ender {
  * @property indCredNFe - `0=Não credenciado para emissão da NF-e`, `1=Credenciado`, `2=Credenciado com obrigatoriedade para todas operações`, `3=Credenciado com obrigatoriedade parcial`, `4=a SEFAZ não fornece a informação`.
  * @property indCredCTe - `0=Não credenciado para emissão de CT-e`, `1=Credenciado`, `2=Credenciado com obrigatoriedade para todas operações`, `3=Credenciado com obrigatoriedade parcial`, `4=a SEFAZ não fornece a informação`.
  * @property xNome - Razão Social ou Nome do Contribuinte.
- * @property xFant - Nome Fantasia.
- * @property xRegApur - Regime de Apuração do ICMS.
- * @property CNAE - Código CNAE principal.
- * @property dIniAtiv - Data de Início de Atividades.
- * @property dUltSit - Data da última situação cadastral.
- * @property dBaixa - Data de Baixa.
- * @property IEUnica - Inscrição Estadual Única.
- * @property IEAtual - Inscrição Estadual Atual.
- * @property Ender - Endereço.
+ * @property [xFant] - Nome Fantasia.
+ * @property [xRegApur] - Regime de Apuração do ICMS.
+ * @property [CNAE] - Código CNAE principal.
+ * @property [dIniAtiv] - Data de Início de Atividades.
+ * @property [dUltSit] - Data da última situação cadastral.
+ * @property [dBaixa] - Data de Baixa.
+ * @property [IEUnica] - Inscrição Estadual Única.
+ * @property [IEAtual] - Inscrição Estadual Atual.
+ * @property [Ender] - Endereço.
  */
 export interface InfCad {
   IE: string;
@@ -292,24 +273,17 @@ export interface InfCad {
  * @property cUF - Código da UF consultada.
  * @property infCad - Informações do cadastro.
  */
-export interface InfCons {
-  verAplic: string;
-  cStat: CodStats;
-  xMotivo: string;
-  UF: string;
-  IE: string;
-  CNPJ: string;
-  CPF: string;
-  dhCons: string;
-  cUF: string;
-  infCad: Array[InfCad];
-}
-
-/**
- * @description Resposta completa da consulta de cadastro.
- *
- * @property infCons - Informações da consulta.
- */
-export interface NfeConsultaCadastroRaw {
-  infCons: InfCons;
+export interface NfeConsultaCadastroResponseRaw {
+  infCons: {
+    verAplic: string;
+    cStat: string;
+    xMotivo: string;
+    UF: string;
+    IE: string;
+    CNPJ: string;
+    CPF: string;
+    dhCons: string;
+    cUF: string;
+    infCad: InfCad[];
+  };
 }
