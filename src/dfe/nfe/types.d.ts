@@ -133,12 +133,12 @@ export type InfoStats =
 
 export type CStatsMap = { [cStat in CodStats]: InfoStats };
 
-export type GetWebServiceUrlOptions = {
+export interface GetWebServiceUrlOptions {
   uf: UF;
   service: WebService;
   env: Environment;
   contingency?: boolean;
-};
+}
 
 export interface NfeRequestOptions<Body> {
   body: Body;
