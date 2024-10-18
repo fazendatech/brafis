@@ -2,14 +2,14 @@ import type { CertificateP12 } from "@/certificate";
 import type {
   Environment,
   NfeRequestOptions,
-  NfeStatusServicoRaw,
   NfeStatusServicoResponse,
   NfeConsultaCadastroOptions,
-  NfeConsultaCadastroRaw,
   NfeConsultaCadastroResponse,
   UF,
   UFCode,
   WebService,
+  NfeStatusServicoResponseRaw,
+  NfeConsultaCadastroResponseRaw,
 } from "@/dfe/nfe/types";
 import { buildSoap, fetchWithTls, parseSoap, type XMLNamespace } from "@/utils";
 import { getWebServiceUrl } from "./webServiceUrls.ts";
@@ -112,8 +112,9 @@ export class NfeWebServices {
    * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
    */
   async statusServico(): Promise<NfeStatusServicoResponse> {
-    const response: { retConsStatServ: NfeStatusServicoRaw } =
-      await this.request(this.getUrl("NfeStatusServico"), {
+    const response: NfeStatusServicoResponseRaw = await this.request(
+      this.getUrl("NfeStatusServico"),
+      {
         timeout: this.timeout,
         body: {
           "@_xmlns":
@@ -126,7 +127,8 @@ export class NfeWebServices {
             xServ: "STATUS",
           },
         },
-      });
+      },
+    );
 
     return {
       status: getInfoStatus(response.retConsStatServ.cStat),
@@ -144,7 +146,7 @@ export class NfeWebServices {
   async consultaCadastro(
     options: NfeConsultaCadastroOptions,
   ): Promise<NfeConsultaCadastroResponse> {
-    const response: { retConsCad: NfeConsultaCadastroRaw } = await this.request(
+    const response: NfeConsultaCadastroResponseRaw = await this.request(
       this.getUrl("NfeConsultaCadastro"),
       {
         timeout: this.timeout,

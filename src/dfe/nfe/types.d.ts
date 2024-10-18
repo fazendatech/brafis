@@ -158,6 +158,10 @@ export interface NfeStatusServicoResponse {
   raw?: NfeStatusServicoRaw;
 }
 
+export interface NfeStatusServicoResponseRaw {
+  retConsStatServ: NfeStatusServicoRaw;
+}
+
 /**
  * @description Resposta completa da consulta de status serviço.
  *
@@ -205,6 +209,10 @@ export interface NfeConsultaCadastroResponse {
   description: string;
 
   raw?: NfeConsultaCadastroRaw;
+}
+
+export interface NfeConsultaCadastroResponseRaw {
+  retConsCad: NfeConsultaCadastroRaw;
 }
 
 export interface NfeConsultaCadastroRaw {
