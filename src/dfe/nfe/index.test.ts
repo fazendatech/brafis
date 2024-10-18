@@ -4,8 +4,8 @@ import { XMLBuilder } from "fast-xml-parser";
 
 import { CertificateP12 } from "@/certificate";
 
-import { NfeWebServices } from "./index.ts";
-import { ServiceRequestError } from "./errors.ts";
+import { NfeWebServices } from ".";
+import { ServiceRequestError } from "./errors";
 
 function buildMockResponse<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({

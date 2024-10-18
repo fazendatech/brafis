@@ -6,7 +6,7 @@ import type {
   WebServiceUrls,
   GetWebServiceUrlOptions,
 } from "@/dfe/nfe/types";
-import { WebServiceNotFoundError } from "./errors.ts";
+import { WebServiceNotFoundError } from "../../errors.ts";
 
 /**
  * @description UF que tem seu próprio ambiente Sefaz: AM, BA, GO, MT, MS, MG, PR, PE, RS, SP
