@@ -21,6 +21,7 @@ export class ServiceRequestError extends Error {
     const truncatedXml = `${extra.xml.slice(0, 100)}${extra.xml.length > 100 ? "…" : ""}`;
     super(`${error.message} URL: ${extra.url}\nXML: ${truncatedXml}`);
     this.name = `ServiceRequestError - ${error.name}`;
+    this.stack = error.stack;
     this.xml = extra.xml;
   }
 }
