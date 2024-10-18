@@ -526,7 +526,7 @@ export function getWebServiceUrl({
   } else {
     url =
       (contingency
-        ? getWebServiceUrlForContingencia(uf, service, env)
+        ? getWebServiceUrlContingencia(uf, service, env)
         : getWebServiceUrlNormal(uf, service, env)) ?? null;
   }
 
@@ -541,7 +541,7 @@ export function getWebServiceUrl({
  * - UF que utilizam a SVC-AN - Sefaz Virtual de Contingência Ambiente Nacional: AC, AL, AP, CE, DF, ES, MG, PA, PB, PI (Produção), RJ, RN, RO, RR, RS, SC, SE, SP, TO
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
-function getWebServiceUrlForContingencia(
+function getWebServiceUrlContingencia(
   uf: UF,
   service: WebService,
   env: Environment,
