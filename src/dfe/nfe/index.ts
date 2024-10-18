@@ -104,7 +104,10 @@ export class NfeWebServices {
       .then((xml) => {
         return parseSoap<NfeRequestResponse>(xml);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
+        if (error.name === "TimeoutError") {
+          throw error;
+        }
         throw new ServiceRequestError(error, { url, xml: buildSoap(body) });
       });
   }

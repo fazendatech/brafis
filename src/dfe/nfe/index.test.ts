@@ -113,13 +113,29 @@ describe("NfeWebServices", () => {
   });
 
   describe("request", () => {
-    test("Request throw ServiceRequestError", () => {
-      const url =
-        "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
+    const url =
+      "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
+
+    test("Request timeout", () => {
+      class TimeoutError extends Error {
+        constructor() {
+          super("The operation timed out.");
+        }
+        name = "TimeoutError";
+      }
 
       mock(url, {
         method: "POST",
-        throw: new Error("TimeoutError"),
+        throw: new TimeoutError(),
+      });
+
+      expect(() => service.statusServico()).toThrowError(TimeoutError);
+    });
+
+    test("Request throw ServiceRequestError", () => {
+      mock(url, {
+        method: "POST",
+        throw: new TypeError("An error occurred during the request."),
       });
 
       expect(() => service.statusServico()).toThrowError(ServiceRequestError);
