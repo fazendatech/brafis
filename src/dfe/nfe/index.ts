@@ -23,7 +23,7 @@ import { getUfCode } from "./ufCode.ts";
 import { ServiceRequestError } from "./errors.ts";
 
 /**
- * @description Opções do "NfeWebServices".
+ * @description Opções do `NfeWebServices`.
  *
  * @property {UF} uf - A unidade federativa (estado) para a NF-e.
  * @property {Environment} env - `producao` -> `tpAmb = 1`. `homologacao` -> `tpAmb = 2`.
