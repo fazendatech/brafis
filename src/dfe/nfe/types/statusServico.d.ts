@@ -1,4 +1,4 @@
-import type { WithXmlns, WithXmlnsVersao, UFCode } from "./index";
+import type { WithXmlns, WithXmlnsVersao, UFCode } from "@nfe/types";
 
 export type NfeWebServiceResponse<Status, Raw> = {
   status: Status | "outro";
