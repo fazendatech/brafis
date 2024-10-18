@@ -553,11 +553,9 @@ function getWebServiceUrlContingencia(
         : webServices[env].SVCRS[service]) ?? null
     );
   }
-
   if (ufEnvMap.SVCAN.has(uf)) {
     return webServices[env].SVCAN[service] ?? null;
   }
-
   if (ufEnvMap.SVCRS.has(uf)) {
     return webServices[env].SVCRS[service] ?? null;
   }
@@ -580,15 +578,12 @@ function getWebServiceUrlNormal(
   if (ufEnvMap.self.has(uf)) {
     return webServices[env][uf as AuthServer][service] ?? null;
   }
-
   if (ufEnvMap.SVAN.has(uf)) {
     return webServices[env].SVAN[service] ?? null;
   }
-
   if (ufEnvMap.SVRS_CC.has(uf) && service === "NfeConsultaCadastro") {
     return webServices[env].SVRS[service] ?? null;
   }
-
   if (ufEnvMap.SVRS.has(uf)) {
     return webServices[env].SVRS[service] ?? null;
   }

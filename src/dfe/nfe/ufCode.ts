@@ -30,19 +30,19 @@ const ufCodeMap: Record<UF, UFCode> = {
   TO: "17",
 };
 
-const ufCodeMapInverse: Record<UFCode, UF> = Object.fromEntries(
+const ufCodeMapInverse = Object.fromEntries(
   Object.entries(ufCodeMap).map(([uf, code]) => [code, uf]),
 ) as Record<UFCode, UF>;
 
 /**
- * @description Retorna o código numérico de uma UF
+ * @description Retorna o código numérico de uma UF.
  */
 export function getUfCode(uf: UF): UFCode {
   return ufCodeMap[uf];
 }
 
 /**
- * @description Retorna a sigla de uma UF a partir do seu código numérico
+ * @description Retorna a sigla de uma UF a partir do seu código numérico.
  */
 export function getUfFromCode(code: UFCode): UF {
   return ufCodeMapInverse[code];
