@@ -34,7 +34,7 @@ export class CertificateP12 {
    * @description Cria uma instância de CertificateP12 a partir de um arquivo PFX.
    *
    * @param options - Caminho do arquivo e senha para descriptografar os dados PFX.
-   * @returns
+   * @returns {CertificateP12}
    */
   static async fromFilepath(options: {
     filepath: string;
