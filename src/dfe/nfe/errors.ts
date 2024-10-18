@@ -18,8 +18,7 @@ export class WebServiceNotFoundError extends Error {
 export class ServiceRequestError extends Error {
   public readonly xml: string;
   constructor(error: Error, extra: { url: string; xml: string }) {
-    const truncatedXml = `${extra.xml.slice(0, 100)}${extra.xml.length > 100 ? "…" : ""}`;
-    super(`${error.message} URL: ${extra.url}\nXML: ${truncatedXml}`);
+    super(`${error.message} URL: ${extra.url}`);
     this.name = `ServiceRequestError - ${error.name}`;
     this.stack = error.stack;
     this.xml = extra.xml;
