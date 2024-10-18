@@ -190,7 +190,9 @@ export interface NfeStatusServicoRaw {
 /**
  * @description Opções para configurar o web service de consulta cadastro.
  *
- * @property {boolean} [raw] - Se verdadeiro, a resposta terá o parâmetro raw com a resposta completa do serviço.
+ * @property {string} [IE] - Inscrição Estadual.
+ * @property {string} [CNPJ] - CNPJ.
+ * @property {string} [CPF] - CPF.
  */
 export interface NfeConsultaCadastroOptions {
   IE?: string;
