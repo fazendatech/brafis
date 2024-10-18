@@ -167,21 +167,21 @@ export interface NfeStatusServicoResponseRaw {
  *
  * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - Código do status da resposta.
+ * @property cStat - `107->"operando"`, `108->"paralisado-temporariamente"`, `109->"paralisado"`.
  * @property xMotivo - Descrição da resposta.
- * @property cUF - código da UF que atendeu a solicitação.
+ * @property cUF - Código da UF que atendeu a solicitação.
  * @property dhRecbto - Data e hora do processamento.
  * @property tMed - Tempo médio de resposta do serviço (em segundos).
  * @property dhRetorno - Data e hora previstas para o retorno do serviço.
  * @property xObs - Informações adicionais para o contribuinte.
  */
 export interface NfeStatusServicoRaw {
-  tpAmb?: "1" | "2";
-  verAplic?: string;
-  cStat?: CodStats;
-  xMotivo?: string;
-  cUF?: string;
-  dhRecbto?: string;
+  tpAmb: "1" | "2";
+  verAplic: string;
+  cStat: CodStats;
+  xMotivo: string;
+  cUF: string;
+  dhRecbto: string;
   tMed?: string;
   dhRetorno?: string;
   xObs?: string;
@@ -193,7 +193,6 @@ export interface NfeStatusServicoRaw {
  * @property {boolean} [raw] - Se verdadeiro, a resposta terá o parâmetro raw com a resposta completa do serviço.
  */
 export interface NfeConsultaCadastroOptions {
-  raw?: boolean;
   IE?: string;
   CNPJ?: string;
   CPF?: string;
@@ -215,43 +214,100 @@ export interface NfeConsultaCadastroResponseRaw {
   retConsCad: NfeConsultaCadastroRaw;
 }
 
+/**
+ * @description Endereço do contribuinte.
+ *
+ * @property xLgr - Logradouro.
+ * @property Nro - Número.
+ * @property xCpl - Complemento.
+ * @property xBairro - Bairro.
+ * @property cMun - Código do Município.
+ * @property xMun - Nome do Município.
+ * @property CEP - CEP.
+ */
+export interface Ender {
+  xLgr?: string;
+  Nro?: string;
+  xCpl?: string;
+  xBairro?: string;
+  cMun?: string;
+  xMun?: string;
+  CEP?: string;
+}
+
+/**
+ * @description Informações do cadastro.
+ *
+ * @property IE - Inscrição Estadual.
+ * @property CNPJ - CNPJ.
+ * @property CPF - CPF.
+ * @property UF - Sigla da UF.
+ * @property cSit - Código da situação cadastral: `0=não habilitado` ou `1=habilitado`.
+ * @property indCredNFe - `0=Não credenciado para emissão da NF-e`, `1=Credenciado`, `2=Credenciado com obrigatoriedade para todas operações`, `3=Credenciado com obrigatoriedade parcial`, `4=a SEFAZ não fornece a informação`.
+ * @property indCredCTe - `0=Não credenciado para emissão de CT-e`, `1=Credenciado`, `2=Credenciado com obrigatoriedade para todas operações`, `3=Credenciado com obrigatoriedade parcial`, `4=a SEFAZ não fornece a informação`.
+ * @property xNome - Razão Social ou Nome do Contribuinte.
+ * @property xFant - Nome Fantasia.
+ * @property xRegApur - Regime de Apuração do ICMS.
+ * @property CNAE - Código CNAE principal.
+ * @property dIniAtiv - Data de Início de Atividades.
+ * @property dUltSit - Data da última situação cadastral.
+ * @property dBaixa - Data de Baixa.
+ * @property IEUnica - Inscrição Estadual Única.
+ * @property IEAtual - Inscrição Estadual Atual.
+ * @property Ender - Endereço.
+ */
+export interface InfCad {
+  IE: string;
+  CNPJ: string;
+  CPF: string;
+  UF: string;
+  cSit: "0" | "1";
+  indCredNFe: "0" | "1" | "2" | "3" | "4";
+  indCredCTe: "0" | "1" | "2" | "3" | "4";
+  xNome: string;
+  xFant?: string;
+  xRegApur?: string;
+  CNAE?: string;
+  dIniAtiv?: string;
+  dUltSit?: string;
+  dBaixa?: string;
+  IEUnica?: string;
+  IEAtual?: string;
+  Ender?: Ender;
+}
+
+/**
+ * @description Informações da consulta.
+ *
+ * @property verAplic - Versão do aplicativo que processou a consulta.
+ * @property cStat - `111->"uma-ocorrencia"`, `112->"multiplas-ocorrencias"`.
+ * @property xMotivo - Descrição da resposta.
+ * @property UF - Sigla da UF consultada.
+ * @property IE - Inscrição Estadual.
+ * @property CNPJ - CNPJ.
+ * @property CPF - CPF.
+ * @property dhCons - Data e hora da consulta.
+ * @property cUF - Código da UF consultada.
+ * @property infCad - Informações do cadastro.
+ */
+export interface InfCons {
+  verAplic: string;
+  cStat: CodStats;
+  xMotivo: string;
+  UF: string;
+  IE: string;
+  CNPJ: string;
+  CPF: string;
+  dhCons: string;
+  cUF: string;
+  infCad: Array[InfCad];
+}
+
+/**
+ * @description Resposta completa da consulta de cadastro.
+ *
+ * @property infCons - Informações da consulta.
+ */
 export interface NfeConsultaCadastroRaw {
-  infCons?: {
-    verAplic?: string;
-    cStat?: CodStats;
-    xMotivo?: string;
-    UF?: string;
-    IE?: string;
-    CNPJ?: string;
-    CPF?: string;
-    dhCons?: string;
-    cUF?: string;
-    infCad?: {
-      IE?: string;
-      CNPJ?: string;
-      CPF?: string;
-      UF?: string;
-      cSit?: string;
-      indCredNFe?: string;
-      indCredCTe?: string;
-      xNome?: string;
-      xFant?: string;
-      xRegApur?: string;
-      CNAE?: string;
-      dIniAtiv?: string;
-      dUltSit?: string;
-      dBaixa?: string;
-      IEUnica?: string;
-      IEAtual?: string;
-      Ender?: {
-        xLgr?: string;
-        Nro?: string;
-        xCpl?: string;
-        xBairro?: string;
-        cMun?: string;
-        xMun?: string;
-        CEP?: string;
-      };
-    };
-  };
+  infCons: InfCons;
 }
