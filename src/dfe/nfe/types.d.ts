@@ -240,9 +240,9 @@ export interface Ender {
  * @property [Ender] - Endereço.
  */
 export interface InfCad {
-  IE: string;
-  CNPJ: string;
-  CPF: string;
+  IE?: string;
+  CNPJ?: string;
+  CPF?: string;
   UF: string;
   cSit: "0" | "1";
   indCredNFe: "0" | "1" | "2" | "3" | "4";
