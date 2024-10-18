@@ -107,7 +107,7 @@ export class NfeWebServices {
   }
 
   /**
-   * @description Consulta do status do serviço prestado pelo Portal da Secretaria de Fazenda Estadual.
+   * @description Consulta o status do serviço do SEFAZ correspondente a uma UF.
    *
    * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
    */
