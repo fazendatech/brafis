@@ -25,8 +25,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@nfe/*": ["src/dfe/nfe/*"]
+      "@/*": ["src/*"]
     }
   }
 }

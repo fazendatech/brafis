@@ -6,26 +6,26 @@ import type {
   UFCode,
   WebService,
   WithXmlns,
-} from "@nfe/types";
+} from "./types";
 import type {
   NfeStatusServicoRequest,
   NfeStatusServicoResponseRaw,
   NfeStatusServicoStatus,
   NfeWebServiceResponse,
-} from "@nfe/types/statusServico";
+} from "./types/statusServico";
 import type {
   NfeConsultaCadastroOptions,
   NfeConsultaCadastroRequest,
   NfeConsultaCadastroResponseRaw,
   NfeConsultaCadastroStatus,
-} from "@nfe/types/consultaCadastro";
+} from "./types/consultaCadastro";
 
 import { buildSoap, fetchWithTls, parseSoap } from "@/utils";
 
-import { getWebServiceUrl } from "@nfe/utils/webServiceUrls";
-import { getUfCode } from "@nfe/utils/ufCode";
-import { loadNfeCa } from "@nfe/utils/ca";
-import { ServiceRequestError } from "@nfe/errors";
+import { getWebServiceUrl } from "./utils/webServiceUrls";
+import { getUfCode } from "./utils/ufCode";
+import { loadNfeCa } from "./utils/ca";
+import { ServiceRequestError } from "./errors";
 
 /**
  * @description Opções do `NfeWebServices`.
