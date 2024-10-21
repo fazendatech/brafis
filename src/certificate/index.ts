@@ -6,7 +6,7 @@ import {
   InvalidPfxError,
   NoCertificatesFoundError,
   NoPrivateKeyFoundError,
-} from "@/certificate/errors";
+} from "./errors";
 import type {
   CertificateP12Options,
   P12Payload,

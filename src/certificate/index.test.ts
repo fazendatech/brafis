@@ -1,13 +1,13 @@
 import forge from "node-forge";
 import { file } from "bun";
 import { describe, test, expect, spyOn, afterEach, mock } from "bun:test";
-import { CertificateP12 } from "./index.ts";
+import { CertificateP12 } from ".";
 import {
   InvalidPasswordError,
   InvalidPfxError,
   NoCertificatesFoundError,
   NoPrivateKeyFoundError,
-} from "./errors.ts";
+} from "./errors";
 
 describe("CertificateP12", async () => {
   const selfSignedPath = "./misc/sample-certificates/";
