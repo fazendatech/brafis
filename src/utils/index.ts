@@ -1,5 +1,9 @@
-import { errorHasMessage } from "@/utils/errors";
-import { fetchWithTls } from "@/utils/fetch";
-import { buildSoap, parseSoap } from "@/utils/xml";
-
-export { errorHasMessage, fetchWithTls, buildSoap, parseSoap };
+export { errorHasMessage } from "./errors";
+export { fetchWithTls } from "./fetch";
+export {
+  buildSoap,
+  parseSoap,
+  type WithXmlns,
+  type WithXmlnsVersao,
+} from "./soap";
+export type { LiteralStringUnion } from "./types";

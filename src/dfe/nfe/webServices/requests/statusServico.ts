@@ -1,4 +1,5 @@
-import type { WithXmlns, WithXmlnsVersao, UFCode } from ".";
+import type { WithXmlns, WithXmlnsVersao } from "@/utils";
+import type { UFCode } from "@/ufCode";
 
 export type NfeWebServiceResponse<Status, Raw> = {
   status: Status | "outro";
@@ -43,3 +44,8 @@ export interface NfeStatusServicoResponseRaw {
   dhRetorno?: string;
   xObs?: string;
 }
+
+export type NfeStatusServicoResponse = NfeWebServiceResponse<
+  NfeStatusServicoStatus,
+  NfeStatusServicoResponseRaw
+>;

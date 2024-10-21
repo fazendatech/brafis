@@ -1,4 +1,4 @@
-import type { UF, UFCode } from "@/dfe/nfe/types";
+import type { UF, UFCode } from "./types";
 
 const ufCodeMap: Record<UF, UFCode> = {
   AC: "12",
@@ -47,3 +47,5 @@ export function getUfCode(uf: UF): UFCode {
 export function getUfFromCode(code: UFCode): UF {
   return ufCodeMapInverse[code];
 }
+
+export type { UF, UFCode };

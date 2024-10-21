@@ -1,6 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { WebServiceNotFoundError } from "@/dfe/nfe/errors";
-import { getWebServiceUrl } from ".";
+import { getWebServiceUrl, NfeWebServiceNotFoundError } from ".";
 
 describe("getWebServiceUrl", () => {
   test("should return correct url for NFeDistribuicaoDFe service", () => {
@@ -45,6 +44,6 @@ describe("getWebServiceUrl", () => {
         service: "NfeConsultaCadastro",
         env: "producao",
       }),
-    ).toThrowError(WebServiceNotFoundError);
+    ).toThrowError(NfeWebServiceNotFoundError);
   });
 });

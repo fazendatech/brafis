@@ -1,4 +1,7 @@
-import type { WithXmlns, WithXmlnsVersao, UFCode } from ".";
+import type { WithXmlns, WithXmlnsVersao } from "@/utils";
+import type { UFCode } from "@/ufCode";
+
+import type { NfeWebServiceResponse } from "./common";
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
@@ -119,3 +122,8 @@ export interface NfeConsultaCadastroResponseRaw {
     infCad: InfCad[];
   };
 }
+
+export type NfeConsultaCadastroResponse = NfeWebServiceResponse<
+  NfeConsultaCadastroStatus,
+  NfeConsultaCadastroResponseRaw
+>;

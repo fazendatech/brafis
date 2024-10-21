@@ -28,3 +28,5 @@ export function parseSoap<Body>(xml: string): Body {
   const parsed = xmlParser.parse(xml);
   return parsed.Envelope?.Body;
 }
+
+export type { WithXmlns, WithXmlnsVersao } from "./types";

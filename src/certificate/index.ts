@@ -1,6 +1,8 @@
 import { file } from "bun";
 import forge from "node-forge";
+
 import { errorHasMessage } from "@/utils";
+
 import {
   InvalidPasswordError,
   InvalidPfxError,
@@ -12,7 +14,7 @@ import type {
   P12Payload,
   PemPayload,
   CertificateFields,
-} from "./index.d";
+} from "./types";
 
 /**
  * @description Representa um Certificado PFX (PKCS#12).
@@ -175,3 +177,17 @@ export class CertificateP12 {
     };
   }
 }
+
+export {
+  InvalidPasswordError,
+  InvalidPfxError,
+  NoCertificatesFoundError,
+  NoPrivateKeyFoundError,
+};
+
+export type {
+  CertificateP12Options,
+  P12Payload,
+  PemPayload,
+  CertificateFields,
+};

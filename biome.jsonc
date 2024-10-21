@@ -22,6 +22,9 @@
         // NOTE: Biome does not recognize aliased imports.
         "noUndeclaredDependencies": "off",
         "useImportExtensions": "off"
+      },
+      "performance": {
+        "noBarrelFile": "off"
       }
     }
   }

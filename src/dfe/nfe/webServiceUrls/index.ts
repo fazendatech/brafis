@@ -1,12 +1,13 @@
+import type { UF } from "@/ufCode";
+
 import type {
   Environment,
-  UF,
   AuthServer,
-  WebService,
+  NfeWebService,
   WebServiceUrls,
   GetWebServiceUrlOptions,
-} from "@/dfe/nfe/types";
-import { WebServiceNotFoundError } from "@/dfe/nfe/errors";
+} from "./types";
+import { NfeWebServiceNotFoundError } from "./errors";
 
 /**
  * @description UF que tem seu próprio ambiente Sefaz: AM, BA, GO, MT, MS, MG, PR, PE, RS, SP
@@ -512,38 +513,13 @@ const webServices: WebServiceUrls = {
 };
 
 /**
- * @description Retorna a URL do WebService de acordo com a UF, serviço, ambiente e se o servidor está, ou não, em contingência.
- */
-export function getWebServiceUrl({
-  uf,
-  service,
-  env,
-  contingency,
-}: GetWebServiceUrlOptions): string {
-  let url: string | null;
-  if (service === "NFeDistribuicaoDFe") {
-    url = webServices[env].AN.NFeDistribuicaoDFe ?? null;
-  } else {
-    url =
-      (contingency
-        ? getWebServiceUrlContingencia(uf, service, env)
-        : getWebServiceUrlNormal(uf, service, env)) ?? null;
-  }
-
-  if (!url) {
-    throw new WebServiceNotFoundError({ uf, service, env, contingency });
-  }
-  return url;
-}
-
-/**
  * @description Autorizadores em contingência:
  * - UF que utilizam a SVC-AN - Sefaz Virtual de Contingência Ambiente Nacional: AC, AL, AP, CE, DF, ES, MG, PA, PB, PI (Produção), RJ, RN, RO, RR, RS, SC, SE, SP, TO
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
 function getWebServiceUrlContingencia(
   uf: UF,
-  service: WebService,
+  service: NfeWebService,
   env: Environment,
 ): string | null {
   if (uf === "PI") {
@@ -572,7 +548,7 @@ function getWebServiceUrlContingencia(
  */
 function getWebServiceUrlNormal(
   uf: UF,
-  service: WebService,
+  service: NfeWebService,
   env: Environment,
 ): string | null {
   if (ufEnvMap.self.has(uf)) {
@@ -590,3 +566,38 @@ function getWebServiceUrlNormal(
 
   return null;
 }
+
+/**
+ * @description Retorna a URL do WebService de acordo com a UF, serviço, ambiente e se o servidor está, ou não, em contingência.
+ */
+export function getWebServiceUrl({
+  uf,
+  service,
+  env,
+  contingency,
+}: GetWebServiceUrlOptions): string {
+  let url: string | null;
+  if (service === "NFeDistribuicaoDFe") {
+    url = webServices[env].AN.NFeDistribuicaoDFe ?? null;
+  } else {
+    url =
+      (contingency
+        ? getWebServiceUrlContingencia(uf, service, env)
+        : getWebServiceUrlNormal(uf, service, env)) ?? null;
+  }
+
+  if (!url) {
+    throw new NfeWebServiceNotFoundError({ uf, service, env, contingency });
+  }
+  return url;
+}
+
+export { NfeWebServiceNotFoundError };
+
+export type {
+  Environment,
+  AuthServer,
+  NfeWebService,
+  WebServiceUrls,
+  GetWebServiceUrlOptions,
+};
