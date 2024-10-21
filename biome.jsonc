@@ -20,7 +20,8 @@
       },
       "correctness": {
         // NOTE: Biome does not recognize aliased imports.
-        "noUndeclaredDependencies": "off"
+        "noUndeclaredDependencies": "off",
+        "useImportExtensions": "off"
       }
     }
   }
