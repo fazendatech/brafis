@@ -3,7 +3,7 @@
  */
 export class InvalidPfxError extends Error {
   constructor() {
-    super("PFX must be a valid and non-empty Uint8Array");
+    super("PFX must have valid certificate content.");
     this.name = "InvalidPfxError";
   }
 }
@@ -13,7 +13,7 @@ export class InvalidPfxError extends Error {
  */
 export class InvalidPasswordError extends Error {
   constructor() {
-    super("Password must be a non-empty string");
+    super("Invalid password.");
     this.name = "InvalidPasswordError";
   }
 }
