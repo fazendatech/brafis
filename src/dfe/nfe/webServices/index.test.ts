@@ -4,8 +4,7 @@ import { XMLBuilder } from "fast-xml-parser";
 
 import { CertificateP12 } from "@/certificate";
 
-import { NfeWebServices } from ".";
-import { ServiceRequestError } from "./errors";
+import { NfeWebServices, NfeServiceRequestError } from ".";
 
 function buildMockResponse<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
@@ -92,13 +91,15 @@ describe("NfeWebServices", () => {
       );
     });
 
-    test("Request throw ServiceRequestError", () => {
+    test("Request throw NfeServiceRequestError", () => {
       mock(url, {
         method: "POST",
         throw: new Error("An error occurred during the request."),
       });
 
-      expect(() => service.statusServico()).toThrowError(ServiceRequestError);
+      expect(() => service.statusServico()).toThrowError(
+        NfeServiceRequestError,
+      );
     });
   });
 
