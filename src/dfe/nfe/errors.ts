@@ -1,4 +1,4 @@
-import type { GetWebServiceUrlOptions } from "@nfe/types";
+import type { GetWebServiceUrlOptions } from "./types";
 
 /**
  * @description Não foi localizado a url do web service.
