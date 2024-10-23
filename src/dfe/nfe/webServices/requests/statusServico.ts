@@ -1,5 +1,6 @@
 import type { UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
+import type { LiteralStringUnion } from "@/utils/types";
 
 export type NfeWebServiceResponse<Status, Raw> = {
   status: Status | "outro";
@@ -25,7 +26,7 @@ export type NfeStatusServicoStatus =
  *
  * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - `107->"operando"`, `108->"paralisado-temporariamente"`, `109->"paralisado"`.
+ * @property cStat - `"107"->"operando"`, `"108"->"paralisado-temporariamente"`, `"109"->"paralisado"`.
  * @property xMotivo - Descrição da resposta.
  * @property cUF - Código da UF que atendeu a solicitação.
  * @property dhRecbto - Data e hora do processamento.
@@ -36,9 +37,9 @@ export type NfeStatusServicoStatus =
 export interface NfeStatusServicoResponseRaw {
   tpAmb: "1" | "2";
   verAplic: string;
-  cStat: string;
+  cStat: LiteralStringUnion<"107" | "108" | "109">;
   xMotivo: string;
-  cUF: string;
+  cUF: UFCode;
   dhRecbto: string;
   tMed?: string;
   dhRetorno?: string;
