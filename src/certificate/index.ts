@@ -1,7 +1,7 @@
 import { file } from "bun";
 import forge from "node-forge";
 
-import { errorHasMessage } from "@/utils";
+import { errorHasMessage } from "@/utils/errors";
 
 import {
   InvalidPasswordError,
@@ -177,17 +177,3 @@ export class CertificateP12 {
     };
   }
 }
-
-export {
-  InvalidPasswordError,
-  InvalidPfxError,
-  NoCertificatesFoundError,
-  NoPrivateKeyFoundError,
-};
-
-export type {
-  CertificateP12Options,
-  P12Payload,
-  PemPayload,
-  CertificateFields,
-};

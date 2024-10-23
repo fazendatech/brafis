@@ -1,5 +1,5 @@
-import type { WithXmlns, WithXmlnsVersao } from "@/utils";
-import type { UFCode } from "@/ufCode";
+import type { UFCode } from "@/ufCode/types";
+import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 import type { NfeWebServiceResponse } from "./common";
 

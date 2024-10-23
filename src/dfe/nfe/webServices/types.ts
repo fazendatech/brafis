@@ -1,6 +1,6 @@
 import type { CertificateP12 } from "@/certificate";
-import type { UF } from "@/ufCode";
-import type { Environment } from "@/dfe/nfe/webServiceUrls";
+import type { Environment } from "@/dfe/nfe/webServiceUrls/types";
+import type { UF } from "@/ufCode/types";
 
 /**
  * @description Opções do `NfeWebServices`.

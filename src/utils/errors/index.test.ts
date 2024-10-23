@@ -1,5 +1,6 @@
 import { describe, test, expect } from "bun:test";
-import { errorHasMessage } from "@/utils";
+
+import { errorHasMessage } from ".";
 
 describe("errorHasMessage", () => {
   test("Returns true if the error has the expected message", () => {

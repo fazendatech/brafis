@@ -47,5 +47,3 @@ export function getUfCode(uf: UF): UFCode {
 export function getUfFromCode(code: UFCode): UF {
   return ufCodeMapInverse[code];
 }
-
-export type { UF, UFCode };
