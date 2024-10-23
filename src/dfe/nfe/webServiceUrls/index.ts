@@ -1,5 +1,6 @@
-import type { UF } from "@/ufCode";
+import type { UF } from "@/ufCode/types";
 
+import { NfeWebServiceNotFoundError } from "./errors";
 import type {
   Environment,
   AuthServer,
@@ -7,7 +8,6 @@ import type {
   WebServiceUrls,
   GetWebServiceUrlOptions,
 } from "./types";
-import { NfeWebServiceNotFoundError } from "./errors";
 
 /**
  * @description UF que tem seu próprio ambiente Sefaz: AM, BA, GO, MT, MS, MG, PR, PE, RS, SP
@@ -591,13 +591,3 @@ export function getWebServiceUrl({
   }
   return url;
 }
-
-export { NfeWebServiceNotFoundError };
-
-export type {
-  Environment,
-  AuthServer,
-  NfeWebService,
-  WebServiceUrls,
-  GetWebServiceUrlOptions,
-};

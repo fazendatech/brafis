@@ -1,5 +1,7 @@
 import { describe, test, expect } from "bun:test";
-import { getWebServiceUrl, NfeWebServiceNotFoundError } from ".";
+
+import { getWebServiceUrl } from ".";
+import { NfeWebServiceNotFoundError } from "./errors";
 
 describe("getWebServiceUrl", () => {
   test("should return correct url for NFeDistribuicaoDFe service", () => {

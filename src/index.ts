@@ -1,16 +1,25 @@
-import { CertificateP12 } from "@/certificate";
-import { NfeWebServices } from "@/dfe/nfe";
+// biome-ignore lint/performance/noBarrelFile:
+export { CertificateP12 } from "@/certificate";
+export {
+  InvalidPfxError,
+  InvalidPasswordError,
+  NoPrivateKeyFoundError,
+  NoCertificatesFoundError,
+} from "@/certificate/errors";
+export type {
+  CertificateP12Options,
+  PemPayload,
+  P12Payload,
+  CertificateFields,
+} from "@/certificate/types";
 
-const certificate = await CertificateP12.fromFilepath({
-  filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
-  password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
-});
+export { NfeWebServices } from "@/dfe/nfe/webServices";
+export { NfeServiceRequestError } from "@/dfe/nfe/webServices/errors";
+export type { NfeWebServicesOptions } from "@/dfe/nfe/webServices/types";
 
-const service = new NfeWebServices({
-  uf: "DF",
-  env: "homologacao",
-  certificate: certificate,
-});
+export { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
+export { NfeWebServiceNotFoundError } from "@/dfe/nfe/webServiceUrls/errors";
+export type { GetWebServiceUrlOptions } from "@/dfe/nfe/webServiceUrls/types";
 
-const statusServicoResponse = await service.statusServico();
-console.log(statusServicoResponse);
+export { getUfCode, getUfFromCode } from "@/ufCode";
+export type { UF, UFCode } from "@/ufCode/types";

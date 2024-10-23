@@ -1,27 +1,32 @@
 import type { CertificateP12 } from "@/certificate";
-import { buildSoap, fetchWithTls, parseSoap, type WithXmlns } from "@/utils";
-import { getUfCode, type UF, type UFCode } from "@/ufCode";
 import { loadNfeCa } from "@/dfe/nfe/ca";
-import {
-  type Environment,
-  type NfeWebService,
-  getWebServiceUrl,
-} from "@/dfe/nfe/webServiceUrls";
-
-import type { NfeWebServicesOptions } from "./types";
+import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
-  NfeRequestOptions,
-  NfeConsultaCadastroOptions,
-  NfeConsultaCadastroStatus,
-  NfeConsultaCadastroResponseRaw,
-  NfeConsultaCadastroRequest,
-  NfeStatusServicoStatus,
-  NfeStatusServicoResponseRaw,
-  NfeStatusServicoRequest,
-  NfeConsultaCadastroResponse,
-  NfeStatusServicoResponse,
-} from "./requests";
+  Environment,
+  NfeWebService,
+} from "@/dfe/nfe/webServiceUrls/types";
+import { getUfCode } from "@/ufCode";
+import type { UF, UFCode } from "@/ufCode/types";
+import { fetchWithTls } from "@/utils/fetch";
+import { buildSoap, parseSoap } from "@/utils/soap";
+import type { WithXmlns } from "@/utils/soap/types";
+
 import { NfeServiceRequestError } from "./errors";
+import type { NfeRequestOptions } from "./requests/common";
+import type {
+  NfeConsultaCadastroOptions,
+  NfeConsultaCadastroRequest,
+  NfeConsultaCadastroResponse,
+  NfeConsultaCadastroResponseRaw,
+  NfeConsultaCadastroStatus,
+} from "./requests/consultaCadastro";
+import type {
+  NfeStatusServicoRequest,
+  NfeStatusServicoResponse,
+  NfeStatusServicoResponseRaw,
+  NfeStatusServicoStatus,
+} from "./requests/statusServico";
+import type { NfeWebServicesOptions } from "./types";
 
 export class NfeWebServices {
   private uf: UF;
@@ -169,7 +174,3 @@ export class NfeWebServices {
     throw new Error("Method not implemented.");
   }
 }
-
-export { NfeServiceRequestError };
-
-export type { NfeWebServicesOptions };

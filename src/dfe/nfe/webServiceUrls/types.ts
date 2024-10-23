@@ -1,4 +1,4 @@
-import type { UF } from "@/ufCode";
+import type { UF } from "@/ufCode/types";
 
 /**
  * @description Ambiente de emissão da NF-e (tpAmb).

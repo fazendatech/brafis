@@ -1,6 +1,6 @@
-import forge from "node-forge";
-import { file } from "bun";
 import { describe, test, expect, spyOn, afterEach, mock } from "bun:test";
+import { file } from "bun";
+import forge from "node-forge";
 
 import { CertificateP12 } from ".";
 import {

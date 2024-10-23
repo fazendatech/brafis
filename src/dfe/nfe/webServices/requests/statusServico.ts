@@ -1,5 +1,5 @@
-import type { WithXmlns, WithXmlnsVersao } from "@/utils";
-import type { UFCode } from "@/ufCode";
+import type { UFCode } from "@/ufCode/types";
+import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 export type NfeWebServiceResponse<Status, Raw> = {
   status: Status | "outro";

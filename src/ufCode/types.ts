@@ -1,4 +1,4 @@
-import type { LiteralStringUnion } from "@/utils";
+import type { LiteralStringUnion } from "@/utils/types";
 
 export type UF = LiteralStringUnion<
   | "AC"
