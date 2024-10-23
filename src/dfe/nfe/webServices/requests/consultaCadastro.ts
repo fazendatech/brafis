@@ -1,8 +1,8 @@
 import type { UF, UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
+import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
-import type { LiteralStringUnion } from "@/utils/types";
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
@@ -16,10 +16,6 @@ export interface NfeConsultaCadastroOptions {
   CNPJ?: string;
   CPF?: string;
 }
-
-export type NfeConsultaCadastroStatus =
-  | "uma-ocorrencia"
-  | "multiplas-ocorrencias";
 
 export type NfeConsultaCadastroRequest = WithXmlns<{
   ConsCad: WithXmlnsVersao<{
@@ -123,6 +119,10 @@ export interface NfeConsultaCadastroResponseRaw {
     infCad: InfCad[];
   };
 }
+
+export type NfeConsultaCadastroStatus =
+  | "uma-ocorrencia"
+  | "multiplas-ocorrencias";
 
 export type NfeConsultaCadastroResponse = NfeWebServiceResponse<
   NfeConsultaCadastroStatus,
