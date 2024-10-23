@@ -2,11 +2,7 @@ import type { UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-export type NfeWebServiceResponse<Status, Raw> = {
-  status: Status | "outro";
-  description: string;
-  raw: Raw;
-};
+import type { NfeWebServiceResponse } from "./common";
 
 export type NfeStatusServicoRequest = WithXmlns<{
   consStatServ: WithXmlnsVersao<{
@@ -15,11 +11,6 @@ export type NfeStatusServicoRequest = WithXmlns<{
     xServ: "STATUS";
   }>;
 }>;
-
-export type NfeStatusServicoStatus =
-  | "operando"
-  | "paralisado-temporariamente"
-  | "paralisado";
 
 /**
  * @description Resposta completa da consulta de status serviço.
@@ -45,6 +36,11 @@ export interface NfeStatusServicoResponseRaw {
   dhRetorno?: string;
   xObs?: string;
 }
+
+export type NfeStatusServicoStatus =
+  | "operando"
+  | "paralisado-temporariamente"
+  | "paralisado";
 
 export type NfeStatusServicoResponse = NfeWebServiceResponse<
   NfeStatusServicoStatus,
