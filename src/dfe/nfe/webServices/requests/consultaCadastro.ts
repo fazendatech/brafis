@@ -1,7 +1,8 @@
-import type { UFCode } from "@/ufCode/types";
+import type { UF, UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 import type { NfeWebServiceResponse } from "./common";
+import type { LiteralStringUnion } from "@/utils/types";
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
@@ -78,7 +79,7 @@ export interface InfCad {
   IE: string;
   CNPJ?: string;
   CPF?: string;
-  UF: string;
+  UF: UF;
   cSit: "0" | "1";
   indCredNFe: "0" | "1" | "2" | "3" | "4";
   indCredCTe: "0" | "1" | "2" | "3" | "4";
@@ -98,27 +99,27 @@ export interface InfCad {
  * @description Informações da consulta.
  *
  * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - `111->"uma-ocorrencia"`, `112->"multiplas-ocorrencias"`.
+ * @property cStat - `"111"->"uma-ocorrencia"`, `"112"->"multiplas-ocorrencias"`.
  * @property xMotivo - Descrição da resposta.
  * @property UF - Sigla da UF consultada.
  * @property [IE] - Inscrição Estadual.
  * @property [CNPJ] - CNPJ.
  * @property [CPF] - CPF.
  * @property dhCons - Data e hora da consulta.
- * @property cUF - Código da UF consultada.
+ * @property cUF - Código da UF que atendeu a solicitação.
  * @property infCad - Informações do cadastro.
  */
 export interface NfeConsultaCadastroResponseRaw {
   infCons: {
     verAplic: string;
-    cStat: string;
+    cStat: LiteralStringUnion<"111" | "112">;
     xMotivo: string;
-    UF: string;
+    UF: UF;
     IE?: string;
     CNPJ?: string;
     CPF?: string;
     dhCons: string;
-    cUF: string;
+    cUF: UFCode;
     infCad: InfCad[];
   };
 }
