@@ -13,7 +13,7 @@ const service = new NfeWebServices({
 });
 
 const response = await service.consultaCadastro({
-  CPF: "11155599900",
+  CPF: process.env.TEST_CPF ?? "",
 });
 
 console.log(JSON.stringify(response, null, 2));
