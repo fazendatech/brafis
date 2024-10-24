@@ -13,12 +13,13 @@ import type { WithXmlns } from "@/utils/soap/types";
 
 import { NfeServiceRequestError } from "./errors";
 import type { NfeRequestOptions } from "./requests/common";
-import type {
-  NfeConsultaCadastroOptions,
-  NfeConsultaCadastroRequest,
-  NfeConsultaCadastroResponse,
-  NfeConsultaCadastroResponseRaw,
-  NfeConsultaCadastroStatus,
+import {
+  schemaNfeConsultaCadastroOptions,
+  type NfeConsultaCadastroOptions,
+  type NfeConsultaCadastroRequest,
+  type NfeConsultaCadastroResponse,
+  type NfeConsultaCadastroResponseRaw,
+  type NfeConsultaCadastroStatus,
 } from "./requests/consultaCadastro";
 import type {
   NfeStatusServicoRequest,
@@ -143,6 +144,8 @@ export class NfeWebServices {
   async consultaCadastro(
     options: NfeConsultaCadastroOptions,
   ): Promise<NfeConsultaCadastroResponse> {
+    schemaNfeConsultaCadastroOptions.parse(options);
+
     const { retConsCad } = await this.request<
       NfeConsultaCadastroRequest,
       { retConsCad: NfeConsultaCadastroResponseRaw }

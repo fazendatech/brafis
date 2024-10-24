@@ -12,5 +12,8 @@ const service = new NfeWebServices({
   certificate: certificate,
 });
 
-const statusServicoResponse = await service.statusServico();
-console.log(statusServicoResponse);
+const response = await service.consultaCadastro({
+  CPF: process.env.TEST_CPF ?? "",
+});
+
+console.log(JSON.stringify(response, null, 2));
