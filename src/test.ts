@@ -6,8 +6,14 @@ const certificate = await CertificateP12.fromFilepath({
   password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
 });
 
-const _service = new NfeWebServices({
+const service = new NfeWebServices({
   uf: "DF",
   env: "homologacao",
   certificate: certificate,
 });
+
+const response = await service.consultaCadastro({
+  CPF: "11155599900",
+});
+
+console.log(JSON.stringify(response, null, 2));

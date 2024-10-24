@@ -1,8 +1,41 @@
+import { z } from "zod";
+
 import type { UF, UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
-import type { LiteralStringUnion } from "@/utils/types";
+import { isValidCnpj, isValidCpf, isValidIe } from "@/utils/validate";
 
 import type { NfeWebServiceResponse } from "./common";
+import type { LiteralStringUnion } from "@/utils/types";
+
+const regexOnlyDigits = /^\d+$/;
+const schemaValidStringInput = (
+  min: number,
+  max: number,
+  isValidCallback: (value?: string) => boolean,
+) =>
+  z
+    .string()
+    .min(min)
+    .max(max)
+    .regex(regexOnlyDigits, "Use only digits")
+    .optional()
+    .refine((value) => isValidCallback(value));
+
+export const schemaNfeConsultaCadastroOptions = z
+  .object({
+    IE: schemaValidStringInput(2, 14, isValidIe),
+    CNPJ: schemaValidStringInput(3, 14, isValidCnpj),
+    CPF: schemaValidStringInput(3, 11, isValidCpf),
+  })
+  .refine(
+    (data) => {
+      const fields = [data.IE, data.CNPJ, data.CPF].filter(Boolean);
+      return fields.length === 1;
+    },
+    {
+      message: "Exactly one of IE, CNPJ, or CPF must be provided",
+    },
+  );
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
@@ -11,11 +44,9 @@ import type { NfeWebServiceResponse } from "./common";
  * @property {string} [CNPJ] - CNPJ.
  * @property {string} [CPF] - CPF.
  */
-export interface NfeConsultaCadastroOptions {
-  IE?: string;
-  CNPJ?: string;
-  CPF?: string;
-}
+export type NfeConsultaCadastroOptions = z.infer<
+  typeof schemaNfeConsultaCadastroOptions
+>;
 
 export type NfeConsultaCadastroRequest = WithXmlns<{
   ConsCad: WithXmlnsVersao<{
