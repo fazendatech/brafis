@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 const schemaValidateOptions = z.object({
-  type: z.enum(["CPF", "CNPJ"]),
-  value: z.string().min(3).max(19),
+  type: z.enum(["IE", "CPF", "CNPJ"]),
+  value: z.string().min(2).max(19),
 });
 
 /**
  * @description Opções para a função de validação.
  *
- * @property {"CPF" | "CNPJ"} type Tipo de documento a ser validado.
+ * @property {"IE" | "CPF" | "CNPJ"} type Tipo de documento a ser validado.
  * @property {string} value Valor a ser validado.
  */
 export type ValidateOptions = z.infer<typeof schemaValidateOptions>;
@@ -36,6 +36,9 @@ export function validate(options: ValidateOptions): ValidateResponse {
   schemaValidateOptions.parse(options);
 
   const valueOnlyDigits = options.value.replace(leadingNonDigitsRegex, "");
+  if (options.type === "IE" && validateIE(valueOnlyDigits)) {
+    return { valid: true, use: valueOnlyDigits.replace(leadingZerosRegex, "") };
+  }
   if (options.type === "CPF" && validateCPF(valueOnlyDigits)) {
     return { valid: true, use: valueOnlyDigits.replace(leadingZerosRegex, "") };
   }
@@ -101,4 +104,13 @@ function validateCPF(cpf: string): boolean {
       ? Number.parseInt(cpf[10]) !== 0
       : Number.parseInt(cpf[10]) !== 11 - D11)
   );
+}
+
+// TODO: Implementar verdadeiras regras de validação para IE (varia por estado).
+function validateIE(ie: string): boolean {
+  if (ie.length < 8 || ie.length > 14) {
+    return false;
+  }
+
+  return true;
 }
