@@ -6,11 +6,8 @@ const certificate = await CertificateP12.fromFilepath({
   password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
 });
 
-const service = new NfeWebServices({
+const _service = new NfeWebServices({
   uf: "DF",
   env: "homologacao",
   certificate: certificate,
 });
-
-const statusServicoResponse = await service.statusServico();
-console.log(statusServicoResponse);
