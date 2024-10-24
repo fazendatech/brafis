@@ -11,15 +11,15 @@ const regexOnlyDigits = /^\d+$/;
 const schemaValidStringInput = (
   min: number,
   max: number,
-  isValidCallback: (value?: string) => boolean,
+  isValidCallback: (value: string) => boolean,
 ) =>
   z
     .string()
     .min(min)
     .max(max)
     .regex(regexOnlyDigits, "Use only digits")
-    .optional()
-    .refine((value) => isValidCallback(value));
+    .refine((value) => isValidCallback(value))
+    .optional();
 
 export const schemaNfeConsultaCadastroOptions = z
   .object({

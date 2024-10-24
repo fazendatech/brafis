@@ -1,8 +1,4 @@
-export function isValidCnpj(cnpj?: string): boolean {
-  if (!cnpj) {
-    return true;
-  }
-
+export function isValidCnpj(cnpj: string): boolean {
   let D13 = 0;
   let D14 = 0;
 
@@ -28,11 +24,7 @@ export function isValidCnpj(cnpj?: string): boolean {
   );
 }
 
-export function isValidCpf(cpf?: string): boolean {
-  if (!cpf) {
-    return true;
-  }
-
+export function isValidCpf(cpf: string): boolean {
   let D10 = 0;
   let D11 = 0;
 
@@ -56,10 +48,6 @@ export function isValidCpf(cpf?: string): boolean {
 }
 
 // TODO: Implementar verdadeiras regras de validação para IE (varia por estado).
-export function isValidIe(ie?: string): boolean {
-  if (!ie) {
-    return true;
-  }
-
+export function isValidIe(ie: string): boolean {
   return true;
 }
