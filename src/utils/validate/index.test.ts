@@ -16,7 +16,7 @@ describe("validate", () => {
     test("Return true for a valid CNPJ", () => {
       expect(isValidCnpj("00023456000177")).toBe(true);
     });
-    test("Return false for an invalid CPF", () => {
+    test("Return false for an invalid CNPJ", () => {
       expect(isValidCnpj("11223344556677")).toBe(false);
     });
   });
