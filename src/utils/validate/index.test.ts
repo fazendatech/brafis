@@ -1,43 +1,29 @@
 import { describe, test, expect } from "bun:test";
-import { ZodError } from "zod";
-import { validate } from ".";
+
+import { isValidCnpj, isValidCpf } from ".";
 
 describe("validate", () => {
-  const type = "CPF";
-  describe("CPF", () => {
+  describe("isValidCpf", () => {
     test("Return true for a valid CPF", () => {
-      expect(validate({ type, value: "11155599900" })).toMatchObject({
-        valid: true,
-        use: "11155599900",
-      });
+      expect(isValidCpf("11155599900")).toBe(true);
     });
     test("Return false for an invalid CPF", () => {
-      expect(validate({ type, value: "11223344556" }).valid).toBe(false);
-    });
-    test("Return false for a CPF with less than 11 digits", () => {
-      expect(validate({ type, value: "123456789" }).valid).toBe(false);
+      expect(isValidCpf("11223344556")).toBe(false);
     });
   });
 
-  describe("CNPJ", () => {
-    const type = "CNPJ";
+  describe("isValidCnpj", () => {
     test("Return true for a valid CNPJ", () => {
-      const response = validate({ type, value: "00.023.456/0001-77" });
-      expect(response).toMatchObject({ valid: true, use: "23456000177" });
+      expect(isValidCnpj("00023456000177")).toBe(true);
     });
     test("Return false for an invalid CPF", () => {
-      expect(validate({ type, value: "11223344556677" }).valid).toBe(false);
-    });
-    test("Return false for a CNPJ with less than 14 digits", () => {
-      expect(validate({ type, value: "123456789" }).valid).toBe(false);
+      expect(isValidCnpj("11223344556677")).toBe(false);
     });
   });
 
-  describe("Schema parse", () => {
-    test("Throws error because the value lenght", () => {
-      expect(() =>
-        validate({ type: "CPF", value: "12345600000000000789" }),
-      ).toThrowError(ZodError);
-    });
+  describe.todo("isValidIe", () => {
+    test.todo(
+      "Implementar verdadeiras regras de validação para IE (varia por estado)",
+    );
   });
 });
