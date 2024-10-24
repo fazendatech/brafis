@@ -1,57 +1,6 @@
-import { z } from "zod";
-
-const schemaValidateOptions = z.object({
-  type: z.enum(["IE", "CPF", "CNPJ"]),
-  value: z.string().min(2).max(19),
-});
-
-/**
- * @description Opções para a função de validação.
- *
- * @property {"IE" | "CPF" | "CNPJ"} type Tipo de documento a ser validado.
- * @property {string} value Valor a ser validado.
- */
-export type ValidateOptions = z.infer<typeof schemaValidateOptions>;
-
-/**
- * @description Resposta da função de validação.
- *
- * @property {boolean} valid Indica se o valor é válido.
- * @property {string} [use] Valor a ser utilizado após a validação, sem zeros a esquerda e sem caracteres.
- */
-export interface ValidateResponse {
-  valid: boolean;
-  use?: string;
-}
-
-const leadingNonDigitsRegex = /\D/g;
-const leadingZerosRegex = /^0+/;
-
-/**
- * @description Valida um CPF ou CNPJ.
- *
- * @param {ValidateOptions} options
- */
-export function validate(options: ValidateOptions): ValidateResponse {
-  schemaValidateOptions.parse(options);
-
-  const valueOnlyDigits = options.value.replace(leadingNonDigitsRegex, "");
-  if (options.type === "IE" && validateIE(valueOnlyDigits)) {
-    return { valid: true, use: valueOnlyDigits.replace(leadingZerosRegex, "") };
-  }
-  if (options.type === "CPF" && validateCPF(valueOnlyDigits)) {
-    return { valid: true, use: valueOnlyDigits.replace(leadingZerosRegex, "") };
-  }
-  if (options.type === "CNPJ" && validateCNPJ(valueOnlyDigits)) {
-    return { valid: true, use: valueOnlyDigits.replace(leadingZerosRegex, "") };
-  }
-
-  return { valid: false };
-}
-
-function validateCNPJ(cnpj: string): boolean {
-  if (cnpj.length !== 14) {
-    return false;
+export function isValidCnpj(cnpj?: string): boolean {
+  if (!cnpj) {
+    return true;
   }
 
   let D13 = 0;
@@ -79,9 +28,9 @@ function validateCNPJ(cnpj: string): boolean {
   );
 }
 
-function validateCPF(cpf: string): boolean {
-  if (cpf.length !== 11) {
-    return false;
+export function isValidCpf(cpf?: string): boolean {
+  if (!cpf) {
+    return true;
   }
 
   let D10 = 0;
@@ -107,9 +56,9 @@ function validateCPF(cpf: string): boolean {
 }
 
 // TODO: Implementar verdadeiras regras de validação para IE (varia por estado).
-function validateIE(ie: string): boolean {
-  if (ie.length < 8 || ie.length > 14) {
-    return false;
+export function isValidIe(ie?: string): boolean {
+  if (!ie) {
+    return true;
   }
 
   return true;
