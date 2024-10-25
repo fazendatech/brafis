@@ -569,6 +569,12 @@ function getWebServiceUrlNormal(
 
 /**
  * @description Retorna a URL do WebService de acordo com a UF, serviço, ambiente e se o servidor está, ou não, em contingência.
+ *
+ * @param {GetWebServiceUrlOptions} options
+ *
+ * @returns {string} URL do WebService
+ *
+ * @throws {NfeWebServiceNotFoundError} Se a URL do WebService não for encontrada
  */
 export function getWebServiceUrl({
   uf,

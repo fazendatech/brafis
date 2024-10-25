@@ -18,6 +18,7 @@ interface FetchRequestInitWithTls extends RequestInit {
  *
  * @param url
  * @param init
+ *
  * @returns {Promise<Response>}
  */
 export function fetchWithTls(
