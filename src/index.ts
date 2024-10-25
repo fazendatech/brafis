@@ -23,3 +23,5 @@ export type { GetWebServiceUrlOptions } from "@/dfe/nfe/webServiceUrls/types";
 
 export { getUfCode, getUfFromCode } from "@/ufCode";
 export type { UF, UFCode } from "@/ufCode/types";
+
+export { TimeoutError } from "@/utils/errors";
