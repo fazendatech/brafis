@@ -105,6 +105,9 @@ export class NfeWebServices {
    * @description Consulta o status do serviço do SEFAZ correspondente a uma UF.
    *
    * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
+   *
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
   async statusServico(): Promise<NfeStatusServicoResponse> {
     const { retConsStatServ } = await this.request<
@@ -140,7 +143,12 @@ export class NfeWebServices {
    * @description Consulta o cadastro de contribuintes do ICMS em uma UF.
    *
    * @param {NfeConsultaCadastroOptions} options - Opções para a consulta.
+   *
    * @returns {Promise<NfeConsultaCadastroResponse>} Informações sobre o cadastro do contribuinte.
+   *
+   * @throws {Zod.ZodError} Se as opções não forem válidas.
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
   async consultaCadastro(
     options: NfeConsultaCadastroOptions,
