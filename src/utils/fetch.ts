@@ -1,5 +1,7 @@
 import type { BunFile } from "bun";
 
+import { TimeoutError } from "@/utils/errors";
+
 type CertFile = string | Buffer | BunFile;
 
 interface FetchRequestInitWithTls extends RequestInit {
@@ -20,10 +22,17 @@ interface FetchRequestInitWithTls extends RequestInit {
  * @param init
  *
  * @returns {Promise<Response>}
+ *
+ * @throws {TimeoutError} If the request exceeds the timeout.
  */
 export function fetchWithTls(
   url: string | URL | Request,
   init?: FetchRequestInitWithTls,
 ): Promise<Response> {
-  return fetch(url, init);
+  return fetch(url, init).catch((error) => {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      throw new TimeoutError();
+    }
+    throw error;
+  });
 }
