@@ -94,8 +94,8 @@ export class NfeWebServices {
           parseSoap<{ nfeResultMsg: NfeRequestResponse }>(xml).nfeResultMsg,
       )
       .catch((error: Error) => {
-        if (error.name === "TimeoutError") {
-          throw new TimeoutError();
+        if (error instanceof TimeoutError) {
+          throw error;
         }
         throw new NfeServiceRequestError(error, { url, xml: soapBody });
       });

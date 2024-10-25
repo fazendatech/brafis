@@ -113,13 +113,13 @@ export class CertificateP12 {
       );
       privateKey = this.getPrivateKey(p12);
       certificate = this.getCertificate(p12);
-    } catch (e) {
-      if (errorHasMessage(e, "Too few bytes to parse DER.")) {
+    } catch (error) {
+      if (errorHasMessage(error, "Too few bytes to parse DER.")) {
         throw new InvalidPfxError();
       }
       if (
         errorHasMessage(
-          e,
+          error,
           "PKCS#12 MAC could not be verified. Invalid password?",
         )
       ) {
