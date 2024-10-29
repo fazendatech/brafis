@@ -42,9 +42,9 @@ const ufCodeMapInverse = Object.fromEntries(
  * getUfCode("SP") // "35"
  * ```
  *
- * @param uf - Sigla de uma UF.
+ * @param {UF} uf - Sigla de uma UF.
  *
- * @returns Código numérico de uma UF.
+ * @returns {UFCode} Código numérico de uma UF.
  */
 export function getUfCode(uf: UF): UFCode {
   return ufCodeMap[uf];
@@ -58,9 +58,9 @@ export function getUfCode(uf: UF): UFCode {
  * getUfFromCode("35") // "SP"
  * ```
  *
- * @param code - Código numérico de uma UF.
+ * @param {UF} code - Código numérico de uma UF.
  *
- * @returns Sigla de uma UF.
+ * @returns {UFCode} Sigla de uma UF.
  */
 export function getUfFromCode(code: UFCode): UF {
   return ufCodeMapInverse[code];
