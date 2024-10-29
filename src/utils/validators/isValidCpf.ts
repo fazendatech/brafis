@@ -17,7 +17,7 @@ function calcVerifierDigit(digits: string): number {
 /**
  * @description Verifica se um CPF é válido.
  *
- * @param cnpj
+ * @param cpf
  * @param options
  * @returns
  */

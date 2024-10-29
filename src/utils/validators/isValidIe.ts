@@ -3,7 +3,7 @@
  * Apesar das UFs possuírem regras de validação definidas (http://www.sintegra.gov.br/insc_est.html),
  * com frequência essas regras ficam desatualizadas. Portanto, usaremos apenas a regra de tamanho por enquanto.
  *
- * @param cnpj
+ * @param ie
  * @param options
  * @returns
  */
