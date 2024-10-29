@@ -2,45 +2,22 @@ import { z } from "zod";
 
 import type { UF, UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
-import { isValidCnpj } from "@/utils/validators/isValidCnpj";
-import { isValidCpf } from "@/utils/validators/isValidCpf";
-import { isValidIe } from "@/utils/validators/isValidIe";
 import type { LiteralStringUnion } from "@/utils/types";
+import { zCustom } from "@/utils/zCustom";
 
 import type { NfeWebServiceResponse } from "./common";
 
-const regexOnlyDigits = /^\d+$/;
-const schemaValidStringInput = (
-  min: number,
-  max: number,
-  isValidCallback: (value: string) => boolean,
-) =>
-  z
-    .string()
-    .min(min)
-    .max(max)
-    .regex(regexOnlyDigits, "Use only digits")
-    .refine((value) => isValidCallback(value))
-    .optional();
-
 export const schemaNfeConsultaCadastroOptions = z
   .object({
-    IE: schemaValidStringInput(2, 14, isValidIe),
-    CNPJ: schemaValidStringInput(3, 14, isValidCnpj),
-    CPF: schemaValidStringInput(3, 11, isValidCpf),
+    IE: zCustom.string.ie().optional(),
+    CPF: zCustom.string.cpf().optional(),
+    CNPJ: zCustom.string.cnpj().optional(),
   })
-  .refine(
-    (data) => {
-      const fields = [data.IE, data.CNPJ, data.CPF].filter(Boolean);
-      return fields.length === 1;
-    },
-    {
-      message: "Exactly one of IE, CNPJ, or CPF must be provided",
-    },
-  );
+  .refine((obj) => zCustom.utils.hasOnlyOne([obj.IE, obj.CPF, obj.CNPJ]));
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
+ * Deve ser usado apenas um dos campos IE, CNPJ ou CPF.
  *
  * @property {string} [IE] - Inscrição Estadual.
  * @property {string} [CNPJ] - CNPJ.
