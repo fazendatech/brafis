@@ -23,7 +23,7 @@ describe("CertificateP12", async () => {
   });
 
   describe("asPem", () => {
-    test("Convert PFX to PEM format", () => {
+    test("Converts PFX to PEM format", () => {
       const certificate = new CertificateP12({
         pfx: selfSignedPfxBuffer,
         password,
