@@ -51,7 +51,7 @@ describe("NfeWebServices", () => {
     const url =
       "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
 
-    test("Nfe get status success", async () => {
+    test("Returns status success", async () => {
       const mockResponse = {
         nfeResultMsg: {
           retConsStatServ: {
@@ -108,7 +108,7 @@ describe("NfeWebServices", () => {
     const url =
       "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx";
 
-    test("Nfe get register consult success", async () => {
+    test("Returns valid response", async () => {
       const mockResponse = {
         nfeResultMsg: {
           retConsCad: {
