@@ -2,7 +2,9 @@ import { z } from "zod";
 
 import type { UF, UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
-import { isValidCnpj, isValidCpf, isValidIe } from "@/utils/validate";
+import { isValidCnpj } from "@/utils/validators/isValidCnpj";
+import { isValidCpf } from "@/utils/validators/isValidCpf";
+import { isValidIe } from "@/utils/validators/isValidIe";
 
 import type { NfeWebServiceResponse } from "./common";
 import type { LiteralStringUnion } from "@/utils/types";
