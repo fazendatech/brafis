@@ -5,9 +5,9 @@ import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import { isValidCnpj } from "@/utils/validators/isValidCnpj";
 import { isValidCpf } from "@/utils/validators/isValidCpf";
 import { isValidIe } from "@/utils/validators/isValidIe";
+import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
-import type { LiteralStringUnion } from "@/utils/types";
 
 const regexOnlyDigits = /^\d+$/;
 const schemaValidStringInput = (
