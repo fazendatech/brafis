@@ -7,6 +7,7 @@ import { schemaNfeDest } from "./groupE";
 import { schemaNfeRetirada } from "./groupF";
 import { schemaNfeEntrega } from "./groupG";
 import { schemaNfeAutXml } from "./groupGA";
+import { schemaNfeDet } from "./groupH";
 
 const schemaNfeInfNfe = z
   .object({
@@ -19,6 +20,18 @@ const schemaNfeInfNfe = z
     retirada: schemaNfeRetirada.optional(),
     entrega: schemaNfeEntrega.optional(),
     autXml: z.array(schemaNfeAutXml).max(10).optional(),
+    det: z
+      .array(schemaNfeDet)
+      .nonempty()
+      .max(990)
+      .refine((array) => {
+        for (let i = 0; i < array.length; i++) {
+          if (Number.parseInt(array[i].nItem) !== i + 1) {
+            return false;
+          }
+        }
+        return true;
+      }),
   })
   .refine(
     (obj) =>
