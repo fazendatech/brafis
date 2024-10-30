@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { schemaNfeIde } from "./B";
 import { schemaNfeEmit } from "./C";
+import { schemaNfeAvulsa } from "./D";
 
 const schemaNfeInfNfe = z
   .object({
@@ -9,6 +10,7 @@ const schemaNfeInfNfe = z
     Id: z.string().startsWith("NFe").length(47).describe("A03"), // TODO: Validar
     ide: schemaNfeIde,
     emit: schemaNfeEmit,
+    avulsa: schemaNfeAvulsa.optional(),
   })
   .describe("infNFe:A01");
 

@@ -7,6 +7,8 @@ import { isValidIe } from "@/utils/validators/isValidIe";
 const stringRange = (min: number, max: number) => z.string().min(min).max(max);
 
 const stringNumeric = () => z.string().regex(/^\d+$/, "Use only digits");
+const stringDecimal = () =>
+  z.string().regex(/^\d+,\d{2}$/, "Use decimal number with comma");
 
 const stringDate = () => z.string().datetime({ precision: 0 });
 
@@ -40,6 +42,7 @@ export const zCustom = {
     range: stringRange,
     date: stringDate,
     numeric: stringNumeric,
+    decimal: stringDecimal,
 
     ie: stringIe,
     cpf: stringCpf,
