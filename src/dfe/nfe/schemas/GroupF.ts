@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
+
 import { zUf } from "./GroupC";
 
 const schemaNfeRetirada = z
