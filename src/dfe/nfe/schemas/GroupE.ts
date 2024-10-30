@@ -16,7 +16,7 @@ const schemaEnderDest = z
     CEP: zCustom.string.numeric().length(8).optional().describe("E13"),
     cPais: zCustom.string.numeric().min(2).max(4).optional().describe("E14"), // TODO: Validar - utilizar a Tabela do BACEN (Seção 8.3 do MOC – Visão Geral, Tabela de UF, Município e País).
     xPais: zCustom.string.range(2, 60).optional().describe("E15"),
-    fone: zCustom.string.range(6, 14).optional().describe("E16"), // Telefone
+    fone: zCustom.string.phone().optional().describe("E16"), // Telefone
   })
   .refine((obj) => (obj.xMun === "EXTERIOR" ? obj.UF === "EX" : true)) // TODO: cPais e xPais !== Brasil
   .describe("enderDest:E05");
@@ -33,7 +33,7 @@ const schemaNfeDest = z
     // TODO: Validar? - Obrigatório, nas operações que se beneficiam de incentivos fiscais existentes nas áreas sob controle da SUFRAMA. A omissão desta informação impede o processamento da operação pelo Sistema de Mercadoria Nacional da SUFRAMA e a liberação da Declaração de Ingresso, prejudicando a comprovação do ingresso internamento da mercadoria nestas áreas. (v2.0)
     ISUF: zCustom.string.range(8, 9).optional().describe("E18"),
     IM: zCustom.string.range(1, 15).optional().describe("E18a"),
-    email: z.string().email().min(1).max(60).optional().describe("E19"),
+    email: zCustom.string.range(1, 60).email().optional().describe("E19"),
   })
   .refine(
     (obj) =>

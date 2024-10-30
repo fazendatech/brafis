@@ -44,7 +44,7 @@ const schemaEnderEmit = z.object({
   CEP: zCustom.string.numeric().length(8).optional().describe("C13"),
   cPais: zCustom.string.numeric().length(4).optional().describe("C14"), // "1058" = Brasil
   xPais: zCustom.string.range(2, 60).optional().describe("C15"), // "brasil" ou "BRASIL"
-  fone: zCustom.string.numeric().min(6).max(14).optional().describe("C16"),
+  fone: zCustom.string.phone().optional().describe("C16"),
 });
 
 const schemaNfeEmit = z

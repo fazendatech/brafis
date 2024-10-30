@@ -26,6 +26,8 @@ const stringCpf = () =>
     .length(11)
     .refine((value) => isValidCpf(value));
 
+const stringPhone = () => stringNumeric().min(6).max(14);
+
 function hasOnlyOne<T>(values: T[]) {
   values.filter(Boolean);
   return values.length === 1;
@@ -47,6 +49,8 @@ export const zCustom = {
     ie: stringIe,
     cpf: stringCpf,
     cnpj: stringCnpj,
+
+    phone: stringPhone,
   },
   utils: {
     hasOnlyOne,

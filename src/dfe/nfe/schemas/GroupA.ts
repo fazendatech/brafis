@@ -4,6 +4,7 @@ import { schemaNfeIde } from "./GroupB";
 import { schemaNfeEmit } from "./GroupC";
 import { schemaNfeAvulsa } from "./GroupD";
 import { schemaNfeDest } from "./GroupE";
+import { schemaNfeRetirada } from "./GroupF";
 
 const schemaNfeInfNfe = z
   .object({
@@ -13,6 +14,7 @@ const schemaNfeInfNfe = z
     emit: schemaNfeEmit,
     avulsa: schemaNfeAvulsa.optional(),
     dest: schemaNfeDest,
+    retirada: schemaNfeRetirada.optional(),
   })
   .refine(
     (obj) =>
