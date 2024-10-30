@@ -18,7 +18,11 @@ const schemaEnderDest = z
     xPais: zCustom.string.range(2, 60).optional().describe("E15"),
     fone: zCustom.string.phone().optional().describe("E16"), // Telefone
   })
-  .refine((obj) => (obj.xMun === "EXTERIOR" ? obj.UF === "EX" : true)) // TODO: cPais e xPais !== Brasil
+  .refine((obj) =>
+    obj.xMun === "EXTERIOR" || obj.UF === "EX"
+      ? obj.xMun === "EXTERIOR" && obj.UF === "EX"
+      : true,
+  ) // TODO: cPais e xPais !== Brasil
   .describe("enderDest:E05");
 
 const schemaNfeDest = z
