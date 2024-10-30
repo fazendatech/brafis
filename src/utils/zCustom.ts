@@ -10,27 +10,29 @@ const stringNumeric = () => z.string().regex(/^\d+$/, "Use only digits");
 
 const stringDate = () => z.string().datetime({ precision: 0 });
 
-const stringRegisterNumber = (
-  min: number,
-  max: number,
-  isValidCallback: (value: string) => boolean,
-) =>
+const stringIe = () =>
   stringNumeric()
-    .min(min)
-    .max(max)
-    .refine((value) => isValidCallback(value))
-    .optional();
-
-const stringIe = (min?: number, max?: number) =>
-  stringRegisterNumber(min ?? 2, max ?? 14, isValidIe);
-const stringCnpj = (min?: number, max?: number) =>
-  stringRegisterNumber(min ?? 3, max ?? 14, isValidCnpj);
-const stringCpf = (min?: number, max?: number) =>
-  stringRegisterNumber(min ?? 3, max ?? 11, isValidCpf);
+    .min(8)
+    .max(14)
+    .refine((value) => isValidIe(value));
+const stringCnpj = () =>
+  stringNumeric()
+    .length(14)
+    .refine((value) => isValidCnpj(value));
+const stringCpf = () =>
+  stringNumeric()
+    .length(11)
+    .refine((value) => isValidCpf(value));
 
 function hasOnlyOne<T>(values: T[]) {
   values.filter(Boolean);
   return values.length === 1;
+}
+
+function hasAll<T>(values: T[]) {
+  const len = values.length;
+  values.filter(Boolean);
+  return values.length === len;
 }
 
 export const zCustom = {
@@ -38,7 +40,6 @@ export const zCustom = {
     range: stringRange,
     date: stringDate,
     numeric: stringNumeric,
-    registerNumber: stringRegisterNumber,
 
     ie: stringIe,
     cpf: stringCpf,
@@ -46,5 +47,6 @@ export const zCustom = {
   },
   utils: {
     hasOnlyOne,
+    hasAll,
   },
 };
