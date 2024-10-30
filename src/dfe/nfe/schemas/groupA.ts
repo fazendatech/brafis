@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { schemaNfeIde } from "./GroupB";
-import { schemaNfeEmit } from "./GroupC";
-import { schemaNfeAvulsa } from "./GroupD";
-import { schemaNfeDest } from "./GroupE";
-import { schemaNfeRetirada } from "./GroupF";
-import { schemaNfeEntrega } from "./GroupG";
+import { schemaNfeIde } from "./groupB";
+import { schemaNfeEmit } from "./groupC";
+import { schemaNfeAvulsa } from "./groupD";
+import { schemaNfeDest } from "./groupE";
+import { schemaNfeRetirada } from "./groupF";
+import { schemaNfeEntrega } from "./groupG";
 
 const schemaNfeInfNfe = z
   .object({

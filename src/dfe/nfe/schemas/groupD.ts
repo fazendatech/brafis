@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
 
-import { zUf } from "./GroupC";
+import { zUf } from "./groupC";
 
 const schemaNfeAvulsa = z
   .object({
