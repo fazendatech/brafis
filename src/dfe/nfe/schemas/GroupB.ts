@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
 
-import { schemaNfeNfRef } from "./BA";
+import { schemaNfeNfRef } from "./GroupBA";
 
 export const zUfCode = () =>
   z.enum([
