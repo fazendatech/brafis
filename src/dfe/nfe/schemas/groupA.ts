@@ -6,6 +6,7 @@ import { schemaNfeAvulsa } from "./groupD";
 import { schemaNfeDest } from "./groupE";
 import { schemaNfeRetirada } from "./groupF";
 import { schemaNfeEntrega } from "./groupG";
+import { schemaNfeAutXml } from "./groupGA";
 
 const schemaNfeInfNfe = z
   .object({
@@ -17,6 +18,7 @@ const schemaNfeInfNfe = z
     dest: schemaNfeDest,
     retirada: schemaNfeRetirada.optional(),
     entrega: schemaNfeEntrega.optional(),
+    autXml: z.array(schemaNfeAutXml).max(10).optional(),
   })
   .refine(
     (obj) =>
