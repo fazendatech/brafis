@@ -2,7 +2,7 @@ import { zCustom } from "@/utils/zCustom";
 
 import { z } from "zod";
 
-import { zUfCode } from "./GroupB";
+import { zUfCode } from "./groupB";
 
 const isValidAamm = (aamm: string) => {
   const month = Number.parseInt(aamm.slice(2, 4));
