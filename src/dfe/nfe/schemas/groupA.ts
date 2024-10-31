@@ -22,7 +22,7 @@ const schemaNfeInfNfe = z
     autXml: z.array(schemaNfeAutXml).max(10).optional(),
     det: z
       .array(schemaNfeDet)
-      .nonempty()
+      .min(1)
       .max(990)
       .refine((array) => {
         for (let i = 0; i < array.length; i++) {
