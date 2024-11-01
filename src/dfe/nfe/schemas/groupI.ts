@@ -2,6 +2,10 @@ import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
 
+import { schemaNfeDi } from "./groupI01";
+import { schemaNfeDetExport } from "./groupI03";
+import { schemaNfeRastro } from "./groupI80";
+
 const schemaNfeProd = z
   .object({
     cProd: zCustom.string.range(1, 60).describe("I02"),
@@ -41,6 +45,19 @@ const schemaNfeProd = z
     vDesc: zCustom.string.decimal().max(13).optional().describe("I17"),
     vOutro: zCustom.string.decimal().max(13).optional().describe("I17a"),
     indTot: z.enum(["0", "1"]).describe("I17b"),
+    DI: z.array(schemaNfeDi).min(1).max(100).optional().describe("I18"),
+    detExport: z
+      .array(schemaNfeDetExport)
+      .min(1)
+      .max(500)
+      .optional()
+      .describe("I50"),
+    // Group I05
+    xPed: zCustom.string.range(1, 15).optional().describe("I60"),
+    nItemPed: zCustom.string.numeric().length(6).optional().describe("I61"),
+    // Group I07
+    nFCI: z.string().length(36).optional().describe("I70"), // Informação relacionada com a Resolução 13/2012 do Senado Federal. Formato: Algarismos, letras maiúsculas de "A" a "F" e o caractere hífen. Exemplo: B01F70AF-10BF4B1F-848C-65FF57F616FE
+    rastro: z.array(schemaNfeRastro).min(1).max(500).optional().describe("I80"),
   })
   .refine((obj) => (obj.indEscala || obj.CNPJFab ? obj.CEST : true)) // Grupo Opcional (I05b)
   .describe("prod:I01");
