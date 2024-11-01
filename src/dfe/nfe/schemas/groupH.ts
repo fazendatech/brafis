@@ -1,5 +1,8 @@
-import { zCustom } from "@/utils/zCustom";
 import { z } from "zod";
+
+import { zCustom } from "@/utils/zCustom";
+
+import { schemaNfeProd } from "./groupI";
 
 const schemaNfeDet = z
   .object({
@@ -11,6 +14,7 @@ const schemaNfeDet = z
         return num > 0 && num <= 990;
       })
       .describe("H02"),
+    prod: schemaNfeProd,
   })
   .describe("det:H01");
 

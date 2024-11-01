@@ -7,8 +7,13 @@ import { isValidIe } from "@/utils/validators/isValidIe";
 const stringRange = (min: number, max: number) => z.string().min(min).max(max);
 
 const stringNumeric = () => z.string().regex(/^\d+$/, "Use only digits");
-const stringDecimal = () =>
-  z.string().regex(/^\d+,\d{2}$/, "Use decimal number with comma");
+const stringDecimal = (min?: number, max?: number) => {
+  if (min !== undefined && max !== undefined) {
+    const regex = new RegExp(`^\\d+(,\\d{${min},${max}})?$`);
+    return z.string().regex(regex, "Use decimal number with comma");
+  }
+  return z.string().regex(/^\d+,\d{2}$/, "Use decimal number with comma");
+};
 
 const stringDate = () => z.string().datetime({ precision: 0 });
 
