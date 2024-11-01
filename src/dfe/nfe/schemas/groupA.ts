@@ -12,7 +12,7 @@ import { schemaNfeDet } from "./groupH";
 const schemaNfeInfNfe = z
   .object({
     "@_versao": z.literal("4.00").describe("A02"),
-    Id: z.string().startsWith("NFe").length(47).describe("A03"), // TODO: Validar
+    "@_Id": z.string().startsWith("NFe").length(47).describe("A03"), // TODO: Validar
     ide: schemaNfeIde,
     emit: schemaNfeEmit,
     avulsa: schemaNfeAvulsa.optional(),
