@@ -9,7 +9,7 @@ const schemaNfeISSQNTot = z
     vISS: zCustom.string.decimal().length(16).optional().describe("W20"),
     vPIS: zCustom.string.decimal().length(16).optional().describe("W21"),
     vCOFINS: zCustom.string.decimal().length(16).optional().describe("W22"),
-    dCompet: zCustom.string.date().describe("W22a"),
+    dCompet: z.string().date().describe("W22a"),
     vDeducao: zCustom.string.decimal().length(16).optional().describe("W22b"),
     vOutro: zCustom.string.decimal().length(16).optional().describe("W22c"),
     vDescIncond: zCustom.string
