@@ -1,6 +1,6 @@
 import type { UF, UFCode } from "./types";
 
-const ufCodeMap: Record<UF, UFCode> = {
+export const ufCodeMap: Record<UF, UFCode> = {
   AC: "12",
   AL: "27",
   AP: "16",
@@ -30,7 +30,7 @@ const ufCodeMap: Record<UF, UFCode> = {
   TO: "17",
 };
 
-const ufCodeMapInverse = Object.fromEntries(
+export const ufCodeMapInverse = Object.fromEntries(
   Object.entries(ufCodeMap).map(([uf, code]) => [code, uf]),
 ) as Record<UFCode, UF>;
 

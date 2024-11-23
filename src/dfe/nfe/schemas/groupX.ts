@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
 import { zUf } from ".";
 
@@ -23,9 +22,17 @@ const schemaNfeTransp = z
       .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne([CNPJ, CPF]), {
         message: "Deve ser informado apenas um CNPJ ou CPF",
       })
-      .refine(({ IE, UF }) => !IE || UF, {
-        message: "UF é obrigatório quando informado uma IE",
-      })
+      .refine(
+        ({ IE, UF }) => {
+          if (IE && !UF) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: "UF é obrigatório quando informado uma IE",
+        },
+      )
       .describe("X03")
       .optional(),
     retTransp: z
@@ -41,13 +48,7 @@ const schemaNfeTransp = z
       .describe("X11"),
     veicTransp: z
       .object({
-        placa: z
-          .string()
-          .regex(/^(?:[A-Z]{3}[0-9]{3,4}|[A-Z]{2}[0-9]{4}|[A-Z]{4}[0-9]{3})$/, {
-            message:
-              "Formatos de placas válidas: XXX9999, XXX999, XX9999, or XXXX999. Informar a placa em informações complementares quando a placa do veículo tiver lei de formação diversa",
-          })
-          .describe("X19"),
+        placa: zCustom.string.placa().describe("X19"),
         UF: zUf().or(z.literal("EX")).describe("X20"),
         RNTC: zCustom.string.range(1, 20).optional().describe("X21"),
       })

@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeCobr = z
