@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeInfRespTec = z
@@ -11,14 +10,17 @@ const schemaNfeInfRespTec = z
     idCSRT: zCustom.string.numeric().length(2).optional().describe("ZD08"),
     hashCSRT: z.string().length(28).optional().describe("ZD09"),
   })
-  .refine(({ idCSRT, hashCSRT }) => !idCSRT === !hashCSRT, {
-    message: "Se informado, idCSRT e hashCSRT devem ser informados juntos.",
-  })
+  .refine(
+    ({ idCSRT, hashCSRT }) => zCustom.utils.hasAllOrNothing([idCSRT, hashCSRT]),
+    {
+      message: "Os campos idCSRT e hashCSRT devem ser informados juntos.",
+    },
+  )
   .describe("infRespTec:ZD01");
-
-type NfeInfRespTec = z.infer<typeof schemaNfeInfRespTec>;
 
 /**
  * @description Grupo ZD. Informações do Responsável Técnico
  */
+type NfeInfRespTec = z.infer<typeof schemaNfeInfRespTec>;
+
 export { schemaNfeInfRespTec, type NfeInfRespTec };

@@ -1,8 +1,6 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
-
-import { zUf } from "./groupC";
+import { zUf } from ".";
 
 const schemaNfeRetirada = z
   .object({
@@ -23,18 +21,29 @@ const schemaNfeRetirada = z
     email: zCustom.string.range(1, 60).email().optional().describe("F14"),
     IE: zCustom.string.ie().optional().describe("F15"),
   })
+  .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne([CNPJ, CPF]), {
+    message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
+  })
   .refine(
-    (obj) =>
-      zCustom.utils.hasOnlyOne([obj.CNPJ, obj.CPF]) &&
-      (obj.cMun === "9999999" || obj.xMun === "EXTERIOR" || obj.UF === "EX"
-        ? obj.cMun === "9999999" && obj.xMun === "EXTERIOR" && obj.UF === "EX"
-        : true),
+    ({ cMun, xMun, UF }) => {
+      if (cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX") {
+        return true;
+      }
+      if (cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX") {
+        return true;
+      }
+      return false;
+    },
+    {
+      message:
+        "Se a operação for no exterior, informar cMun = '9999999', xMun = 'EXTERIOR' e UF = 'EX'",
+    },
   )
   .describe("retirada:F01");
-
-type NfeRetirada = z.infer<typeof schemaNfeRetirada>;
 
 /**
  * @description Grupo F. Identificação do Local de Retirada
  */
+type NfeRetirada = z.infer<typeof schemaNfeRetirada>;
+
 export { schemaNfeRetirada, type NfeRetirada };

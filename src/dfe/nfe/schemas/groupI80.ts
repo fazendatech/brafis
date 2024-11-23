@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeRastro = z
@@ -12,9 +11,9 @@ const schemaNfeRastro = z
   })
   .describe("rastro:I80");
 
-type NfeRastro = z.infer<typeof schemaNfeRastro>;
-
 /**
  * @description Grupo I80. Rastreabilidade de Produto
  */
+type NfeRastro = z.infer<typeof schemaNfeRastro>;
+
 export { schemaNfeRastro, type NfeRastro };

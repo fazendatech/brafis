@@ -1,7 +1,5 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
-
 import { schemaNfeDi } from "./groupI01";
 import { schemaNfeDetExport } from "./groupI03";
 import { schemaNfeRastro } from "./groupI80";
@@ -20,9 +18,9 @@ const schemaNfeProd = z
     // END I05b
     cBenef: z
       .string()
-      .min(8)
-      .max(10)
-      .refine((value) => value.length !== 9)
+      .refine((value) => value.length === 8 || value.length === 10, {
+        message: "O campo cBenef deve ter 8 ou 10 caracteres.",
+      })
       .optional()
       .describe("I05f"),
     EXTIPI: zCustom.string.numeric().min(2).max(3).optional().describe("I06"),
@@ -59,12 +57,26 @@ const schemaNfeProd = z
     nFCI: z.string().length(36).optional().describe("I70"), // Informação relacionada com a Resolução 13/2012 do Senado Federal. Formato: Algarismos, letras maiúsculas de "A" a "F" e o caractere hífen. Exemplo: B01F70AF-10BF4B1F-848C-65FF57F616FE
     rastro: z.array(schemaNfeRastro).min(1).max(500).optional().describe("I80"),
   })
-  .refine((obj) => (obj.indEscala || obj.CNPJFab ? obj.CEST : true)) // Grupo Opcional (I05b)
+  .refine(
+    ({ indEscala, CNPJFab, CEST }) => {
+      if (indEscala && !CEST) {
+        return false;
+      }
+      if (CNPJFab && !CEST) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "Se informado indEscala ou CNPJFab, então CEST precisa ser ser informado",
+    },
+  ) // Grupo Opcional (I05b)
   .describe("prod:I01");
-
-type NfeProd = z.infer<typeof schemaNfeProd>;
 
 /**
  * @description Grupo I. Produtos e Serviços da NF-e
  */
+type NfeProd = z.infer<typeof schemaNfeProd>;
+
 export { schemaNfeProd, type NfeProd };

@@ -1,8 +1,6 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
-
-import { zUf } from "./groupC";
+import { zUf } from ".";
 
 const schemaNfeAvulsa = z
   .object({
@@ -20,9 +18,9 @@ const schemaNfeAvulsa = z
   })
   .describe("avulsa:D01");
 
-type NfeAvulsa = z.infer<typeof schemaNfeAvulsa>;
-
 /**
  * @description Grupo D. Identificação do Fisco Emitente da NF-e (uso exclusivo do fisco)
  */
+type NfeAvulsa = z.infer<typeof schemaNfeAvulsa>;
+
 export { schemaNfeAvulsa, type NfeAvulsa };

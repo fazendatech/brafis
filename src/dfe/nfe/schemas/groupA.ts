@@ -8,6 +8,13 @@ import { schemaNfeRetirada } from "./groupF";
 import { schemaNfeEntrega } from "./groupG";
 import { schemaNfeAutXml } from "./groupGA";
 import { schemaNfeDet } from "./groupH";
+import { schemaNfeTotal } from "./groupW";
+import { schemaNfeTransp } from "./groupX";
+import { schemaNfeCobr } from "./groupY";
+import { schemaNfePag } from "./groupYA";
+import { schemaNfeInfIntermed } from "./groupYB";
+import { schemaNfeInfAdic } from "./groupZ";
+import { schemaNfeInfRespTec } from "./groupZD";
 
 const schemaNfeInfNfe = z
   .object({
@@ -25,26 +32,44 @@ const schemaNfeInfNfe = z
       .min(1)
       .max(990)
       .refine((array) => {
-        for (let i = 0; i < array.length; i++) {
-          if (Number.parseInt(array[i].nItem) !== i + 1) {
-            return false;
-          }
-        }
-        return true;
+        array.every(({ nItem }, i) => Number(nItem) === i + 1);
       }),
+    total: schemaNfeTotal,
+    transp: schemaNfeTransp,
+    cobr: schemaNfeCobr.optional(),
+    pag: schemaNfePag,
+    infIntermed: schemaNfeInfIntermed.optional(),
+    infAdic: schemaNfeInfAdic.optional(),
+    infRespTec: schemaNfeInfRespTec.optional(),
   })
   .refine(
-    (obj) =>
-      (obj.ide.mod === "55" ? obj.dest.xNome : true) && // dest.xNome obrigatório para a NF-e (modelo 55) e opcional para a NFC-e.
-      (obj.ide.mod === "65"
-        ? obj.dest.indIEDest === "9" && !obj.dest.IE
-        : true), //No caso de NFC-e (ide.mod->65) informar dest.indIEDest=9 e não informar a tag Idest.E
+    ({ ide: { mod }, dest: { xNome } }) => {
+      if (mod === "55") {
+        return xNome !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "dest.xNome é obrigatório para a NF-e (modelo 55).",
+    },
+  )
+  .refine(
+    ({ ide: { mod }, dest: { indIEDest, IE } }) => {
+      if (mod === "65") {
+        return indIEDest === "9" && !IE;
+      }
+      return true;
+    },
+    {
+      message:
+        "No caso de NFC-e (modelo 65) informar dest.indIEDest=9 e não informar a tag dest.IE",
+    },
   )
   .describe("infNFe:A01");
-
-type NfeInfNfe = z.infer<typeof schemaNfeInfNfe>;
 
 /**
  * @description Grupo A. Dados da Nota Fiscal eletrônica
  */
+type NfeInfNfe = z.infer<typeof schemaNfeInfNfe>;
+
 export { schemaNfeInfNfe, type NfeInfNfe };

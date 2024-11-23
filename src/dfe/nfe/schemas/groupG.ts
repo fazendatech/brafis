@@ -1,8 +1,6 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
-
-import { zUf } from "./groupC";
+import { zUf } from ".";
 
 const schemaNfeEntrega = z
   .object({
@@ -24,17 +22,25 @@ const schemaNfeEntrega = z
     IE: zCustom.string.ie().optional().describe("G15"),
   })
   .refine(
-    (obj) =>
-      zCustom.utils.hasOnlyOne([obj.CNPJ, obj.CPF]) &&
-      (obj.cMun === "9999999" || obj.xMun === "EXTERIOR" || obj.UF === "EX"
-        ? obj.cMun === "9999999" && obj.xMun === "EXTERIOR" && obj.UF === "EX"
-        : true),
+    ({ cMun, xMun, UF }) => {
+      if (cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX") {
+        return true;
+      }
+      if (cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX") {
+        return true;
+      }
+      return false;
+    },
+    {
+      message:
+        "Se a operação for no exterior, informar cMun = '9999999', xMun = 'EXTERIOR' e UF = 'EX",
+    },
   )
   .describe("entrega:G01");
-
-type NfeEntrega = z.infer<typeof schemaNfeEntrega>;
 
 /**
  * @description Grupo G. Identificação do Local de Entrega
  */
+type NfeEntrega = z.infer<typeof schemaNfeEntrega>;
+
 export { schemaNfeEntrega, type NfeEntrega };
