@@ -65,7 +65,10 @@ const schemaNfeNfRef = z
   .refine(
     ({ refNfe, refNF, refNFP, refCTe, refECF }) =>
       zCustom.utils.hasOnlyOne([refNfe, refNF, refNFP, refCTe, refECF]),
-    { message: "Deve ser informado apenas um dos campos." },
+    {
+      message:
+        "Deve ser informado apenas um dos campos: refNfe, refNF, refNFP, refCTe ou refECF.",
+    },
   )
   .describe("NFref:BA01");
 
