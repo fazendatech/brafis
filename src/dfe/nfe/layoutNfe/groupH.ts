@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
 import { schemaNfeProd } from "./groupI";
+import { schemaNfeImposto } from "./groupM";
 
 const schemaNfeDet = z
   .object({
@@ -16,7 +17,7 @@ const schemaNfeDet = z
       )
       .describe("H02"),
     prod: schemaNfeProd,
-    // imposto: schemaNfeImposto,
+    imposto: schemaNfeImposto,
     // impostoDevol: schemaNfeImpostoDevol.optional(),
     infAdProd: z.string().max(500).optional().describe("H05"),
   })
