@@ -32,13 +32,7 @@ const schemaNfeIde = z
     indIntermed: z.enum(["0", "1"]).optional().describe("B25c"),
     procEmi: z.enum(["0", "1", "2", "3"]).describe("B26"),
     verProc: zCustom.string.range(1, 20).describe("B27"),
-    dhCont: zCustom.string
-      .date()
-      .refine((date) => new Date(date) <= new Date(), {
-        message: "Data de emissão não pode ser futura",
-      })
-      .optional()
-      .describe("B28"),
+    dhCont: zCustom.string.date().optional().describe("B28"),
     xJust: zCustom.string.range(15, 256).optional().describe("B29"),
     NFref: z.array(schemaNfeNfRef).max(500).optional(),
   })
