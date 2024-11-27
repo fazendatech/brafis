@@ -49,6 +49,10 @@ export function verifierDigit(digits: string): number {
   return dv > 9 ? 0 : dv;
 }
 
+export function validateVerifierDigit(value: string) {
+  return Number(value.slice(-1)) === verifierDigit(value.slice(0, -1));
+}
+
 export function formatYYMM(date: Date): string {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
