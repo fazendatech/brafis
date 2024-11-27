@@ -15,7 +15,7 @@ const schemaNfeRetirada = z
     xMun: zCustom.string.range(2, 60).describe("F08"),
     UF: zUf().or(z.literal("EX")).describe("F09"),
     CEP: zCustom.string.numeric().length(8).optional().describe("F10"),
-    cPais: zCustom.string.numeric().length(4).optional().describe("F11"), // Utilizar a Tabela do BACEN (Seção 8.3 do MOC – Visão Geral,Tabela de UF, Município e País).
+    cPais: zCustom.string.numeric().length(4).optional().describe("F11"),
     xPais: zCustom.string.range(2, 60).optional().describe("F12"),
     fone: zCustom.string.phone().optional().describe("F13"),
     email: zCustom.string.range(1, 60).email().optional().describe("F14"),
@@ -26,17 +26,15 @@ const schemaNfeRetirada = z
   })
   .refine(
     ({ cMun, xMun, UF }) => {
-      if (cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX") {
-        return true;
-      }
-      if (cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX") {
-        return true;
-      }
-      return false;
+      const isExterior =
+        cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX";
+      const isNotExterior =
+        cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX";
+      return isExterior || isNotExterior;
     },
     {
       message:
-        "Se a operação for no exterior, informar cMun = '9999999', xMun = 'EXTERIOR' e UF = 'EX'",
+        "Se a operação for no exterior, informar cMun = '9999999', xMun = 'EXTERIOR' e UF = 'EX'.",
     },
   )
   .describe("retirada:F01");
