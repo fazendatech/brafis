@@ -37,9 +37,10 @@ const schemaNfeInfNfe = z
       .array(schemaNfeDet)
       .min(1)
       .max(990)
-      .refine((array) => {
-        array.every(({ nItem }, i) => Number(nItem) === i + 1);
-      }),
+      .refine(
+        (array) => array.every(({ nItem }, i) => Number(nItem) === i + 1),
+        { message: "nItem deve ser sequencial a partir de 1" },
+      ),
     total: schemaNfeTotal,
     transp: schemaNfeTransp,
     cobr: schemaNfeCobr.optional(),
@@ -48,24 +49,12 @@ const schemaNfeInfNfe = z
     infAdic: schemaNfeInfAdic.optional(),
     infRespTec: schemaNfeInfRespTec.optional(),
   })
+  .refine(({ ide, dest }) => (ide.mod === "55" ? !!dest.xNome : true), {
+    message: "dest.xNome é obrigatório para a NF-e (modelo 55).",
+  })
   .refine(
-    ({ ide: { mod }, dest: { xNome } }) => {
-      if (mod === "55") {
-        return xNome !== undefined;
-      }
-      return true;
-    },
-    {
-      message: "dest.xNome é obrigatório para a NF-e (modelo 55).",
-    },
-  )
-  .refine(
-    ({ ide: { mod }, dest: { indIEDest, IE } }) => {
-      if (mod === "65") {
-        return indIEDest === "9" && !IE;
-      }
-      return true;
-    },
+    ({ ide, dest }) =>
+      ide.mod === "65" ? dest.indIEDest === "9" && !dest.IE : true,
     {
       message:
         "No caso de NFC-e (modelo 65) informar dest.indIEDest=9 e não informar a tag dest.IE",
