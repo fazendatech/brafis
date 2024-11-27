@@ -10,7 +10,7 @@ const schemaNfeDi = z
     UFDesemb: zUf().describe("I22"),
     dDesemb: zCustom.string.date().describe("I23"),
     tpViaTransp: z.enum(["1", "2", "3", "4", "5", "6", "7"]).describe("I23a"),
-    vAFRMM: zCustom.string.decimal().max(13).optional().describe("I23b"),
+    vAFRMM: zCustom.string.decimal(13, 2).optional().describe("I23b"),
     tpIntermedio: z.enum(["1", "2", "3"]).describe("I23c"),
     CNPJ: zCustom.string.cnpj().optional().describe("I23d"),
     UFTerceiro: zUf().optional().describe("I23e"),
@@ -21,7 +21,7 @@ const schemaNfeDi = z
           nAdicao: zCustom.string.numeric().min(1).max(3).describe("I26"),
           nSeqAdic: zCustom.string.numeric().min(1).max(3).describe("I27"),
           cFabricante: zCustom.string.range(1, 60).describe("I28"),
-          vDescDI: zCustom.string.decimal().max(13).optional().describe("I29"),
+          vDescDI: zCustom.string.decimal(13, 2).optional().describe("I29"),
           nDraw: zCustom.string
             .numeric()
             .refine((value) => value.length === 9 || value.length === 11, {

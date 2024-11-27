@@ -27,7 +27,7 @@ const schemaNfePag = z
               "99",
             ])
             .describe("YA02"),
-          vPag: zCustom.string.decimal().length(16).describe("YA03"),
+          vPag: zCustom.string.decimal(13, 2).describe("YA03"),
           card: z
             .object({
               tpIntegra: z.enum(["1", "2"]).optional().describe("YA04a"),
@@ -48,11 +48,7 @@ const schemaNfePag = z
                 .optional()
                 .describe("YA06"),
               cAut: zCustom.string.range(1, 20).optional().describe("YA07"),
-              vTroco: zCustom.string
-                .decimal()
-                .length(16)
-                .optional()
-                .describe("YA09"),
+              vTroco: zCustom.string.decimal(13, 2).optional().describe("YA09"),
             })
             .optional()
             .describe("YA04"),

@@ -26,22 +26,21 @@ const schemaNfeProd = z
     EXTIPI: zCustom.string.numeric().min(2).max(3).optional().describe("I06"),
     CFOP: zCustom.string.numeric().length(4).describe("I08"),
     uCom: zCustom.string.range(1, 6).describe("I09"),
-    qCom: zCustom.string.decimal(1, 4).max(11).describe("I10"),
-    vUnCom: zCustom.string.decimal(1, 10).max(11).describe("I10a"),
-    vProd: zCustom.string.decimal().max(13).describe("I11"),
+    qCom: zCustom.string.decimal(11, 4).describe("I10"),
+    vUnCom: zCustom.string.decimal(11, 10).describe("I10a"),
+    vProd: zCustom.string.decimal(13, 2).describe("I11"),
     cEANTrib: zCustom.string.range(8, 14).optional().describe("I12"),
     uTrib: zCustom.string.range(1, 6).describe("I13"),
-    qTrib: zCustom.string.decimal(1, 4).max(11).describe("I14"),
-    vUnTrib: zCustom.string.decimal(1, 10).max(11).describe("I14a"),
+    qTrib: zCustom.string.decimal(11, 4).describe("I14"),
+    vUnTrib: zCustom.string.decimal(11, 10).describe("I14a"),
     vFrete: zCustom.string
-      .decimal()
-      .max(13)
+      .decimal(13, 2)
       .or(z.literal("SEM GTIN"))
       .optional()
       .describe("I15"),
-    vSeg: zCustom.string.decimal().max(13).optional().describe("I16"),
-    vDesc: zCustom.string.decimal().max(13).optional().describe("I17"),
-    vOutro: zCustom.string.decimal().max(13).optional().describe("I17a"),
+    vSeg: zCustom.string.decimal(13, 2).optional().describe("I16"),
+    vDesc: zCustom.string.decimal(13, 2).optional().describe("I17"),
+    vOutro: zCustom.string.decimal(13, 2).optional().describe("I17a"),
     indTot: z.enum(["0", "1"]).describe("I17b"),
     DI: z.array(schemaNfeDi).min(1).max(100).optional().describe("I18"),
     detExport: z
