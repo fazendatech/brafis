@@ -15,32 +15,48 @@ const schemaNfeDest = z
         xCpl: zCustom.string.range(1, 60).optional().describe("E08"),
         xBairro: zCustom.string.range(2, 60).describe("E09"),
         cMun: zCustom.string.numeric().length(7).describe("E10"),
-        xMun: zCustom.string.range(2, 60).describe("E11"), // Nome do município ou "EXTERIOR"
-        UF: zUf().or(z.literal("EX")).describe("E12"), // "EX" - Operações no exterior
+        xMun: zCustom.string.range(2, 60).describe("E11"),
+        UF: zUf().or(z.literal("EX")).describe("E12"),
         CEP: zCustom.string.numeric().length(8).optional().describe("E13"),
         cPais: zCustom.string
           .numeric()
           .min(2)
           .max(4)
           .optional()
-          .describe("E14"), // TODO: Validar - utilizar a Tabela do BACEN (Seção 8.3 do MOC – Visão Geral, Tabela de UF, Município e País).
+          .describe("E14"),
         xPais: zCustom.string.range(2, 60).optional().describe("E15"),
-        fone: zCustom.string.phone().optional().describe("E16"), // Telefone
+        fone: zCustom.string.phone().optional().describe("E16"),
       })
-      .refine(({ xMun, UF }) => {
-        // TODO: cPais e xPais !== Brasil
-        if (xMun === "EXTERIOR" && UF === "EX") {
+      .refine(
+        ({ cPais, xPais }) => {
+          if (cPais === "1058") {
+            return xPais === "BRASIL" || xPais === "Brasil";
+          }
           return true;
-        }
-        if (xMun !== "EXTERIOR" && UF !== "EX") {
-          return true;
-        }
-        return false;
-      })
+        },
+        { message: "Para cPais='1058', xPais deve ser 'BRASIL' ou 'Brasil'." },
+      )
+      .refine(
+        ({ cPais, xMun, UF }) => {
+          if (cPais === "1058") {
+            return true;
+          }
+          if (xMun === "EXTERIOR" && UF === "EX") {
+            return true;
+          }
+          if (xMun !== "EXTERIOR" && UF !== "EX") {
+            return true;
+          }
+          return false;
+        },
+        {
+          message:
+            "Se a operação é no exterior, então xMun deve ser 'EXTERIOR' e UF='EX'.",
+        },
+      )
       .describe("enderDest:E05"),
     indIEDest: z.enum(["1", "2", "9"]).describe("E16a"),
     IE: zCustom.string.ie().optional().describe("E17"),
-    // TODO: Validar? - Obrigatório, nas operações que se beneficiam de incentivos fiscais existentes nas áreas sob controle da SUFRAMA. A omissão desta informação impede o processamento da operação pelo Sistema de Mercadoria Nacional da SUFRAMA e a liberação da Declaração de Ingresso, prejudicando a comprovação do ingresso internamento da mercadoria nestas áreas. (v2.0)
     ISUF: zCustom.string.range(8, 9).optional().describe("E18"),
     IM: zCustom.string.range(1, 15).optional().describe("E18a"),
     email: zCustom.string.range(1, 60).email().optional().describe("E19"),
@@ -54,16 +70,11 @@ const schemaNfeDest = z
     },
   )
   .refine(
-    ({ idEstrangeiro, enderDest: { xMun } }) => {
-      if (idEstrangeiro) {
-        //NOTE: Os demais campos referentes ao exterior são validados em enderDest
-        return xMun === "EXTERIOR";
-      }
-      return true;
-    },
+    ({ idEstrangeiro, enderDest }) =>
+      idEstrangeiro ? enderDest.xMun === "EXTERIOR" : true,
     {
       message:
-        "Se informado idEstrangeiro então a operação deve ser identificada como no exterior",
+        "Se informado idEstrangeiro então a operação deve ser identificada como no exterior.",
     },
   )
   .refine(
@@ -75,7 +86,7 @@ const schemaNfeDest = z
     },
     {
       message:
-        "No caso de operação com o exterior deve-se informar indIEDest='9' e não informar a tag IE do destinatário.",
+        "Para operações com o exterior, 'indIEDest' deve ser '9' e 'IE' não deve ser informada.",
     },
   )
   .refine(
