@@ -26,11 +26,13 @@ const schemaNfeRetirada = z
   })
   .refine(
     ({ cMun, xMun, UF }) => {
-      const isExterior =
-        cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX";
-      const isNotExterior =
-        cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX";
-      return isExterior || isNotExterior;
+      if (cMun === "9999999" && xMun === "EXTERIOR" && UF === "EX") {
+        return true;
+      }
+      if (cMun !== "9999999" && xMun !== "EXTERIOR" && UF !== "EX") {
+        return true;
+      }
+      return false;
     },
     {
       message:

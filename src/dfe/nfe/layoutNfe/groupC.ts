@@ -16,7 +16,7 @@ const schemaNfeEmit = z
         xBairro: zCustom.length(2, 60).describe("C09"),
         cMun: zCustom.numeric().length(7).describe("C10"),
         xMun: zCustom.length(2, 60).describe("C11"),
-        UF: zUf().describe("C12"), // UF
+        UF: zUf().describe("C12"),
         CEP: zCustom.numeric().length(8).optional().describe("C13"),
         cPais: zCustom.numeric().length(4).optional().describe("C14"),
         xPais: zCustom.length(2, 60).optional().describe("C15"),
@@ -43,8 +43,8 @@ const schemaNfeEmit = z
   })
   .refine(
     ({ CNAE, IM }) => {
-      if (CNAE && !IM) {
-        return false;
+      if (CNAE) {
+        return !!IM;
       }
       return true;
     },
