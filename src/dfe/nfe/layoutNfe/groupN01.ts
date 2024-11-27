@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
+import { hasJSDocParameterTags } from "typescript";
 
 /**
  * @returns z.enum(["0", "1", "2", "3", "4", "5", "6", "7", "8"]).describe("N11");
@@ -99,6 +100,32 @@ const zVICMSDeson = () =>
 const zMotDesICMS = (array: [string, ...string[]]) =>
   z.enum(array).optional().describe("N28");
 
+function hasFcp(vBCFCP?: string, pFCP?: string, vFCP?: string) {
+  if (vBCFCP && pFCP && vFCP) {
+    return true;
+  }
+  if (!vBCFCP && !pFCP && !vFCP) {
+    return true;
+  }
+  return false;
+}
+function hasDes(vICMSDeson?: string, motDesICMS?: string) {
+  if (vICMSDeson && !motDesICMS) {
+    return false;
+  }
+  if (!vICMSDeson && motDesICMS) {
+    return false;
+  }
+  return true;
+}
+
+const messageFcp =
+  "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP), então vBCFCP, vFCP e pFCP devem ser todos informados";
+const messageFcpst =
+  "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP) retido por Substituição Tributária, então vBCFCPST, vFCPST e pFCPST devem ser todos informados";
+const messageDes =
+  "No caso de ICMS Desoneração, então vICMSDeson e motDesICMS devem ser ambos informados";
+
 const schemaNfeICMS00 = z
   .object({
     orig: zOrig(),
@@ -148,45 +175,15 @@ const schemaNfeICMS10 = z
     pFCPST: zPFCPST(),
     vFCPST: zVFCPST(),
   })
-  .refine(
-    ({ vBCFCP, pFCP, vFCP }) => {
-      if (vBCFCP && (!pFCP || !vFCP)) {
-        return false;
-      }
-      if (pFCP && (!vBCFCP || !vFCP)) {
-        return false;
-      }
-      if (vFCP && (!vBCFCP || !pFCP)) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP), então vBCFCP, vFCP e pFCP devem ser todos informados",
-    },
-  )
-  .refine(
-    ({ vBCFCPST, pFCPST, vFCPST }) => {
-      if (vBCFCPST && (!pFCPST || !vFCPST)) {
-        return false;
-      }
-      if (pFCPST && (!vBCFCPST || !vFCPST)) {
-        return false;
-      }
-      if (vFCPST && (!vBCFCPST || !pFCPST)) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP) retido por Substituição Tributária, então vBCFCP, vFCP e pFCP devem ser todos informados",
-    },
-  )
+  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
+    message: messageFcp,
+  })
+  .refine(({ vBCFCPST, pFCPST, vFCPST }) => hasFcp(vBCFCPST, pFCPST, vFCPST), {
+    message: messageFcpst,
+  })
   .describe("ICMS10:N03");
 
-const schemaICMS20 = z
+const schemaNfeICMS20 = z
   .object({
     orig: zOrig(),
     CST: zCST("20"),
@@ -201,39 +198,12 @@ const schemaICMS20 = z
     vICMSDeson: zVICMSDeson(),
     motDesICMS: zMotDesICMS(["3", "9", "12"]),
   })
-  .refine(
-    ({ vBCFCP, pFCP, vFCP }) => {
-      if (vBCFCP && (!pFCP || !vFCP)) {
-        return false;
-      }
-      if (pFCP && (!vBCFCP || !vFCP)) {
-        return false;
-      }
-      if (vFCP && (!vBCFCP || !pFCP)) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP), então vBCFCP, vFCP e pFCP devem ser todos informados",
-    },
-  )
-  .refine(
-    ({ vICMSDeson, motDesICMS }) => {
-      if (vICMSDeson && !motDesICMS) {
-        return false;
-      }
-      if (!vICMSDeson && motDesICMS) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        "No caso de ICMS Desoneração, então vICMSDeson e motDesICMS devem ser ambos informados",
-    },
-  )
+  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
+    message: messageFcp,
+  })
+  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
+    message: messageDes,
+  })
   .describe("ICMS20:N04");
 
 const schemaNfeICMS30 = z
@@ -252,11 +222,70 @@ const schemaNfeICMS30 = z
     vICMSDeson: zVICMSDeson(),
     motDesICMS: zMotDesICMS(["6", "7", "9"]),
   })
+  .refine(({ vBCFCPST, pFCPST, vFCPST }) => hasFcp(vBCFCPST, pFCPST, vFCPST), {
+    message: messageFcpst,
+  })
+  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
+    message: messageDes,
+  })
   .describe("ICMS30:N05");
 
+const schemaNfeICMS40 = z
+  .object({
+    orig: zOrig(),
+    CST: z.enum(["40", "41", "50"]).describe("N12"),
+    vICMSDeson: zVICMSDeson(),
+    motDesICMS: zMotDesICMS([
+      "1",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "16",
+      "90",
+    ]),
+  })
+  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
+    message: messageDes,
+  })
+  .describe("ICMS40:N06");
+
+const schemaNfeICMS51 = z
+  .object({
+    orig: zOrig(),
+    CST: zCST("51"),
+    modBC: zModBC().optional(),
+    pRedBC: zPRedBC().optional(),
+    vBC: zVBC().optional(),
+    pICMS: zPICMS().optional(),
+    vICMSOp: zCustom.string.decimal().max(16).optional().describe("N16a"),
+    pDif: zCustom.string.decimal(2, 4).max(8).optional().describe("N16b"),
+    vICMSDif: zCustom.string.decimal().max(16).optional().describe("N16c"),
+    vICMS: zVICMS().optional(),
+    vBCFCP: zVBCFCP(),
+    pFCP: zPFCP(),
+    vFCP: zVFCP(),
+  })
+  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
+    message: messageFcp,
+  })
+  .describe("ICMS51:N07");
+
 const schemaNfeICMS = z
-  .object({ ICMS: schemaNfeICMS00.or(schemaNfeICMS10).or(schemaICMS20) })
-  .describe("N01");
+  .object({
+    ICMS: schemaNfeICMS00
+      .or(schemaNfeICMS10)
+      .or(schemaNfeICMS20)
+      .or(schemaNfeICMS30)
+      .or(schemaNfeICMS40)
+      .or(schemaNfeICMS51),
+  })
+  .describe("ICMS:N01");
 
 /**
  * @description Grupo N01. ICMS Normal e ST
