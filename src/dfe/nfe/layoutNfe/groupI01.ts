@@ -24,10 +24,20 @@ const schemaNfeDi = z
           vDescDI: zCustom.decimal(13, 2).optional().describe("I29"),
           nDraw: zCustom
             .numeric()
-            .refine((value) => value.length === 9 || value.length === 11, {
-              message:
-                "O número do Ato Concessório de Suspensão deve ser preenchido com 11 dígitos (AAAANNNNNND) e o número do Ato Concessório de Drawback Isenção deve ser preenchido com 9 dígitos (AANNNNNND).",
-            })
+            .refine(
+              (value) => {
+                if (!value) {
+                  return true;
+                }
+                const drawback9 = /^\d{2}\d{6}\d$/; // AANNNNNND
+                const drawback11 = /^\d{4}\d{6}\d$/; // AAAANNNNNND
+                return drawback11.test(value) || drawback9.test(value);
+              },
+              {
+                message:
+                  "O número do Ato Concessório de Suspensão deve ser preenchido com 11 dígitos (AAAANNNNNND) e o número do Ato Concessório de Drawback Isenção deve ser preenchido com 9 dígitos (AANNNNNND).",
+              },
+            )
             .optional()
             .describe("I29a"),
         }),
