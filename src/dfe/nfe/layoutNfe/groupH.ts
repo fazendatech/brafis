@@ -11,9 +11,9 @@ const schemaNfeDet = z
       .refine(
         (value) => {
           const num = Number(value);
-          return num > 0 && num <= 990;
+          return num >= 1 && num <= 990;
         },
-        { message: "Deve ser maior que 0 e menor ou igual a 990." },
+        { message: "Deve estar entre 1 e 990." },
       )
       .describe("H02"),
     prod: schemaNfeProd,
