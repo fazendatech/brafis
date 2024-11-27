@@ -62,7 +62,7 @@ const schemaNfeDi = z
     },
     {
       message:
-        "Os campos CNPJ e UFTerceiro são obrigatórios quando tpIntermedio é igual a 1 (Importação por conta e ordem ou por encomenda).",
+        "Os campos CNPJ e UFTerceiro são obrigatórios quando tpIntermedio é igual a '2' ou '3' (Importação por conta e ordem ou por encomenda).",
     },
   )
   .describe("DI:I18");
