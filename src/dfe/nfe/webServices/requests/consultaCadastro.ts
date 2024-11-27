@@ -17,7 +17,7 @@ export const schemaNfeConsultaCadastroOptions = z
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
- * Deve ser usado apenas um dos campos IE, CNPJ ou CPF.
+ * Deve ser usado um, e apenas um, dos campos IE, CNPJ ou CPF.
  *
  * @property {string} [IE] - Inscrição Estadual.
  * @property {string} [CNPJ] - CNPJ.
