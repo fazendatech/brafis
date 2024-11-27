@@ -3,13 +3,13 @@ import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeRetTrib = z
   .object({
-    vRetPIS: zCustom.string.decimal(13, 2).optional().describe("W31"),
-    vRetCOFINS: zCustom.string.decimal(13, 2).optional().describe("W32"),
-    vRetCSLL: zCustom.string.decimal(13, 2).optional().describe("W33"),
-    vBCIRRF: zCustom.string.decimal(13, 2).optional().describe("W34"),
-    vIRRF: zCustom.string.decimal(13, 2).optional().describe("W35"),
-    vBCRetPrev: zCustom.string.decimal(13, 2).optional().describe("W36"),
-    vRetPrev: zCustom.string.decimal(13, 2).optional().describe("W37"),
+    vRetPIS: zCustom.decimal(13, 2).optional().describe("W31"),
+    vRetCOFINS: zCustom.decimal(13, 2).optional().describe("W32"),
+    vRetCSLL: zCustom.decimal(13, 2).optional().describe("W33"),
+    vBCIRRF: zCustom.decimal(13, 2).optional().describe("W34"),
+    vIRRF: zCustom.decimal(13, 2).optional().describe("W35"),
+    vBCRetPrev: zCustom.decimal(13, 2).optional().describe("W36"),
+    vRetPrev: zCustom.decimal(13, 2).optional().describe("W37"),
   })
   .describe("retTrib:W30");
 

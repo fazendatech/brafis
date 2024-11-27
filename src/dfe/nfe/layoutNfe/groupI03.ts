@@ -3,7 +3,7 @@ import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeDetExport = z
   .object({
-    nDraw: zCustom.string
+    nDraw: zCustom
       .numeric()
       .refine((value) => value.length === 9 || value.length === 11, {
         message:
@@ -15,7 +15,7 @@ const schemaNfeDetExport = z
       .object({
         nRE: z.string().length(12).describe("I53"),
         chNFe: z.string().length(44).describe("I54"),
-        qExport: zCustom.string.decimal(11, 4).describe("I55"),
+        qExport: zCustom.decimal(11, 4).describe("I55"),
       })
       .optional()
       .describe("I52"),

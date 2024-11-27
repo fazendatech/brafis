@@ -17,77 +17,74 @@ const zCST = (cst: string) => z.literal(cst).describe("N12");
  */
 const zModBC = () => z.enum(["0", "1", "2", "3"]).describe("N13");
 /**
- * @returns zCustom.string.decimal(3, 4).describe("N14");
+ * @returns zCustom.decimal(3, 4).describe("N14");
  */
-const zPRedBC = () => zCustom.string.decimal(3, 4).describe("N14");
+const zPRedBC = () => zCustom.decimal(3, 4).describe("N14");
 /**
- * @returns zCustom.string.decimal(13,2).describe("N15");
+ * @returns zCustom.decimal(13,2).describe("N15");
  */
-const zVBC = () => zCustom.string.decimal(13, 2).describe("N15");
+const zVBC = () => zCustom.decimal(13, 2).describe("N15");
 /**
- * @returns zCustom.string.decimal(3, 4).describe("N16");
+ * @returns zCustom.decimal(3, 4).describe("N16");
  */
-const zPICMS = () => zCustom.string.decimal(3, 4).describe("N16");
+const zPICMS = () => zCustom.decimal(3, 4).describe("N16");
 /**
- * @returns zCustom.string.decimal(13, 2).describe("N17");
+ * @returns zCustom.decimal(13, 2).describe("N17");
  */
-const zVICMS = () => zCustom.string.decimal(13, 2).describe("N17");
+const zVICMS = () => zCustom.decimal(13, 2).describe("N17");
 /**
- * @returns zCustom.string.decimal(13, 2).describe("N17.a");
+ * @returns zCustom.decimal(13, 2).describe("N17.a");
  */
-const zVBCFCP = () =>
-  zCustom.string.decimal(13, 2).optional().describe("N17.a");
+const zVBCFCP = () => zCustom.decimal(13, 2).optional().describe("N17.a");
 /**
- * @returns zCustom.string.decimal(3, 4).optional().describe("N17.b");
+ * @returns zCustom.decimal(3, 4).optional().describe("N17.b");
  */
-const zPFCP = () => zCustom.string.decimal(3, 4).optional().describe("N17.b");
+const zPFCP = () => zCustom.decimal(3, 4).optional().describe("N17.b");
 /**
- * @returns zCustom.string.decimal(13, 2).describe("N17.c");
+ * @returns zCustom.decimal(13, 2).describe("N17.c");
  */
-const zVFCP = () => zCustom.string.decimal(13, 2).optional().describe("N17.c");
+const zVFCP = () => zCustom.decimal(13, 2).optional().describe("N17.c");
 /**
  * @returns z.enum(["0", "1", "2", "3", "4", "5", "6"]).describe("N18");
  */
 const zModBCST = () =>
   z.enum(["0", "1", "2", "3", "4", "5", "6"]).describe("N18");
 /**
- * @returns zCustom.string.decimal(3, 4).describe("N19");
+ * @returns zCustom.decimal(3, 4).describe("N19");
  */
-const zPMVAST = () => zCustom.string.decimal(3, 4).optional().describe("N19");
+const zPMVAST = () => zCustom.decimal(3, 4).optional().describe("N19");
 /**
- * @returns zCustom.string.decimal(3, 4).describe("N20");
+ * @returns zCustom.decimal(3, 4).describe("N20");
  */
-const zPRedBCST = () => zCustom.string.decimal(3, 4).optional().describe("N20");
+const zPRedBCST = () => zCustom.decimal(3, 4).optional().describe("N20");
 /**
- * @returns zCustom.string.decimal(13, 2).describe("N21");
+ * @returns zCustom.decimal(13, 2).describe("N21");
  */
-const zVBCST = () => zCustom.string.decimal(13, 2).describe("N21");
+const zVBCST = () => zCustom.decimal(13, 2).describe("N21");
 /**
- * @returns zCustom.string.decimal(3, 4).describe("N22");
+ * @returns zCustom.decimal(3, 4).describe("N22");
  */
-const zPICMSST = () => zCustom.string.decimal(3, 4).describe("N22");
+const zPICMSST = () => zCustom.decimal(3, 4).describe("N22");
 /**
- * @returns zCustom.string.decimal(13, 2).describe("N23");
+ * @returns zCustom.decimal(13, 2).describe("N23");
  */
-const zVICMSST = () => zCustom.string.decimal(13, 2).describe("N23");
+const zVICMSST = () => zCustom.decimal(13, 2).describe("N23");
 /**
- * @returns zCustom.string.decimal(13, 2).optional().describe("N23a");
+ * @returns zCustom.decimal(13, 2).optional().describe("N23a");
  */
-const zVBCFCPST = () =>
-  zCustom.string.decimal(13, 2).optional().describe("N23a");
+const zVBCFCPST = () => zCustom.decimal(13, 2).optional().describe("N23a");
 /**
- * @returns zCustom.string.decimal(3, 4).optional().describe("N23b");
+ * @returns zCustom.decimal(3, 4).optional().describe("N23b");
  */
-const zPFCPST = () => zCustom.string.decimal(3, 4).optional().describe("N23b");
+const zPFCPST = () => zCustom.decimal(3, 4).optional().describe("N23b");
 /**
- * @returns zCustom.string.decimal(13, 2).optional().describe("N23c");
+ * @returns zCustom.decimal(13, 2).optional().describe("N23c");
  */
-const zVFCPST = () => zCustom.string.decimal(13, 2).optional().describe("N23d");
+const zVFCPST = () => zCustom.decimal(13, 2).optional().describe("N23d");
 /**
- * @returns zCustom.string.decimal(13, 2).optional().describe("N28a");
+ * @returns zCustom.decimal(13, 2).optional().describe("N28a");
  */
-const zVICMSDeson = () =>
-  zCustom.string.decimal(13, 2).optional().describe("N28a");
+const zVICMSDeson = () => zCustom.decimal(13, 2).optional().describe("N28a");
 /**
  * @returns z.enum(array).optional().describe("N28");
  */
@@ -257,9 +254,9 @@ const schemaNfeICMS51 = z
     pRedBC: zPRedBC().optional(),
     vBC: zVBC().optional(),
     pICMS: zPICMS().optional(),
-    vICMSOp: zCustom.string.decimal(13, 2).optional().describe("N16a"),
-    pDif: zCustom.string.decimal(3, 4).optional().describe("N16b"),
-    vICMSDif: zCustom.string.decimal(13, 2).optional().describe("N16c"),
+    vICMSOp: zCustom.decimal(13, 2).optional().describe("N16a"),
+    pDif: zCustom.decimal(3, 4).optional().describe("N16b"),
+    vICMSDif: zCustom.decimal(13, 2).optional().describe("N16c"),
     vICMS: zVICMS().optional(),
     vBCFCP: zVBCFCP(),
     pFCP: zPFCP(),

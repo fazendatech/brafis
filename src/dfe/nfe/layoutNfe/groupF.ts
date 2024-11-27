@@ -4,24 +4,24 @@ import { zUf } from ".";
 
 const schemaNfeRetirada = z
   .object({
-    CNPJ: zCustom.string.cnpj().optional().describe("F02"),
-    CPF: zCustom.string.cpf().optional().describe("F02a"),
-    xNome: zCustom.string.range(2, 60).optional().describe("F02b"),
-    xLgr: zCustom.string.range(2, 60).describe("F03"),
-    nro: zCustom.string.range(1, 60).describe("F04"),
-    xCpl: zCustom.string.range(1, 60).optional().describe("F05"),
-    xBairro: zCustom.string.range(2, 60).describe("F06"),
-    cMun: zCustom.string.numeric().length(7).describe("F07"),
-    xMun: zCustom.string.range(2, 60).describe("F08"),
+    CNPJ: zCustom.cnpj().optional().describe("F02"),
+    CPF: zCustom.cpf().optional().describe("F02a"),
+    xNome: zCustom.range(2, 60).optional().describe("F02b"),
+    xLgr: zCustom.range(2, 60).describe("F03"),
+    nro: zCustom.range(1, 60).describe("F04"),
+    xCpl: zCustom.range(1, 60).optional().describe("F05"),
+    xBairro: zCustom.range(2, 60).describe("F06"),
+    cMun: zCustom.numeric().length(7).describe("F07"),
+    xMun: zCustom.range(2, 60).describe("F08"),
     UF: zUf().or(z.literal("EX")).describe("F09"),
-    CEP: zCustom.string.numeric().length(8).optional().describe("F10"),
-    cPais: zCustom.string.numeric().length(4).optional().describe("F11"),
-    xPais: zCustom.string.range(2, 60).optional().describe("F12"),
-    fone: zCustom.string.phone().optional().describe("F13"),
-    email: zCustom.string.range(1, 60).email().optional().describe("F14"),
-    IE: zCustom.string.ie().optional().describe("F15"),
+    CEP: zCustom.numeric().length(8).optional().describe("F10"),
+    cPais: zCustom.numeric().length(4).optional().describe("F11"),
+    xPais: zCustom.range(2, 60).optional().describe("F12"),
+    fone: zCustom.phone().optional().describe("F13"),
+    email: zCustom.range(1, 60).email().optional().describe("F14"),
+    IE: zCustom.ie().optional().describe("F15"),
   })
-  .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne([CNPJ, CPF]), {
+  .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
     message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
   })
   .refine(

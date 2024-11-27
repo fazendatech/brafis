@@ -4,16 +4,16 @@ import { zUf } from ".";
 
 const schemaNfeAvulsa = z
   .object({
-    CNPJ: zCustom.string.cnpj().describe("D02"),
-    xOrgao: zCustom.string.range(1, 60).describe("D03"),
-    matr: zCustom.string.range(1, 60).describe("D04"),
-    xAgente: zCustom.string.range(1, 60).describe("D05"),
-    fone: zCustom.string.phone().optional().describe("D06"),
+    CNPJ: zCustom.cnpj().describe("D02"),
+    xOrgao: zCustom.range(1, 60).describe("D03"),
+    matr: zCustom.range(1, 60).describe("D04"),
+    xAgente: zCustom.range(1, 60).describe("D05"),
+    fone: zCustom.phone().optional().describe("D06"),
     UF: zUf().describe("D07"),
-    nDAR: zCustom.string.range(1, 60).optional().describe("D08"),
+    nDAR: zCustom.range(1, 60).optional().describe("D08"),
     dEmi: z.string().date().optional().describe("D09"),
-    vDAR: zCustom.string.decimal(13, 2).optional().describe("D10"),
-    repEmi: zCustom.string.range(1, 60).describe("D11"),
+    vDAR: zCustom.decimal(13, 2).optional().describe("D10"),
+    repEmi: zCustom.range(1, 60).describe("D11"),
     dPag: z.string().date().optional().describe("D12"),
   })
   .describe("avulsa:D01");
