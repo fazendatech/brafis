@@ -24,7 +24,7 @@ const schemaNfeIde = z
     cMunFG: zCustom.string.numeric().length(7).describe("B12"),
     tpImp: z.enum(["0", "1", "2", "3", "4", "5"]).describe("B21"),
     tpEmis: z.enum(["1", "2", "3", "4", "5", "6", "7", "9"]).describe("B22"),
-    cDV: z.number().nonnegative().lt(10).describe("B23"), // TODO: TENTAR ADICIONAR O ALGORITMO PARA PREENCHER AUTOMÁTICO
+    cDV: z.number().nonnegative().lt(10).describe("B23"),
     tpAmb: z.enum(["1", "2"]).describe("B24"),
     finNFe: z.enum(["1", "2", "3", "4"]).describe("B25"),
     indFinal: z.enum(["0", "1"]).describe("B25a"),
