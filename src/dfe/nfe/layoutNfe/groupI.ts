@@ -10,34 +10,22 @@ const schemaNfeProd = z
     cEAN: zCustom
       .numeric()
       .or(z.literal("SEM GTIN"))
-      .refine(
-        (value) => {
-          const validSize = [0, 8, 12, 13, 14];
-          return validSize.includes(value.length);
-        },
-        {
-          message:
-            "GTIN inválido. O campo cEAN deve ter 0, 8, 12, 13 ou 14 caracteres.",
-        },
-      )
+      .refine((value) => [0, 8, 12, 13, 14].includes(value.length), {
+        message:
+          "GTIN inválido. O campo cEAN deve ter 0, 8, 12, 13 ou 14 caracteres.",
+      })
       .describe("I03"),
     xProd: zCustom.length(1, 120).describe("I04"),
     NCM: zCustom.numeric().length(8).or(z.literal("00")).describe("I05"),
     NVE: z.array(z.string().length(6)).max(8).optional().describe("I05a"),
-    // I05b
     CEST: zCustom.numeric().length(7).optional().describe("I05c"),
     indEscala: z.enum(["S", "N"]).optional().describe("I05d"),
     CNPJFab: zCustom.cnpj().optional().describe("I05e"),
-    // END I05b
     cBenef: z
       .string()
-      .refine(
-        (value) => {
-          const validSize = [8, 10];
-          return validSize.includes(value.length);
-        },
-        { message: "O campo cBenef deve ter 8 ou 10 caracteres." },
-      )
+      .refine((value) => [8, 10].includes(value.length), {
+        message: "O campo cBenef deve ter 8 ou 10 caracteres.",
+      })
       .optional()
       .describe("I05f"),
     EXTIPI: zCustom.numeric().min(2).max(3).optional().describe("I06"),
@@ -62,20 +50,23 @@ const schemaNfeProd = z
       .max(500)
       .optional()
       .describe("I50"),
-    // Group I05
     xPed: zCustom.length(1, 15).optional().describe("I60"),
     nItemPed: zCustom.numeric().length(6).optional().describe("I61"),
-    // Group I07
-    nFCI: z.string().length(36).optional().describe("I70"), // Informação relacionada com a Resolução 13/2012 do Senado Federal. Formato: Algarismos, letras maiúsculas de "A" a "F" e o caractere hífen. Exemplo: B01F70AF-10BF4B1F-848C-65FF57F616FE
+    nFCI: z.string().length(36).optional().describe("I70"),
     rastro: z.array(schemaNfeRastro).min(1).max(500).optional().describe("I80"),
   })
   .refine(
-    ({ indEscala, CNPJFab, CEST }) => (indEscala || CNPJFab ? !!CEST : true),
+    ({ indEscala, CNPJFab, CEST }) => {
+      if (indEscala || CNPJFab) {
+        return !!CEST;
+      }
+      return true;
+    },
     {
       message:
         "Se informado indEscala ou CNPJFab, então CEST precisa ser ser informado",
     },
-  ) // Grupo Opcional (I05b)
+  )
   .describe("prod:I01");
 
 /**

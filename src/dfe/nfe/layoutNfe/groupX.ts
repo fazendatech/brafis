@@ -15,7 +15,7 @@ const schemaNfeTransp = z
         xMun: zCustom.length(1, 60).optional().describe("X09"),
         UF: zUf().optional().describe("X10"),
       })
-      .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
+      .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
         message: "Deve ser informado apenas um CNPJ ou CPF",
       })
       .refine(

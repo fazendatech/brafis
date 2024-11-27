@@ -38,7 +38,7 @@ const schemaNfeEmit = z
     CNAE: zCustom.numeric().length(7).optional().describe("C20"),
     CRT: z.enum(["1", "2", "3"]).describe("C21"),
   })
-  .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
+  .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
     message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
   })
   .refine(

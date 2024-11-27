@@ -1,114 +1,51 @@
 import { z } from "zod";
 
 import { zCustom } from "@/utils/zCustom";
-import { hasJSDocParameterTags } from "typescript";
 
-/**
- * @returns z.enum(["0", "1", "2", "3", "4", "5", "6", "7", "8"]).describe("N11");
- */
 const zOrig = () =>
   z.enum(["0", "1", "2", "3", "4", "5", "6", "7", "8"]).describe("N11");
-/**
- * @returns z.literal(cst).describe("N12");
- */
+
 const zCST = (cst: string) => z.literal(cst).describe("N12");
-/**
- * @returns z.enum(["0", "1", "2", "3"]).describe("N13");
- */
+
 const zModBC = () => z.enum(["0", "1", "2", "3"]).describe("N13");
-/**
- * @returns zCustom.decimal(3, 4).describe("N14");
- */
+
 const zPRedBC = () => zCustom.decimal(3, 4).describe("N14");
-/**
- * @returns zCustom.decimal(13,2).describe("N15");
- */
+
 const zVBC = () => zCustom.decimal(13, 2).describe("N15");
-/**
- * @returns zCustom.decimal(3, 4).describe("N16");
- */
+
 const zPICMS = () => zCustom.decimal(3, 4).describe("N16");
-/**
- * @returns zCustom.decimal(13, 2).describe("N17");
- */
+
 const zVICMS = () => zCustom.decimal(13, 2).describe("N17");
-/**
- * @returns zCustom.decimal(13, 2).describe("N17.a");
- */
+
 const zVBCFCP = () => zCustom.decimal(13, 2).optional().describe("N17.a");
-/**
- * @returns zCustom.decimal(3, 4).optional().describe("N17.b");
- */
+
 const zPFCP = () => zCustom.decimal(3, 4).optional().describe("N17.b");
-/**
- * @returns zCustom.decimal(13, 2).describe("N17.c");
- */
+
 const zVFCP = () => zCustom.decimal(13, 2).optional().describe("N17.c");
-/**
- * @returns z.enum(["0", "1", "2", "3", "4", "5", "6"]).describe("N18");
- */
+
 const zModBCST = () =>
   z.enum(["0", "1", "2", "3", "4", "5", "6"]).describe("N18");
-/**
- * @returns zCustom.decimal(3, 4).describe("N19");
- */
+
 const zPMVAST = () => zCustom.decimal(3, 4).optional().describe("N19");
-/**
- * @returns zCustom.decimal(3, 4).describe("N20");
- */
+
 const zPRedBCST = () => zCustom.decimal(3, 4).optional().describe("N20");
-/**
- * @returns zCustom.decimal(13, 2).describe("N21");
- */
+
 const zVBCST = () => zCustom.decimal(13, 2).describe("N21");
-/**
- * @returns zCustom.decimal(3, 4).describe("N22");
- */
+
 const zPICMSST = () => zCustom.decimal(3, 4).describe("N22");
-/**
- * @returns zCustom.decimal(13, 2).describe("N23");
- */
+
 const zVICMSST = () => zCustom.decimal(13, 2).describe("N23");
-/**
- * @returns zCustom.decimal(13, 2).optional().describe("N23a");
- */
+
 const zVBCFCPST = () => zCustom.decimal(13, 2).optional().describe("N23a");
-/**
- * @returns zCustom.decimal(3, 4).optional().describe("N23b");
- */
+
 const zPFCPST = () => zCustom.decimal(3, 4).optional().describe("N23b");
-/**
- * @returns zCustom.decimal(13, 2).optional().describe("N23c");
- */
+
 const zVFCPST = () => zCustom.decimal(13, 2).optional().describe("N23d");
-/**
- * @returns zCustom.decimal(13, 2).optional().describe("N28a");
- */
+
 const zVICMSDeson = () => zCustom.decimal(13, 2).optional().describe("N28a");
-/**
- * @returns z.enum(array).optional().describe("N28");
- */
+
 const zMotDesICMS = (array: [string, ...string[]]) =>
   z.enum(array).optional().describe("N28");
-
-function hasFcp(vBCFCP?: string, pFCP?: string, vFCP?: string) {
-  if (vBCFCP && pFCP && vFCP) {
-    return true;
-  }
-  if (!vBCFCP && !pFCP && !vFCP) {
-    return true;
-  }
-  return false;
-}
-function hasDes(vICMSDeson?: string, motDesICMS?: string) {
-  if (vICMSDeson && !motDesICMS) {
-    return false;
-  }
-  if (!vICMSDeson && motDesICMS) {
-    return false;
-  }
-  return true;
-}
 
 const messageFcp =
   "No caso de percentual relativo ao Fundo de Combate à Pobreza (FCP), então vBCFCP, vFCP e pFCP devem ser todos informados";
@@ -166,12 +103,20 @@ const schemaNfeICMS10 = z
     pFCPST: zPFCPST(),
     vFCPST: zVFCPST(),
   })
-  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
-    message: messageFcp,
-  })
-  .refine(({ vBCFCPST, pFCPST, vFCPST }) => hasFcp(vBCFCPST, pFCPST, vFCPST), {
-    message: messageFcpst,
-  })
+  .refine(
+    ({ vBCFCP, pFCP, vFCP }) =>
+      zCustom.utils.hasAllOrNothing(vBCFCP, pFCP, vFCP),
+    {
+      message: messageFcp,
+    },
+  )
+  .refine(
+    ({ vBCFCPST, pFCPST, vFCPST }) =>
+      zCustom.utils.hasAllOrNothing(vBCFCPST, pFCPST, vFCPST),
+    {
+      message: messageFcpst,
+    },
+  )
   .describe("ICMS10:N03");
 
 const schemaNfeICMS20 = z
@@ -189,12 +134,20 @@ const schemaNfeICMS20 = z
     vICMSDeson: zVICMSDeson(),
     motDesICMS: zMotDesICMS(["3", "9", "12"]),
   })
-  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
-    message: messageFcp,
-  })
-  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
-    message: messageDes,
-  })
+  .refine(
+    ({ vBCFCP, pFCP, vFCP }) =>
+      zCustom.utils.hasAllOrNothing(vBCFCP, pFCP, vFCP),
+    {
+      message: messageFcp,
+    },
+  )
+  .refine(
+    ({ vICMSDeson, motDesICMS }) =>
+      zCustom.utils.hasAllOrNothing(vICMSDeson, motDesICMS),
+    {
+      message: messageDes,
+    },
+  )
   .describe("ICMS20:N04");
 
 const schemaNfeICMS30 = z
@@ -213,12 +166,20 @@ const schemaNfeICMS30 = z
     vICMSDeson: zVICMSDeson(),
     motDesICMS: zMotDesICMS(["6", "7", "9"]),
   })
-  .refine(({ vBCFCPST, pFCPST, vFCPST }) => hasFcp(vBCFCPST, pFCPST, vFCPST), {
-    message: messageFcpst,
-  })
-  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
-    message: messageDes,
-  })
+  .refine(
+    ({ vBCFCPST, pFCPST, vFCPST }) =>
+      zCustom.utils.hasAllOrNothing(vBCFCPST, pFCPST, vFCPST),
+    {
+      message: messageFcpst,
+    },
+  )
+  .refine(
+    ({ vICMSDeson, motDesICMS }) =>
+      zCustom.utils.hasAllOrNothing(vICMSDeson, motDesICMS),
+    {
+      message: messageDes,
+    },
+  )
   .describe("ICMS30:N05");
 
 const schemaNfeICMS40 = z
@@ -241,9 +202,13 @@ const schemaNfeICMS40 = z
       "90",
     ]),
   })
-  .refine(({ vICMSDeson, motDesICMS }) => hasDes(vICMSDeson, motDesICMS), {
-    message: messageDes,
-  })
+  .refine(
+    ({ vICMSDeson, motDesICMS }) =>
+      zCustom.utils.hasAllOrNothing(vICMSDeson, motDesICMS),
+    {
+      message: messageDes,
+    },
+  )
   .describe("ICMS40:N06");
 
 const schemaNfeICMS51 = z
@@ -262,20 +227,65 @@ const schemaNfeICMS51 = z
     pFCP: zPFCP(),
     vFCP: zVFCP(),
   })
-  .refine(({ vBCFCP, pFCP, vFCP }) => hasFcp(vBCFCP, pFCP, vFCP), {
-    message: messageFcp,
-  })
+  .refine(
+    ({ vBCFCP, pFCP, vFCP }) =>
+      zCustom.utils.hasAllOrNothing(vBCFCP, pFCP, vFCP),
+    {
+      message: messageFcp,
+    },
+  )
   .describe("ICMS51:N07");
+
+const schemaNfeICMS60 = z.object({});
+
+const schemaNfeICMS70 = z.object({});
+
+const schemaNfeICMS90 = z.object({});
 
 const schemaNfeICMS = z
   .object({
-    ICMS: schemaNfeICMS00
-      .or(schemaNfeICMS10)
-      .or(schemaNfeICMS20)
-      .or(schemaNfeICMS30)
-      .or(schemaNfeICMS40)
-      .or(schemaNfeICMS51),
+    ICMS00: schemaNfeICMS00,
   })
+  .or(
+    z.object({
+      ICMS10: schemaNfeICMS10,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS20: schemaNfeICMS20,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS30: schemaNfeICMS30,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS40: schemaNfeICMS40,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS51: schemaNfeICMS51,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS60: schemaNfeICMS60,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS70: schemaNfeICMS70,
+    }),
+  )
+  .or(
+    z.object({
+      ICMS90: schemaNfeICMS90,
+    }),
+  )
   .describe("ICMS:N01");
 
 /**

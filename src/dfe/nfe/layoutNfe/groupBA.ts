@@ -57,7 +57,7 @@ const schemaNfeNfRef = z
           .refine((value) => Number(value) > 0)
           .describe("BA18"),
       })
-      .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
+      .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
         message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
       })
       .optional()
@@ -74,7 +74,7 @@ const schemaNfeNfRef = z
   })
   .refine(
     ({ refNfe, refNF, refNFP, refCTe, refECF }) =>
-      zCustom.hasOnlyOne(refNfe, refNF, refNFP, refCTe, refECF),
+      zCustom.utils.hasOnlyOne(refNfe, refNF, refNFP, refCTe, refECF),
     {
       message:
         "Informe apenas uma das referências: refNfe, refNF, refNFP, refCTe ou refECF.",

@@ -5,7 +5,7 @@ const schemaNfeDetExport = z
   .object({
     nDraw: zCustom
       .numeric()
-      .refine((value) => value.length === 9 || value.length === 11, {
+      .refine((value) => [0, 9, 11].includes(value.length), {
         message:
           "O número do Ato Concessório de Suspensão deve ser preenchido com 11 dígitos (AAAANNNNNND) e o número do Ato Concessório de Drawback Isenção deve ser preenchido com 9 dígitos (AANNNNNND).",
       })

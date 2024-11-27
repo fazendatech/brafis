@@ -6,6 +6,14 @@ const schemaNfeImposto = z
   .object({
     vTotTrib: zCustom.decimal(13, 2).optional().describe("M02"),
     ICMS: schemaNfeICMS,
+    IPI: z.object({}).optional(),
+    II: z.object({}).optional(),
+    PIS: z.object({}).optional(),
+    PISST: z.object({}).optional(),
+    COFINS: z.object({}).optional(),
+    COFINSST: z.object({}).optional(),
+    ISSQN: z.object({}).optional(),
+    ICMSUFDest: z.object({}).optional(),
   })
   .describe("imposto:M01");
 

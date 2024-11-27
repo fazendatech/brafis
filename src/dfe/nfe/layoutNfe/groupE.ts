@@ -58,7 +58,7 @@ const schemaNfeDest = z
   })
   .refine(
     ({ CNPJ, CPF, idEstrangeiro }) =>
-      zCustom.hasOnlyOne(CNPJ, CPF, idEstrangeiro),
+      zCustom.utils.hasOnlyOne(CNPJ, CPF, idEstrangeiro),
     {
       message:
         "Deve ser informado apenas um dos campos: CNPJ, CPF ou idEstrangeiro.",

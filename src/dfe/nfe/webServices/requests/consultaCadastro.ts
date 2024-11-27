@@ -13,7 +13,7 @@ export const schemaNfeConsultaCadastroOptions = z
     CPF: zCustom.cpf().optional(),
     CNPJ: zCustom.cnpj().optional(),
   })
-  .refine((obj) => zCustom.hasOnlyOne([obj.IE, obj.CPF, obj.CNPJ]));
+  .refine((obj) => zCustom.utils.hasOnlyOne([obj.IE, obj.CPF, obj.CNPJ]));
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
