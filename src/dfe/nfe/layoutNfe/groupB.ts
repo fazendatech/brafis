@@ -17,20 +17,8 @@ const schemaNfeIde = z
     mod: z.enum(["55", "65"]).describe("B06"),
     serie: zCustom.string.numeric().length(3).describe("B07"),
     nNF: zCustom.string.numeric().min(1).max(9).describe("B08"),
-    dhEmi: zCustom.string
-      .date()
-      .refine((date) => new Date(date) <= new Date(), {
-        message: "Data e hora de emissão não pode ser futura",
-      })
-      .describe("B09"),
-    dhSaiEnt: zCustom.string
-      .date()
-      .refine((date) => new Date(date) <= new Date(), {
-        message:
-          "Data e hora de Saída ou da Entrada da Mercadoria/Produto não pode ser futura",
-      })
-      .optional()
-      .describe("B10"),
+    dhEmi: zCustom.string.date().describe("B09"),
+    dhSaiEnt: zCustom.string.date().optional().describe("B10"),
     tpNF: z.enum(["0", "1"]).describe("B11"),
     idDest: z.enum(["1", "2", "3"]).describe("B11a"),
     cMunFG: zCustom.string.numeric().length(7).describe("B12"),
@@ -64,6 +52,18 @@ const schemaNfeIde = z
     {
       message:
         "Data e hora de Saída ou da Entrada da Mercadoria/Produto não deve ser informada para NFC-e.",
+    },
+  )
+  .refine(
+    ({ tpNF, dhSaiEnt, dhEmi }) => {
+      if (dhSaiEnt === undefined || tpNF !== "1") {
+        return true;
+      }
+      return new Date(dhSaiEnt) >= new Date(dhEmi);
+    },
+    {
+      message:
+        "Data e hora de Saída ou da Entrada da Mercadoria/Produto deve ser maior ou igual a Data e hora de Emissão.",
     },
   )
   .refine(({ cNF, nNF }) => cNF !== nNF, {
