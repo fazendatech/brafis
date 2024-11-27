@@ -5,8 +5,8 @@ const schemaNfeRastro = z
   .object({
     nLote: zCustom.string.range(1, 20).describe("I81"),
     qLote: zCustom.string.decimal(8, 3).describe("I82"),
-    dFab: zCustom.string.date().describe("I83"),
-    dVal: zCustom.string.date().describe("I84"),
+    dFab: z.string().date().describe("I83"),
+    dVal: z.string().date().describe("I84"),
     cAgreg: zCustom.string.range(1, 20).optional().describe("I85"),
   })
   .describe("rastro:I80");
