@@ -37,10 +37,10 @@ const schemaNfeTransp = z
       .optional(),
     retTransp: z
       .object({
-        vServ: zCustom.string.decimal().length(16).describe("X12"),
-        vBCRet: zCustom.string.decimal().length(16).describe("X13"),
-        pICMSRet: zCustom.string.decimal(2, 4).length(8).describe("X14"),
-        vICMSRet: zCustom.string.decimal().length(16).describe("X15"),
+        vServ: zCustom.string.decimal(13, 2).describe("X12"),
+        vBCRet: zCustom.string.decimal(13, 2).describe("X13"),
+        pICMSRet: zCustom.string.decimal(3, 4).describe("X14"),
+        vICMSRet: zCustom.string.decimal(13, 2).describe("X15"),
         CFOP: zCustom.string.numeric().length(4).describe("X16"),
         cMunFG: zCustom.string.numeric().length(7).describe("X17"),
       })
@@ -74,8 +74,8 @@ const schemaNfeTransp = z
           esp: zCustom.string.range(1, 60).optional().describe("X28"),
           marca: zCustom.string.range(1, 60).optional().describe("X29"),
           nVol: zCustom.string.range(1, 60).optional().describe("X30"),
-          pesoL: zCustom.string.decimal().length(16).optional().describe("X31"),
-          pesoB: zCustom.string.decimal().length(16).optional().describe("X32"),
+          pesoL: zCustom.string.decimal(12, 3).optional().describe("X31"),
+          pesoB: zCustom.string.decimal(12, 3).optional().describe("X32"),
           lacres: z
             .array(
               z.object({ nLacre: zCustom.string.range(1, 60).describe("X34") }),

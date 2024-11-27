@@ -6,12 +6,13 @@ import { isValidIe } from "@/utils/validators/isValidIe";
 
 const range = (min: number, max: number) => z.string().min(min).max(max);
 const numeric = () => z.string().regex(/^\d+$/, "Use only digits");
-const decimal = (min: number | null = null, max: number | null = null) => {
-  if (min !== null && max !== null) {
-    const regex = new RegExp(`^\\d+(,\\d{${min},${max}})?$`);
-    return z.string().regex(regex, "Use decimal number with comma");
-  }
-  return z.string().regex(/^\d+,\d{2}$/, "Use decimal number with comma");
+const decimal = (beforeComma: number, afterComma: number) => {
+  return z
+    .string()
+    .regex(
+      new RegExp(`^\\d{1,${beforeComma}}(,\\d{1,${afterComma}})?$`),
+      "Use decimal number with comma",
+    );
 };
 const date = () => z.string().datetime({ precision: 0 });
 const ie = () =>
@@ -27,7 +28,11 @@ const cpf = () =>
   numeric()
     .length(11)
     .refine((value) => isValidCpf(value));
-const phone = () => numeric().min(6).max(14);
+const phone = () =>
+  numeric()
+    .min(6)
+    .max(14)
+    .regex(/^(\d{2,3})?\d{2}\d{8,9}$/);
 const placa = () =>
   z
     .string()

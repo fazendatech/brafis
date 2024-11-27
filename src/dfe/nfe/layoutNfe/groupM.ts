@@ -4,7 +4,7 @@ import { schemaNfeICMS } from "./groupN01";
 
 const schemaNfeImposto = z
   .object({
-    vTotTrib: zCustom.string.decimal().max(16).optional().describe("M02"),
+    vTotTrib: zCustom.string.decimal(13, 2).optional().describe("M02"),
     ICMS: schemaNfeICMS,
   })
   .describe("imposto:M01");

@@ -15,7 +15,7 @@ const schemaNfeDetExport = z
       .object({
         nRE: z.string().length(12).describe("I53"),
         chNFe: z.string().length(44).describe("I54"),
-        qExport: zCustom.string.decimal(4, 4).max(11).describe("I55"),
+        qExport: zCustom.string.decimal(11, 4).describe("I55"),
       })
       .optional()
       .describe("I52"),

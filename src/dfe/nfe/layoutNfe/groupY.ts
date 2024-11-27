@@ -6,9 +6,9 @@ const schemaNfeCobr = z
     fat: z
       .object({
         nFat: zCustom.string.range(1, 60).optional().describe("Y03"),
-        vOrig: zCustom.string.decimal().length(16).optional().describe("Y04"),
-        vDesc: zCustom.string.decimal().length(16).optional().describe("Y05"),
-        vLiq: zCustom.string.decimal().length(16).optional().describe("Y06"),
+        vOrig: zCustom.string.decimal(13, 2).optional().describe("Y04"),
+        vDesc: zCustom.string.decimal(13, 2).optional().describe("Y05"),
+        vLiq: zCustom.string.decimal(13, 2).optional().describe("Y06"),
       })
       .optional()
       .describe("Y02"),
@@ -17,7 +17,7 @@ const schemaNfeCobr = z
         z.object({
           nDup: zCustom.string.range(1, 60).optional().describe("Y08"),
           dVenc: z.string().date().optional().describe("Y09"),
-          vDup: zCustom.string.numeric().describe("Y10"),
+          vDup: zCustom.string.decimal(13, 2).describe("Y10"),
         }),
       )
       .max(120)
