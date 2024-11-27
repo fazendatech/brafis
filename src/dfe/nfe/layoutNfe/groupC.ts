@@ -18,26 +18,40 @@ const schemaNfeEmit = z
         xMun: zCustom.string.range(2, 60).describe("C11"),
         UF: zUf().describe("C12"), // UF
         CEP: zCustom.string.numeric().length(8).optional().describe("C13"),
-        cPais: zCustom.string.numeric().length(4).optional().describe("C14"), // "1058" = Brasil
-        xPais: zCustom.string.range(2, 60).optional().describe("C15"), // "brasil" ou "BRASIL"
+        cPais: zCustom.string.numeric().length(4).optional().describe("C14"),
+        xPais: zCustom.string.range(2, 60).optional().describe("C15"),
         fone: zCustom.string.phone().optional().describe("C16"),
       })
+      .refine(
+        ({ cPais, xPais }) => {
+          if (cPais === "1058") {
+            return xPais === "BRASIL" || xPais === "Brasil";
+          }
+          return true;
+        },
+        { message: "Para cPais='1058', xPais deve ser 'BRASIL' ou 'Brasil'" },
+      )
       .describe("C05"),
     IE: zCustom.string.ie().describe("C17"),
-    IEST: zCustom.string.ie().optional().describe("C18"), // IE do Substituto Tributário
+    IEST: zCustom.string.ie().optional().describe("C18"),
     IM: zCustom.string.range(1, 15).optional().describe("C19"),
     CNAE: zCustom.string.numeric().length(7).optional().describe("C20"),
-    // 1=Simples Nacional;
-    // 2=Simples Nacional, excesso sublimite de receita bruta;
-    // 3=Regime Normal. (v2.0).
     CRT: z.enum(["1", "2", "3"]).describe("C21"),
   })
   .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne([CNPJ, CPF]), {
     message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
   })
-  .refine(({ CNAE, IM }) => !CNAE || IM, {
-    message: "Se informado CNAE então é necessário informar IM.",
-  })
+  .refine(
+    ({ CNAE, IM }) => {
+      if (CNAE && !IM) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Se informado CNAE então é necessário informar IM.",
+    },
+  )
   .describe("emit:C01");
 
 /**
