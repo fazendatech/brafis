@@ -7,9 +7,22 @@ import { schemaNfeRastro } from "./groupI80";
 const schemaNfeProd = z
   .object({
     cProd: zCustom.string.range(1, 60).describe("I02"),
-    cEAN: zCustom.string.range(8, 14).describe("I03"),
+    cEAN: zCustom.string
+      .numeric()
+      .or(z.literal("SEM GTIN"))
+      .refine(
+        (value) => {
+          const validSize = [0, 8, 12, 13, 14];
+          return validSize.includes(value.length);
+        },
+        {
+          message:
+            "GTIN inválido. O campo cEAN deve ter 0, 8, 12, 13 ou 14 caracteres.",
+        },
+      )
+      .describe("I03"),
     xProd: zCustom.string.range(1, 120).describe("I04"),
-    NCM: zCustom.string.numeric().length(8).or(z.literal("00")).describe("I05"), // Obrigatória informação do NCM completo (8 dígitos). Nota: Em caso de item de serviço ou item que não tenham produto (ex. transferência de crédito, crédito do ativo imobilizado, etc.), informar o valor 00
+    NCM: zCustom.string.numeric().length(8).or(z.literal("00")).describe("I05"),
     NVE: z.array(z.string().length(6)).max(8).optional().describe("I05a"),
     // I05b
     CEST: zCustom.string.numeric().length(7).optional().describe("I05c"),
@@ -18,9 +31,13 @@ const schemaNfeProd = z
     // END I05b
     cBenef: z
       .string()
-      .refine((value) => value.length === 8 || value.length === 10, {
-        message: "O campo cBenef deve ter 8 ou 10 caracteres.",
-      })
+      .refine(
+        (value) => {
+          const validSize = [8, 10];
+          return validSize.includes(value.length);
+        },
+        { message: "O campo cBenef deve ter 8 ou 10 caracteres." },
+      )
       .optional()
       .describe("I05f"),
     EXTIPI: zCustom.string.numeric().min(2).max(3).optional().describe("I06"),
@@ -33,11 +50,7 @@ const schemaNfeProd = z
     uTrib: zCustom.string.range(1, 6).describe("I13"),
     qTrib: zCustom.string.decimal(11, 4).describe("I14"),
     vUnTrib: zCustom.string.decimal(11, 10).describe("I14a"),
-    vFrete: zCustom.string
-      .decimal(13, 2)
-      .or(z.literal("SEM GTIN"))
-      .optional()
-      .describe("I15"),
+    vFrete: zCustom.string.decimal(13, 2).optional().describe("I15"),
     vSeg: zCustom.string.decimal(13, 2).optional().describe("I16"),
     vDesc: zCustom.string.decimal(13, 2).optional().describe("I17"),
     vOutro: zCustom.string.decimal(13, 2).optional().describe("I17a"),
@@ -57,15 +70,7 @@ const schemaNfeProd = z
     rastro: z.array(schemaNfeRastro).min(1).max(500).optional().describe("I80"),
   })
   .refine(
-    ({ indEscala, CNPJFab, CEST }) => {
-      if (indEscala && !CEST) {
-        return false;
-      }
-      if (CNPJFab && !CEST) {
-        return false;
-      }
-      return true;
-    },
+    ({ indEscala, CNPJFab, CEST }) => (indEscala || CNPJFab ? !!CEST : true),
     {
       message:
         "Se informado indEscala ou CNPJFab, então CEST precisa ser ser informado",
