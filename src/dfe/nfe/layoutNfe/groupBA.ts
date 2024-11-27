@@ -48,7 +48,7 @@ const schemaNfeNfRef = z
         CNPJ: zCustom.string.cnpj().optional().describe("BA13"),
         CPF: zCustom.string.cpf().optional().describe("BA14"),
         IE: zCustom.string.ie().describe("BA15"),
-        mod: z.enum(["04", "01"]).describe("BA16"),
+        mod: z.enum(["01", "04"]).describe("BA16"),
         serie: zCustom.string.numeric().min(1).max(3).describe("BA17"),
         nNF: zCustom.string
           .numeric()
@@ -77,7 +77,7 @@ const schemaNfeNfRef = z
       zCustom.utils.hasOnlyOne([refNfe, refNF, refNFP, refCTe, refECF]),
     {
       message:
-        "Deve ser informado apenas um dos campos: refNfe, refNF, refNFP, refCTe ou refECF.",
+        "Informe apenas uma das referências: refNfe, refNF, refNFP, refCTe ou refECF.",
     },
   )
   .describe("NFref:BA01");
