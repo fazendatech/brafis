@@ -60,7 +60,7 @@ const schemaNfeIde = z
         "Data e hora de Saída ou da Entrada da Mercadoria/Produto deve ser maior ou igual a Data e hora de Emissão.",
     },
   )
-  .refine(({ cNF, nNF }) => cNF !== nNF, {
+  .refine(({ cNF, nNF }) => Number(cNF) !== Number(nNF), {
     message: "O código numérico da NF-e não pode ser igual ao número da NF-e.",
   })
   .describe("ide:B01");
