@@ -36,7 +36,7 @@ const schemaNfeIde = z
         message: "Código numérico em formato inválido.",
       })
       .describe("B03"),
-    natOp: zCustom.range(1, 60).describe("B04"),
+    natOp: zCustom.length(1, 60).describe("B04"),
     mod: z.enum(["55", "65"]).describe("B06"),
     serie: zCustom.numeric().length(3).describe("B07"),
     nNF: zCustom.numeric().min(1).max(9).describe("B08"),
@@ -54,9 +54,9 @@ const schemaNfeIde = z
     indPres: z.enum(["0", "1", "2", "3", "4", "5", "9"]).describe("B25b"),
     indIntermed: z.enum(["0", "1"]).optional().describe("B25c"),
     procEmi: z.enum(["0", "1", "2", "3"]).describe("B26"),
-    verProc: zCustom.range(1, 20).describe("B27"),
+    verProc: zCustom.length(1, 20).describe("B27"),
     dhCont: zCustom.date().optional().describe("B28"),
-    xJust: zCustom.range(15, 256).optional().describe("B29"),
+    xJust: zCustom.length(15, 256).optional().describe("B29"),
     NFref: z.array(schemaNfeNfRef).max(500).optional(),
   })
   .refine(

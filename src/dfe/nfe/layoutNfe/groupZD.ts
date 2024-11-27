@@ -4,8 +4,8 @@ import { zCustom } from "@/utils/zCustom";
 const schemaNfeInfRespTec = z
   .object({
     CNPJ: zCustom.cnpj().describe("ZD02"),
-    xContato: zCustom.range(2, 60).describe("ZD04"),
-    email: zCustom.range(6, 60).email().describe("ZD05"),
+    xContato: zCustom.length(2, 60).describe("ZD04"),
+    email: zCustom.length(6, 60).email().describe("ZD05"),
     fone: zCustom.numeric().min(6).max(14).describe("ZD06"),
     idCSRT: zCustom.numeric().length(2).optional().describe("ZD08"),
     hashCSRT: z.string().length(28).optional().describe("ZD09"),

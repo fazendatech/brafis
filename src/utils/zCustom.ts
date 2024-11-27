@@ -4,7 +4,7 @@ import { isValidCnpj } from "@/utils/validators/isValidCnpj";
 import { isValidCpf } from "@/utils/validators/isValidCpf";
 import { isValidIe } from "@/utils/validators/isValidIe";
 
-const range = (min: number, max: number) => z.string().min(min).max(max);
+const length = (min: number, max: number) => z.string().min(min).max(max);
 const numeric = () => z.string().regex(/^\d+$/, "Deve possuir apenas dígitos.");
 const decimal = (before: number, after: number) => {
   return z
@@ -42,7 +42,7 @@ function hasAllOrNothing(...values: unknown[]) {
 }
 
 export const zCustom = {
-  range,
+  length,
   date,
   numeric,
   decimal,

@@ -4,9 +4,9 @@ import { zUf } from ".";
 
 const schemaNfeDi = z
   .object({
-    nDI: zCustom.range(1, 12).describe("I19"),
+    nDI: zCustom.length(1, 12).describe("I19"),
     dDI: z.string().date().describe("I20"),
-    xLocDesemb: zCustom.range(1, 60).describe("I21"),
+    xLocDesemb: zCustom.length(1, 60).describe("I21"),
     UFDesemb: zUf().describe("I22"),
     dDesemb: z.string().date().describe("I23"),
     tpViaTransp: z.enum(["1", "2", "3", "4", "5", "6", "7"]).describe("I23a"),
@@ -14,13 +14,13 @@ const schemaNfeDi = z
     tpIntermedio: z.enum(["1", "2", "3"]).describe("I23c"),
     CNPJ: zCustom.cnpj().optional().describe("I23d"),
     UFTerceiro: zUf().optional().describe("I23e"),
-    cExportador: zCustom.range(1, 60).describe("I24"),
+    cExportador: zCustom.length(1, 60).describe("I24"),
     adi: z
       .array(
         z.object({
           nAdicao: zCustom.numeric().min(1).max(3).describe("I26"),
           nSeqAdic: zCustom.numeric().min(1).max(3).describe("I27"),
-          cFabricante: zCustom.range(1, 60).describe("I28"),
+          cFabricante: zCustom.length(1, 60).describe("I28"),
           vDescDI: zCustom.decimal(13, 2).optional().describe("I29"),
           nDraw: zCustom
             .numeric()

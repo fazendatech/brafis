@@ -6,20 +6,20 @@ const schemaNfeDest = z
   .object({
     CNPJ: zCustom.cnpj().optional().describe("E02"),
     CPF: zCustom.cpf().optional().describe("E03"),
-    idEstrangeiro: zCustom.range(5, 20).optional().describe("E03a"),
-    xNome: zCustom.range(2, 60).optional().describe("E04"),
+    idEstrangeiro: zCustom.length(5, 20).optional().describe("E03a"),
+    xNome: zCustom.length(2, 60).optional().describe("E04"),
     enderDest: z
       .object({
-        xLgr: zCustom.range(2, 60).describe("E06"),
-        nro: zCustom.range(1, 60).describe("E07"),
-        xCpl: zCustom.range(1, 60).optional().describe("E08"),
-        xBairro: zCustom.range(2, 60).describe("E09"),
+        xLgr: zCustom.length(2, 60).describe("E06"),
+        nro: zCustom.length(1, 60).describe("E07"),
+        xCpl: zCustom.length(1, 60).optional().describe("E08"),
+        xBairro: zCustom.length(2, 60).describe("E09"),
         cMun: zCustom.numeric().length(7).describe("E10"),
-        xMun: zCustom.range(2, 60).describe("E11"),
+        xMun: zCustom.length(2, 60).describe("E11"),
         UF: zUf().or(z.literal("EX")).describe("E12"),
         CEP: zCustom.numeric().length(8).optional().describe("E13"),
         cPais: zCustom.numeric().min(2).max(4).optional().describe("E14"),
-        xPais: zCustom.range(2, 60).optional().describe("E15"),
+        xPais: zCustom.length(2, 60).optional().describe("E15"),
         fone: zCustom.phone().optional().describe("E16"),
       })
       .refine(
@@ -52,9 +52,9 @@ const schemaNfeDest = z
       .describe("enderDest:E05"),
     indIEDest: z.enum(["1", "2", "9"]).describe("E16a"),
     IE: zCustom.ie().optional().describe("E17"),
-    ISUF: zCustom.range(8, 9).optional().describe("E18"),
-    IM: zCustom.range(1, 15).optional().describe("E18a"),
-    email: zCustom.range(1, 60).email().optional().describe("E19"),
+    ISUF: zCustom.length(8, 9).optional().describe("E18"),
+    IM: zCustom.length(1, 15).optional().describe("E18a"),
+    email: zCustom.length(1, 60).email().optional().describe("E19"),
   })
   .refine(
     ({ CNPJ, CPF, idEstrangeiro }) =>
