@@ -12,8 +12,8 @@ const schemaNfeIde = z
       .refine((cNF) => !invalidCnfs.has(cNF), {
         message: "Código numérico em formato inválido.",
       })
-      .describe("B03"), // TODO: Validar
-    natOp: zCustom.string.range(1, 60).describe("B04"), // TODO: Validar
+      .describe("B03"),
+    natOp: zCustom.string.range(1, 60).describe("B04"),
     mod: z.enum(["55", "65"]).describe("B06"),
     serie: zCustom.string.numeric().length(3).describe("B07"),
     nNF: zCustom.string.numeric().min(1).max(9).describe("B08"),
