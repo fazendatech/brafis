@@ -1,10 +1,11 @@
 import { z } from "zod";
-
 import { zCustom } from "@/utils/zCustom";
+import { schemaNfeICMS } from "./groupN01";
 
 const schemaNfeImposto = z
   .object({
     vTotTrib: zCustom.string.decimal().max(16).optional().describe("M02"),
+    ICMS: schemaNfeICMS,
   })
   .describe("imposto:M01");
 
