@@ -5,29 +5,19 @@ import { isValidCpf } from "@/utils/validators/isValidCpf";
 import { isValidIe } from "@/utils/validators/isValidIe";
 
 const range = (min: number, max: number) => z.string().min(min).max(max);
-const numeric = () => z.string().regex(/^\d+$/, "Use only digits");
-const decimal = (beforeComma: number, afterComma: number) => {
+const numeric = () => z.string().regex(/^\d+$/, "Deve possuir apenas dígitos.");
+const decimal = (before: number, after: number) => {
   return z
     .string()
     .regex(
-      new RegExp(`^\\d{1,${beforeComma}}(,\\d{1,${afterComma}})?$`),
-      "Use decimal number with comma",
+      new RegExp(`^\\d{1,${before}}(.\\d{1,${after}})?$`),
+      "Use apenas números decimais separados por ponto",
     );
 };
 const date = () => z.string().datetime({ precision: 0 });
-const ie = () =>
-  numeric()
-    .min(8)
-    .max(14)
-    .refine((value) => isValidIe(value));
-const cnpj = () =>
-  numeric()
-    .length(14)
-    .refine((value) => isValidCnpj(value));
-const cpf = () =>
-  numeric()
-    .length(11)
-    .refine((value) => isValidCpf(value));
+const ie = () => z.string().refine((value) => isValidIe(value));
+const cnpj = () => z.string().refine((value) => isValidCnpj(value));
+const cpf = () => z.string().refine((value) => isValidCpf(value));
 const phone = () =>
   numeric()
     .min(6)
@@ -41,30 +31,26 @@ const placa = () =>
         "Formatos de placas válidas: XXX9999, XXX999, XX9999, or XXXX999.",
     });
 
-function hasOnlyOne<T>(values: T[]) {
-  values.filter((v) => v !== undefined);
-  return values.length === 1;
+function hasOnlyOne(...values: unknown[]) {
+  const filtered = values.filter((v) => !!v);
+  return filtered.length === 1;
 }
-function hasAllOrNothing<T>(values: T[]) {
+function hasAllOrNothing(...values: unknown[]) {
   const len = values.length;
-  values.filter((v) => v !== undefined);
-  return values.length === len || values.length === 0;
+  const filtered = values.filter((v) => !!v);
+  return filtered.length === len || filtered.length === 0;
 }
 
 export const zCustom = {
-  string: {
-    range,
-    date,
-    numeric,
-    decimal,
-    ie,
-    cpf,
-    cnpj,
-    phone,
-    placa,
-  },
-  utils: {
-    hasOnlyOne,
-    hasAllOrNothing,
-  },
+  range,
+  date,
+  numeric,
+  decimal,
+  ie,
+  cpf,
+  cnpj,
+  phone,
+  placa,
+  hasOnlyOne,
+  hasAllOrNothing,
 };

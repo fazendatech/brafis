@@ -4,11 +4,11 @@ import { zUfCode } from ".";
 
 const schemaNfeNfRef = z
   .object({
-    refNfe: zCustom.string.numeric().length(44).optional().describe("BA02"),
+    refNfe: zCustom.numeric().length(44).optional().describe("BA02"),
     refNF: z
       .object({
         cUF: zUfCode().describe("BA04"),
-        AAMM: zCustom.string
+        AAMM: zCustom
           .numeric()
           .length(4)
           .refine(
@@ -19,10 +19,10 @@ const schemaNfeNfRef = z
             { message: "Mês deve ser entre 01 e 12." },
           )
           .describe("BA05"),
-        CNPJ: zCustom.string.cnpj().describe("BA06"),
+        CNPJ: zCustom.cnpj().describe("BA06"),
         mod: z.enum(["01", "02"]).describe("BA07"),
-        serie: zCustom.string.numeric().min(1).max(3).describe("BA08"),
-        nNF: zCustom.string
+        serie: zCustom.numeric().min(1).max(3).describe("BA08"),
+        nNF: zCustom
           .numeric()
           .min(1)
           .max(9)
@@ -34,7 +34,7 @@ const schemaNfeNfRef = z
     refNFP: z
       .object({
         cUF: zUfCode().describe("BA11"),
-        AAMM: zCustom.string
+        AAMM: zCustom
           .numeric()
           .length(4)
           .refine(
@@ -45,36 +45,36 @@ const schemaNfeNfRef = z
             { message: "Mês deve ser entre 01 e 12." },
           )
           .describe("BA12"),
-        CNPJ: zCustom.string.cnpj().optional().describe("BA13"),
-        CPF: zCustom.string.cpf().optional().describe("BA14"),
-        IE: zCustom.string.ie().describe("BA15"),
+        CNPJ: zCustom.cnpj().optional().describe("BA13"),
+        CPF: zCustom.cpf().optional().describe("BA14"),
+        IE: zCustom.ie().describe("BA15"),
         mod: z.enum(["01", "04"]).describe("BA16"),
-        serie: zCustom.string.numeric().min(1).max(3).describe("BA17"),
-        nNF: zCustom.string
+        serie: zCustom.numeric().min(1).max(3).describe("BA17"),
+        nNF: zCustom
           .numeric()
           .min(1)
           .max(9)
           .refine((value) => Number(value) > 0)
           .describe("BA18"),
       })
-      .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne([CNPJ, CPF]), {
+      .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
         message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
       })
       .optional()
       .describe("BA10"),
-    refCTe: zCustom.string.numeric().length(44).optional().describe("BA19"),
+    refCTe: zCustom.numeric().length(44).optional().describe("BA19"),
     refECF: z
       .object({
         mod: z.enum(["2B", "2C", "2D"]).describe("BA21"),
-        nECF: zCustom.string.numeric().length(3).describe("BA22"),
-        nCOO: zCustom.string.numeric().length(6).describe("BA23"),
+        nECF: zCustom.numeric().length(3).describe("BA22"),
+        nCOO: zCustom.numeric().length(6).describe("BA23"),
       })
       .optional()
       .describe("BA20"),
   })
   .refine(
     ({ refNfe, refNF, refNFP, refCTe, refECF }) =>
-      zCustom.utils.hasOnlyOne([refNfe, refNF, refNFP, refCTe, refECF]),
+      zCustom.hasOnlyOne(refNfe, refNF, refNFP, refCTe, refECF),
     {
       message:
         "Informe apenas uma das referências: refNfe, refNF, refNFP, refCTe ou refECF.",

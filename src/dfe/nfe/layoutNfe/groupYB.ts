@@ -3,7 +3,7 @@ import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeInfIntermed = z
   .object({
-    CNPJ: zCustom.string.cnpj().describe("YB02"),
+    CNPJ: zCustom.cnpj().describe("YB02"),
     idCadIntTran: z.string().length(60).describe("YB03"),
   })
   .describe("infIntermed:YB01");

@@ -4,28 +4,23 @@ import { zUf } from ".";
 
 const schemaNfeDest = z
   .object({
-    CNPJ: zCustom.string.cnpj().optional().describe("E02"),
-    CPF: zCustom.string.cpf().optional().describe("E03"),
-    idEstrangeiro: zCustom.string.range(5, 20).optional().describe("E03a"),
-    xNome: zCustom.string.range(2, 60).optional().describe("E04"),
+    CNPJ: zCustom.cnpj().optional().describe("E02"),
+    CPF: zCustom.cpf().optional().describe("E03"),
+    idEstrangeiro: zCustom.range(5, 20).optional().describe("E03a"),
+    xNome: zCustom.range(2, 60).optional().describe("E04"),
     enderDest: z
       .object({
-        xLgr: zCustom.string.range(2, 60).describe("E06"),
-        nro: zCustom.string.range(1, 60).describe("E07"),
-        xCpl: zCustom.string.range(1, 60).optional().describe("E08"),
-        xBairro: zCustom.string.range(2, 60).describe("E09"),
-        cMun: zCustom.string.numeric().length(7).describe("E10"),
-        xMun: zCustom.string.range(2, 60).describe("E11"),
+        xLgr: zCustom.range(2, 60).describe("E06"),
+        nro: zCustom.range(1, 60).describe("E07"),
+        xCpl: zCustom.range(1, 60).optional().describe("E08"),
+        xBairro: zCustom.range(2, 60).describe("E09"),
+        cMun: zCustom.numeric().length(7).describe("E10"),
+        xMun: zCustom.range(2, 60).describe("E11"),
         UF: zUf().or(z.literal("EX")).describe("E12"),
-        CEP: zCustom.string.numeric().length(8).optional().describe("E13"),
-        cPais: zCustom.string
-          .numeric()
-          .min(2)
-          .max(4)
-          .optional()
-          .describe("E14"),
-        xPais: zCustom.string.range(2, 60).optional().describe("E15"),
-        fone: zCustom.string.phone().optional().describe("E16"),
+        CEP: zCustom.numeric().length(8).optional().describe("E13"),
+        cPais: zCustom.numeric().min(2).max(4).optional().describe("E14"),
+        xPais: zCustom.range(2, 60).optional().describe("E15"),
+        fone: zCustom.phone().optional().describe("E16"),
       })
       .refine(
         ({ cPais, xPais }) => {
@@ -56,14 +51,14 @@ const schemaNfeDest = z
       )
       .describe("enderDest:E05"),
     indIEDest: z.enum(["1", "2", "9"]).describe("E16a"),
-    IE: zCustom.string.ie().optional().describe("E17"),
-    ISUF: zCustom.string.range(8, 9).optional().describe("E18"),
-    IM: zCustom.string.range(1, 15).optional().describe("E18a"),
-    email: zCustom.string.range(1, 60).email().optional().describe("E19"),
+    IE: zCustom.ie().optional().describe("E17"),
+    ISUF: zCustom.range(8, 9).optional().describe("E18"),
+    IM: zCustom.range(1, 15).optional().describe("E18a"),
+    email: zCustom.range(1, 60).email().optional().describe("E19"),
   })
   .refine(
     ({ CNPJ, CPF, idEstrangeiro }) =>
-      zCustom.utils.hasOnlyOne([CNPJ, CPF, idEstrangeiro]),
+      zCustom.hasOnlyOne(CNPJ, CPF, idEstrangeiro),
     {
       message:
         "Deve ser informado apenas um dos campos: CNPJ, CPF ou idEstrangeiro.",

@@ -9,11 +9,11 @@ import type { NfeWebServiceResponse } from "./common";
 
 export const schemaNfeConsultaCadastroOptions = z
   .object({
-    IE: zCustom.string.ie().optional(),
-    CPF: zCustom.string.cpf().optional(),
-    CNPJ: zCustom.string.cnpj().optional(),
+    IE: zCustom.ie().optional(),
+    CPF: zCustom.cpf().optional(),
+    CNPJ: zCustom.cnpj().optional(),
   })
-  .refine((obj) => zCustom.utils.hasOnlyOne([obj.IE, obj.CPF, obj.CNPJ]));
+  .refine((obj) => zCustom.hasOnlyOne([obj.IE, obj.CPF, obj.CNPJ]));
 
 /**
  * @description Opções para configurar o web service de consulta cadastro.
