@@ -25,7 +25,7 @@ const schemaNfeInfNfe = z
       .string()
       .startsWith("NFe")
       .length(47)
-      .refine((value) => isValidAccessCode(value, { strict: true }))
+      .refine((value) => isValidAccessCode(value.slice(3), { strict: true }))
       .describe("A03"),
     ide: schemaNfeIde,
     emit: schemaNfeEmit,
@@ -61,6 +61,7 @@ const schemaNfeInfNfe = z
         "No caso de NFC-e (modelo 65) informar dest.indIEDest=9 e não informar a tag dest.IE",
     },
   )
+  .refine(({ ide, "@_Id": id }) => ide.cDV === id.slice(-1))
   .describe("infNFe:A01");
 
 /**
