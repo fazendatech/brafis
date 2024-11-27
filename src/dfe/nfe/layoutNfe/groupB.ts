@@ -59,21 +59,13 @@ const schemaNfeIde = z
     xJust: zCustom.length(15, 256).optional().describe("B29"),
     NFref: z.array(schemaNfeNfRef).max(500).optional(),
   })
-  .refine(
-    ({ mod, dhSaiEnt }) => {
-      if (mod === "65") {
-        return dhSaiEnt === undefined;
-      }
-      return true;
-    },
-    {
-      message:
-        "Data e hora de Saída ou da Entrada da Mercadoria/Produto não deve ser informada para NFC-e.",
-    },
-  )
+  .refine(({ mod, dhSaiEnt }) => (mod === "65" ? !dhSaiEnt : true), {
+    message:
+      "Data e hora de Saída ou da Entrada da Mercadoria/Produto não deve ser informada para NFC-e.",
+  })
   .refine(
     ({ tpNF, dhSaiEnt, dhEmi }) => {
-      if (dhSaiEnt === undefined || tpNF !== "1") {
+      if (!dhSaiEnt || tpNF !== "1") {
         return true;
       }
       return new Date(dhSaiEnt) >= new Date(dhEmi);
