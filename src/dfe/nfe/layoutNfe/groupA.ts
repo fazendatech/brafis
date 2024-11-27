@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { validateVerifierDigit } from ".";
 import { schemaNfeIde } from "./groupB";
 import { schemaNfeEmit } from "./groupC";
 import { schemaNfeAvulsa } from "./groupD";
@@ -17,6 +16,20 @@ import { schemaNfeInfIntermed } from "./groupYB";
 import { schemaNfeInfAdic } from "./groupZ";
 import { schemaNfeInfRespTec } from "./groupZD";
 
+function verifierDigit(digits: string): number {
+  let factor = 4;
+  let sum = 0;
+  for (const d of digits) {
+    sum += Number(d) * factor;
+    factor -= 1;
+    if (factor === 1) {
+      factor = 9;
+    }
+  }
+  const dv = 11 - (sum % 11);
+  return dv > 9 ? 0 : dv;
+}
+
 const schemaNfeInfNfe = z
   .object({
     "@_versao": z.literal("4.00").describe("A02"),
@@ -24,8 +37,11 @@ const schemaNfeInfNfe = z
       .string()
       .startsWith("NFe")
       .length(47)
-      .refine(validateVerifierDigit)
-      .describe("A03"), // TODO: Validar
+      .refine(
+        (value) =>
+          Number(value.slice(-1)) === verifierDigit(value.slice(0, -1)),
+      )
+      .describe("A03"),
     ide: schemaNfeIde,
     emit: schemaNfeEmit,
     avulsa: schemaNfeAvulsa.optional(),
