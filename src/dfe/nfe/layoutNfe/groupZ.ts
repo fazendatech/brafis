@@ -3,13 +3,13 @@ import { zCustom } from "@/utils/zCustom";
 
 const schemaNfeInfAdic = z
   .object({
-    infAdFisco: zCustom.range(1, 2000).optional().describe("Z02"),
-    infCpl: zCustom.range(1, 5000).optional().describe("Z03"),
+    infAdFisco: zCustom.length(1, 2000).optional().describe("Z02"),
+    infCpl: zCustom.length(1, 5000).optional().describe("Z03"),
     obsCont: z
       .array(
         z.object({
-          xCampo: zCustom.range(1, 20).describe("Z05"),
-          xTexto: zCustom.range(1, 160).describe("Z06"),
+          xCampo: zCustom.length(1, 20).describe("Z05"),
+          xTexto: zCustom.length(1, 160).describe("Z06"),
         }),
       )
       .max(10)
@@ -18,8 +18,8 @@ const schemaNfeInfAdic = z
     obsFisco: z
       .array(
         z.object({
-          xCampo: zCustom.range(1, 20).describe("Z08"),
-          xTexto: zCustom.range(1, 160).describe("Z09"),
+          xCampo: zCustom.length(1, 20).describe("Z08"),
+          xTexto: zCustom.length(1, 160).describe("Z09"),
         }),
       )
       .max(10)
@@ -28,7 +28,7 @@ const schemaNfeInfAdic = z
     procRef: z
       .array(
         z.object({
-          nProc: zCustom.range(1, 60).describe("Z11"),
+          nProc: zCustom.length(1, 60).describe("Z11"),
           indProc: z.enum(["0", "1", "2", "3", "9"]).describe("Z12"),
         }),
       )

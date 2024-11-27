@@ -47,7 +47,7 @@ const schemaNfePag = z
                 ])
                 .optional()
                 .describe("YA06"),
-              cAut: zCustom.range(1, 20).optional().describe("YA07"),
+              cAut: zCustom.length(1, 20).optional().describe("YA07"),
               vTroco: zCustom.decimal(13, 2).optional().describe("YA09"),
             })
             .optional()

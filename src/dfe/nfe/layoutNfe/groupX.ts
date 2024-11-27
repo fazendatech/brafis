@@ -9,10 +9,10 @@ const schemaNfeTransp = z
       .object({
         CNPJ: zCustom.cnpj().optional().describe("X04"),
         CPF: zCustom.cpf().optional().describe("X05"),
-        xNome: zCustom.range(2, 60).optional().describe("X06"),
+        xNome: zCustom.length(2, 60).optional().describe("X06"),
         IE: zCustom.ie().or(z.literal("ISENTO")).optional().describe("X07"),
-        xEnder: zCustom.range(1, 60).optional().describe("X08"),
-        xMun: zCustom.range(1, 60).optional().describe("X09"),
+        xEnder: zCustom.length(1, 60).optional().describe("X08"),
+        xMun: zCustom.length(1, 60).optional().describe("X09"),
         UF: zUf().optional().describe("X10"),
       })
       .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
@@ -46,34 +46,34 @@ const schemaNfeTransp = z
       .object({
         placa: zCustom.placa().describe("X19"),
         UF: zUf().or(z.literal("EX")).describe("X20"),
-        RNTC: zCustom.range(1, 20).optional().describe("X21"),
+        RNTC: zCustom.length(1, 20).optional().describe("X21"),
       })
       .optional()
       .describe("X18"),
     reboque: z
       .array(
         z.object({
-          placa: zCustom.range(7, 7).describe("X23"),
+          placa: zCustom.length(7, 7).describe("X23"),
           UF: zUf().or(z.literal("EX")).describe("X24"),
-          RNTC: zCustom.range(1, 20).optional().describe("X25"),
+          RNTC: zCustom.length(1, 20).optional().describe("X25"),
         }),
       )
       .max(5)
       .optional()
       .describe("X22"),
-    vagao: zCustom.range(1, 20).optional().describe("X25a"),
-    balsa: zCustom.range(1, 20).optional().describe("X25b"),
+    vagao: zCustom.length(1, 20).optional().describe("X25a"),
+    balsa: zCustom.length(1, 20).optional().describe("X25b"),
     vol: z
       .array(
         z.object({
           qVol: zCustom.numeric().max(15).optional().describe("X27"),
-          esp: zCustom.range(1, 60).optional().describe("X28"),
-          marca: zCustom.range(1, 60).optional().describe("X29"),
-          nVol: zCustom.range(1, 60).optional().describe("X30"),
+          esp: zCustom.length(1, 60).optional().describe("X28"),
+          marca: zCustom.length(1, 60).optional().describe("X29"),
+          nVol: zCustom.length(1, 60).optional().describe("X30"),
           pesoL: zCustom.decimal(12, 3).optional().describe("X31"),
           pesoB: zCustom.decimal(12, 3).optional().describe("X32"),
           lacres: z
-            .array(z.object({ nLacre: zCustom.range(1, 60).describe("X34") }))
+            .array(z.object({ nLacre: zCustom.length(1, 60).describe("X34") }))
             .max(5000)
             .optional()
             .describe("X33"),

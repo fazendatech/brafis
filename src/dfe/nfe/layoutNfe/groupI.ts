@@ -6,7 +6,7 @@ import { schemaNfeRastro } from "./groupI80";
 
 const schemaNfeProd = z
   .object({
-    cProd: zCustom.range(1, 60).describe("I02"),
+    cProd: zCustom.length(1, 60).describe("I02"),
     cEAN: zCustom
       .numeric()
       .or(z.literal("SEM GTIN"))
@@ -21,7 +21,7 @@ const schemaNfeProd = z
         },
       )
       .describe("I03"),
-    xProd: zCustom.range(1, 120).describe("I04"),
+    xProd: zCustom.length(1, 120).describe("I04"),
     NCM: zCustom.numeric().length(8).or(z.literal("00")).describe("I05"),
     NVE: z.array(z.string().length(6)).max(8).optional().describe("I05a"),
     // I05b
@@ -42,12 +42,12 @@ const schemaNfeProd = z
       .describe("I05f"),
     EXTIPI: zCustom.numeric().min(2).max(3).optional().describe("I06"),
     CFOP: zCustom.numeric().length(4).describe("I08"),
-    uCom: zCustom.range(1, 6).describe("I09"),
+    uCom: zCustom.length(1, 6).describe("I09"),
     qCom: zCustom.decimal(11, 4).describe("I10"),
     vUnCom: zCustom.decimal(11, 10).describe("I10a"),
     vProd: zCustom.decimal(13, 2).describe("I11"),
-    cEANTrib: zCustom.range(8, 14).optional().describe("I12"),
-    uTrib: zCustom.range(1, 6).describe("I13"),
+    cEANTrib: zCustom.length(8, 14).optional().describe("I12"),
+    uTrib: zCustom.length(1, 6).describe("I13"),
     qTrib: zCustom.decimal(11, 4).describe("I14"),
     vUnTrib: zCustom.decimal(11, 10).describe("I14a"),
     vFrete: zCustom.decimal(13, 2).optional().describe("I15"),
@@ -63,7 +63,7 @@ const schemaNfeProd = z
       .optional()
       .describe("I50"),
     // Group I05
-    xPed: zCustom.range(1, 15).optional().describe("I60"),
+    xPed: zCustom.length(1, 15).optional().describe("I60"),
     nItemPed: zCustom.numeric().length(6).optional().describe("I61"),
     // Group I07
     nFCI: z.string().length(36).optional().describe("I70"), // Informação relacionada com a Resolução 13/2012 do Senado Federal. Formato: Algarismos, letras maiúsculas de "A" a "F" e o caractere hífen. Exemplo: B01F70AF-10BF4B1F-848C-65FF57F616FE

@@ -6,20 +6,20 @@ const schemaNfeEmit = z
   .object({
     CNPJ: zCustom.cnpj().optional().describe("C02"),
     CPF: zCustom.cpf().optional().describe("C02a"),
-    xNome: zCustom.range(2, 60).describe("C03"),
-    xFant: zCustom.range(1, 60).describe("C04"),
+    xNome: zCustom.length(2, 60).describe("C03"),
+    xFant: zCustom.length(1, 60).describe("C04"),
     enderEmit: z
       .object({
-        xLgr: zCustom.range(2, 60).describe("C06"),
-        nro: zCustom.range(1, 60).describe("C07"),
-        xCpl: zCustom.range(1, 60).optional().describe("C08"),
-        xBairro: zCustom.range(2, 60).describe("C09"),
+        xLgr: zCustom.length(2, 60).describe("C06"),
+        nro: zCustom.length(1, 60).describe("C07"),
+        xCpl: zCustom.length(1, 60).optional().describe("C08"),
+        xBairro: zCustom.length(2, 60).describe("C09"),
         cMun: zCustom.numeric().length(7).describe("C10"),
-        xMun: zCustom.range(2, 60).describe("C11"),
+        xMun: zCustom.length(2, 60).describe("C11"),
         UF: zUf().describe("C12"), // UF
         CEP: zCustom.numeric().length(8).optional().describe("C13"),
         cPais: zCustom.numeric().length(4).optional().describe("C14"),
-        xPais: zCustom.range(2, 60).optional().describe("C15"),
+        xPais: zCustom.length(2, 60).optional().describe("C15"),
         fone: zCustom.phone().optional().describe("C16"),
       })
       .refine(
@@ -34,7 +34,7 @@ const schemaNfeEmit = z
       .describe("C05"),
     IE: zCustom.ie().describe("C17"),
     IEST: zCustom.ie().optional().describe("C18"),
-    IM: zCustom.range(1, 15).optional().describe("C19"),
+    IM: zCustom.length(1, 15).optional().describe("C19"),
     CNAE: zCustom.numeric().length(7).optional().describe("C20"),
     CRT: z.enum(["1", "2", "3"]).describe("C21"),
   })
