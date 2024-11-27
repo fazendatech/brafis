@@ -21,7 +21,7 @@ const schemaNfeEntrega = z
     email: zCustom.length(1, 60).email().optional().describe("G14"),
     IE: zCustom.ie().optional().describe("G15"),
   })
-  .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
+  .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
     message: "Deve ser informado apenas um dos campos: CNPJ ou CPF.",
   })
   .refine(

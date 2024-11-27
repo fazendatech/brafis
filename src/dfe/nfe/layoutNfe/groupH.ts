@@ -18,8 +18,19 @@ const schemaNfeDet = z
       .describe("H02"),
     prod: schemaNfeProd,
     imposto: schemaNfeImposto,
-    // impostoDevol: schemaNfeImpostoDevol.optional(),
-    infAdProd: z.string().max(500).optional().describe("H05"),
+    impostoDevol: z
+      .object({
+        pDevol: zCustom.decimal(3, 2).describe("UA02"),
+        IPI: z
+          .object({
+            vIPIDevol: zCustom.decimal(13, 2).describe("UA03"),
+          })
+          .optional()
+          .describe("UA04"),
+      })
+      .optional()
+      .describe("UA01"),
+    infAdProd: zCustom.length(1, 500).optional().describe("H05"),
   })
   .describe("det:H01");
 

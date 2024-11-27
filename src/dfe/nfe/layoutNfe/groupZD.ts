@@ -11,7 +11,7 @@ const schemaNfeInfRespTec = z
     hashCSRT: z.string().length(28).optional().describe("ZD09"),
   })
   .refine(
-    ({ idCSRT, hashCSRT }) => zCustom.hasAllOrNothing([idCSRT, hashCSRT]),
+    ({ idCSRT, hashCSRT }) => zCustom.utils.hasAllOrNothing([idCSRT, hashCSRT]),
     {
       message: "Os campos idCSRT e hashCSRT devem ser informados juntos.",
     },

@@ -6,7 +6,7 @@ const schemaNfeAutXml = z
     CNPJ: zCustom.cnpj().optional().describe("GA02"),
     CPF: zCustom.cpf().optional().describe("GA03"),
   })
-  .refine(({ CNPJ, CPF }) => zCustom.hasOnlyOne(CNPJ, CPF), {
+  .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
     message: "Deve ser informado apenas um dos campos: CNPJ, CPF",
   })
   .describe("autXML:GA01");

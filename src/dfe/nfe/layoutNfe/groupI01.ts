@@ -24,20 +24,10 @@ const schemaNfeDi = z
           vDescDI: zCustom.decimal(13, 2).optional().describe("I29"),
           nDraw: zCustom
             .numeric()
-            .refine(
-              (value) => {
-                if (!value) {
-                  return true;
-                }
-                const drawback9 = /^\d{2}\d{6}\d$/; // AANNNNNND
-                const drawback11 = /^\d{4}\d{6}\d$/; // AAAANNNNNND
-                return drawback11.test(value) || drawback9.test(value);
-              },
-              {
-                message:
-                  "O número do Ato Concessório de Suspensão deve ser preenchido com 11 dígitos (AAAANNNNNND) e o número do Ato Concessório de Drawback Isenção deve ser preenchido com 9 dígitos (AANNNNNND).",
-              },
-            )
+            .refine((value) => [0, 9, 11].includes(value.length), {
+              message:
+                "O número do Ato Concessório de Suspensão deve ser preenchido com 11 dígitos (AAAANNNNNND) e o número do Ato Concessório de Drawback Isenção deve ser preenchido com 9 dígitos (AANNNNNND).",
+            })
             .optional()
             .describe("I29a"),
         }),
@@ -47,7 +37,12 @@ const schemaNfeDi = z
       .describe("I25"),
   })
   .refine(
-    ({ tpViaTransp, vAFRMM }) => (tpViaTransp === "1" ? !!vAFRMM : true),
+    ({ tpViaTransp, vAFRMM }) => {
+      if (tpViaTransp === "1") {
+        return !!vAFRMM;
+      }
+      return true;
+    },
     {
       message:
         "O campo vAFRMM é obrigatório quando tpViaTransp é igual a 1 (Transporte maritmo).",
@@ -55,10 +50,10 @@ const schemaNfeDi = z
   )
   .refine(
     ({ tpIntermedio, CNPJ, UFTerceiro }) => {
-      if (tpIntermedio === "1") {
-        return true;
+      if (tpIntermedio === "2" || tpIntermedio === "3") {
+        return !!CNPJ && !!UFTerceiro;
       }
-      return !!CNPJ && !!UFTerceiro;
+      return true;
     },
     {
       message:
