@@ -5,10 +5,10 @@ import { zUf } from ".";
 const schemaNfeDi = z
   .object({
     nDI: zCustom.string.range(1, 12).describe("I19"),
-    dDI: zCustom.string.date().describe("I20"),
+    dDI: z.string().date().describe("I20"),
     xLocDesemb: zCustom.string.range(1, 60).describe("I21"),
     UFDesemb: zUf().describe("I22"),
-    dDesemb: zCustom.string.date().describe("I23"),
+    dDesemb: z.string().date().describe("I23"),
     tpViaTransp: z.enum(["1", "2", "3", "4", "5", "6", "7"]).describe("I23a"),
     vAFRMM: zCustom.string.decimal(13, 2).optional().describe("I23b"),
     tpIntermedio: z.enum(["1", "2", "3"]).describe("I23c"),
@@ -36,6 +36,25 @@ const schemaNfeDi = z
       .max(100)
       .describe("I25"),
   })
+  .refine(
+    ({ tpViaTransp, vAFRMM }) => (tpViaTransp === "1" ? !!vAFRMM : true),
+    {
+      message:
+        "O campo vAFRMM é obrigatório quando tpViaTransp é igual a 1 (Transporte maritmo).",
+    },
+  )
+  .refine(
+    ({ tpIntermedio, CNPJ, UFTerceiro }) => {
+      if (tpIntermedio === "1") {
+        return true;
+      }
+      return !!CNPJ && !!UFTerceiro;
+    },
+    {
+      message:
+        "Os campos CNPJ e UFTerceiro são obrigatórios quando tpIntermedio é igual a 1 (Importação por conta e ordem ou por encomenda).",
+    },
+  )
   .describe("DI:I18");
 
 /**
