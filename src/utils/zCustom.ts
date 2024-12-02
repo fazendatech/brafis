@@ -10,7 +10,7 @@ const decimal = (before: number, after: number) =>
   z
     .string()
     .regex(
-      new RegExp(`^\\d{1,${before}}(.\\d{1,${after}})?$`),
+      new RegExp(`^\\d{1,${before}}(\\.\\d{1,${after}})?$`),
       "Use apenas números decimais separados por ponto",
     );
 const date = () => z.string().datetime({ precision: 0 });
