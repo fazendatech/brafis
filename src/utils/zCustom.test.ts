@@ -51,6 +51,8 @@ describe("zCustom", () => {
 
       test("Returns true when no values are present", () => {
         expect(zCustom.utils.hasAllOrNothing()).toBeTrue();
+        expect(zCustom.utils.hasAllOrNothing(null)).toBeTrue();
+        expect(zCustom.utils.hasAllOrNothing(undefined)).toBeTrue();
         expect(zCustom.utils.hasAllOrNothing(null, undefined)).toBeTrue();
       });
 
