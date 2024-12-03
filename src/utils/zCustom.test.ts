@@ -36,6 +36,7 @@ describe("zCustom", () => {
         expect(zCustom.utils.hasOnlyOne("value")).toBeTrue();
         expect(zCustom.utils.hasOnlyOne(null, undefined, "value")).toBeTrue();
       });
+
       test("Returns false when multiple values are valid", () => {
         expect(zCustom.utils.hasOnlyOne("value", 1)).toBeFalse();
         expect(zCustom.utils.hasOnlyOne("", false, 0)).toBeFalse();
@@ -43,20 +44,18 @@ describe("zCustom", () => {
     });
 
     describe("hasAllOrNothing", () => {
-      test("validates either all values are present or none", () => {
-        expect(
-          zCustom.utils.hasAllOrNothing(null, undefined, "", false, 0),
-        ).toBeTrue();
-        expect(
-          zCustom.utils.hasAllOrNothing("value1", "value2", "value3"),
-        ).toBeTrue();
-        expect(
-          zCustom.utils.hasAllOrNothing(null, "value", "", false, 0),
-        ).toBeFalse();
-        expect(
-          zCustom.utils.hasAllOrNothing("value", undefined, "another"),
-        ).toBeFalse();
+      test("Returns true when all values are present", () => {
+        expect(zCustom.utils.hasAllOrNothing("value", "value")).toBeTrue();
+        expect(zCustom.utils.hasAllOrNothing("value", "", false, 0)).toBeTrue();
+      });
+
+      test("Returns true when no values are present", () => {
         expect(zCustom.utils.hasAllOrNothing()).toBeTrue();
+        expect(zCustom.utils.hasAllOrNothing(null, undefined)).toBeTrue();
+      });
+
+      test("Returns false when some values are present", () => {
+        expect(zCustom.utils.hasAllOrNothing("value", undefined)).toBeFalse();
       });
     });
   });
