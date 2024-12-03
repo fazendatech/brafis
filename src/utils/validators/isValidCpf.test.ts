@@ -11,5 +11,9 @@ describe("isValidCpf", () => {
     expect(isValidCpf("11223344556")).toBe(false);
   });
 
-  test.todo("Handles `strict` option");
+  test("Handles `strict` option", () => {
+    expect(isValidCpf("[a?@] 111.555.999-00", { strict: false })).toBeTrue();
+    expect(isValidCpf("111.555.999-00", { strict: true })).toBeTrue();
+    expect(isValidCpf("[a?@] 111.555.999-00", { strict: true })).toBeFalse();
+  });
 });
