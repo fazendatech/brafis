@@ -19,7 +19,13 @@ const decimal = (before: number, after: number) => {
       "Use apenas números decimais separados por ponto",
     );
 };
-const date = () => z.string().datetime({ precision: 0 });
+const date = () =>
+  z
+    .string()
+    .datetime({ precision: 0 })
+    .describe(
+      "Formato de data esperado: AAAA-MM-DDThh:mm:ssTZD (ex: 2020-01-01T00:00:00Z)",
+    );
 const ie = () => z.string().refine((value) => isValidIe(value));
 const cnpj = () => z.string().refine((value) => isValidCnpj(value));
 const cpf = () => z.string().refine((value) => isValidCpf(value));

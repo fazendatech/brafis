@@ -2,6 +2,21 @@ import { describe, test, expect } from "bun:test";
 import { zCustom } from "./zCustom";
 
 describe("zCustom", () => {
+  describe("numeric", () => {
+    const zNumeric = zCustom.numeric();
+
+    test("Successfully parses valid numeric string", () => {
+      expect(zNumeric.safeParse("1").success).toBeTrue();
+      expect(zNumeric.safeParse("123").success).toBeTrue();
+    });
+
+    test("Fails when parsing invalid numeric string", () => {
+      expect(zNumeric.safeParse("1.2").success).toBeFalse();
+      expect(zNumeric.safeParse("1,2").success).toBeFalse();
+      expect(zNumeric.safeParse("1a").success).toBeFalse();
+    });
+  });
+
   describe("decimal", () => {
     const zDecimal = zCustom.decimal(1, 1);
 
@@ -22,6 +37,35 @@ describe("zCustom", () => {
       expect(() => zCustom.decimal(1, 0)).toThrowError();
       expect(() => zCustom.decimal(-1, 1)).toThrowError();
       expect(() => zCustom.decimal(1, -1)).toThrowError();
+    });
+  });
+
+  describe("date", () => {
+    const zDate = zCustom.date();
+
+    test("Successfully parses valid date string", () => {
+      expect(zDate.safeParse("2020-01-01T00:00:00Z").success).toBeTrue();
+    });
+
+    test("Fails when parsing invalid date string", () => {
+      expect(zDate.safeParse("2021-10-10").success).toBeFalse();
+      expect(zDate.safeParse("2021-10-10 00:00:00").success).toBeFalse();
+      expect(zDate.safeParse("2021-10-10T00:00:00.000").success).toBeFalse();
+    });
+  });
+
+  describe("placa", () => {
+    test("Successfully parses valid placa string", () => {
+      expect(zCustom.placa().safeParse("AB1234").success).toBeTrue();
+      expect(zCustom.placa().safeParse("ABC123").success).toBeTrue();
+      expect(zCustom.placa().safeParse("ABC1234").success).toBeTrue();
+      expect(zCustom.placa().safeParse("ABCD123").success).toBeTrue();
+    });
+
+    test("Fails when parsing invalid placa string", () => {
+      expect(zCustom.placa().safeParse("ABC-123").success).toBeFalse();
+      expect(zCustom.placa().safeParse("ABCDE123").success).toBeFalse();
+      expect(zCustom.placa().safeParse("A12345").success).toBeFalse();
     });
   });
 
