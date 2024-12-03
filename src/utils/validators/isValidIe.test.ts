@@ -12,7 +12,7 @@ describe("isValidIe", () => {
     expect(isValidIe("123456789012345")).toBeFalse();
   });
 
-  test("validate strict option", () => {
+  test("Handles `strict` option", () => {
     expect(isValidIe("[a?@] 12.345.678-9", { strict: false })).toBeTrue();
     expect(isValidIe("12.345.678-9", { strict: true })).toBeTrue();
     expect(isValidIe("[a?@] 12.345.678-9", { strict: true })).toBeFalse();
