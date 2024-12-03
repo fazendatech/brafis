@@ -11,5 +11,13 @@ describe("isValidCnpj", () => {
     expect(isValidCnpj("11223344556677")).toBe(false);
   });
 
-  test.todo("Handles `strict` option");
+  test("Handles `strict` option", () => {
+    expect(
+      isValidCnpj("[a?@] 00.023.456/0001-77", { strict: false }),
+    ).toBeTrue();
+    expect(isValidCnpj("00.023.456/0001-77", { strict: true })).toBeTrue();
+    expect(
+      isValidCnpj("[a?@] 00.023.456/0001-77", { strict: true }),
+    ).toBeFalse();
+  });
 });
