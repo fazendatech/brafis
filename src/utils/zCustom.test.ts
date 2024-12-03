@@ -4,17 +4,27 @@ import { zCustom } from "./zCustom";
 describe("zCustom", () => {
   describe("decimal", () => {
     const zDecimal = zCustom.decimal(1, 1);
-    test("validates a decimal number", () => {
+
+    test("Successfully parses valid decimal number", () => {
       expect(zDecimal.safeParse("1").success).toBeTrue();
       expect(zDecimal.safeParse("1.2").success).toBeTrue();
     });
-    test("throws error when invalid", () => {
+
+    test("Fails when parsing invalid decimal number", () => {
       expect(zDecimal.safeParse("1.").success).toBeFalse();
+      expect(zDecimal.safeParse("1,2").success).toBeFalse();
       expect(zDecimal.safeParse("12.3").success).toBeFalse();
       expect(zDecimal.safeParse("1.23").success).toBeFalse();
-      expect(zDecimal.safeParse("1,23").success).toBeFalse();
+    });
+
+    test("Throws error when before or after is less than 1", () => {
+      expect(() => zCustom.decimal(0, 1)).toThrowError();
+      expect(() => zCustom.decimal(1, 0)).toThrowError();
+      expect(() => zCustom.decimal(-1, 1)).toThrowError();
+      expect(() => zCustom.decimal(1, -1)).toThrowError();
     });
   });
+
   describe("utils", () => {
     describe("hasOnlyOne", () => {
       test("Returns true when only one value is valid", () => {
