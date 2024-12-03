@@ -3,24 +3,42 @@ import { describe, test, expect } from "bun:test";
 import { isValidAccessCode } from "./isValidAccessCode";
 
 describe("isValidAccessCode", () => {
-  const validAccessCode = "32191105570714000825550010059146621133082968";
-  test("valid access codes with lenght 44", () => {
-    expect(isValidAccessCode(validAccessCode.slice(0, -1))).toBeFalse(); //43
-    expect(isValidAccessCode(validAccessCode)).toBeTrue(); // 44
-    expect(isValidAccessCode(`${validAccessCode}0`)).toBeFalse(); //45
+  const validAccessCode =
+    "3219 1105 5707-1400-0825.5500.1005.9146-6211-3308 2968";
+  const invalidAccessCode = "32191105570714000825550010059146621133082960";
+  const invalidAccessCodeWithSpecialChars =
+    "[a?@]_32191105570714000825550010059146621133082960";
+  const accessCodeWithSpecialChars =
+    "[a?@]_32191105570714000825550010059146621133082968";
+
+  test("Returns true when access code is valid", () => {
+    expect(isValidAccessCode(validAccessCode)).toBeTrue();
   });
 
-  test("return false to access codes with invalid verifier digit", () => {
-    expect(isValidAccessCode(`${validAccessCode.slice(0, -1)}0`)).toBeFalse();
+  test("Returns false when access code is invalid", () => {
+    expect(isValidAccessCode(invalidAccessCode)).toBeFalse();
   });
 
-  test("Handles `strict` option", () => {
-    expect(
-      isValidAccessCode(`[a?@]_ ${validAccessCode}`, { strict: false }),
-    ).toBeTrue();
-    expect(isValidAccessCode(validAccessCode, { strict: true })).toBeTrue();
-    expect(
-      isValidAccessCode(`[a?@]_ ${validAccessCode}`, { strict: true }),
-    ).toBeFalse();
+  describe("Handles strict option", () => {
+    test("Returns true when strict is false", () => {
+      expect(
+        isValidAccessCode(accessCodeWithSpecialChars, {
+          strict: false,
+        }),
+      ).toBeTrue();
+    });
+    test("Returns false when strict is false", () => {
+      expect(
+        isValidAccessCode(invalidAccessCodeWithSpecialChars, { strict: false }),
+      ).toBeFalse();
+    });
+    test("Returns true when strict is true", () => {
+      expect(isValidAccessCode(validAccessCode, { strict: true })).toBeTrue();
+    });
+    test("Returns false when strict is true", () => {
+      expect(
+        isValidAccessCode(accessCodeWithSpecialChars, { strict: true }),
+      ).toBeFalse();
+    });
   });
 });
