@@ -24,13 +24,13 @@ const placa = () =>
   });
 
 function hasOnlyOne(...values: unknown[]) {
-  const filtered = values.filter((v) => !!v);
+  const filtered = values.filter((v) => v !== null && v !== undefined);
   return filtered.length === 1;
 }
 
 function hasAllOrNothing(...values: unknown[]) {
   const len = values.length;
-  const filtered = values.filter((v) => !!v);
+  const filtered = values.filter((v) => v !== null && v !== undefined);
   return filtered.length === len || filtered.length === 0;
 }
 
