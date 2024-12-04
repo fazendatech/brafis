@@ -4,12 +4,13 @@ import { isValidAccessCode } from "./isValidAccessCode";
 
 describe("isValidAccessCode", () => {
   const validAccessCode =
-    "3219 1105 5707-1400-0825.5500.1005.9146-6211-3308 2968";
-  const invalidAccessCode = "32191105570714000825550010059146621133082960";
-  const invalidAccessCodeWithChars =
-    "[a?@]_32191105570714000825550010059146621133082960";
+    "1457 9158 7644 3103 8505 9627 0014 0061 8549 8112 272-6";
+  const invalidAccessCode = "14579158764431038505962700140061854981122728";
+
   const validAccessCodeWithChars =
-    "[a?@]_32191105570714000825550010059146621133082968";
+    "[a?@]_14579158764431038505962700140061854981122726";
+  const invalidAccessCodeWithChars =
+    "[a?@]_14579158764431038505962700140061854981122728";
 
   test("Returns true when access code is valid", () => {
     expect(isValidAccessCode(validAccessCode)).toBeTrue();
@@ -27,14 +28,17 @@ describe("isValidAccessCode", () => {
         }),
       ).toBeTrue();
     });
+
     test("Returns false when strict is false", () => {
       expect(
         isValidAccessCode(invalidAccessCodeWithChars, { strict: false }),
       ).toBeFalse();
     });
+
     test("Returns true when strict is true", () => {
       expect(isValidAccessCode(validAccessCode, { strict: true })).toBeTrue();
     });
+
     test("Returns false when strict is true", () => {
       expect(
         isValidAccessCode(validAccessCodeWithChars, { strict: true }),

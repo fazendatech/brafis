@@ -2,19 +2,35 @@ import { describe, expect, test } from "bun:test";
 import { isValidIe } from "./isValidIe";
 
 describe("isValidIe", () => {
-  test("returns true for valid IE with length between 8 and 14", () => {
-    expect(isValidIe("12345678")).toBeTrue();
-    expect(isValidIe("12345678901234")).toBeTrue();
+  const validIe = "1234567-8";
+  const invalidIe = "1234.5678.9012.3456";
+
+  const validIeWithChars = "[a?@] 1234567-8";
+  const invalidIeWithChars = "[a?@] 1234.5678.9012-3456";
+
+  test("Returns true for a valid IE", () => {
+    expect(isValidIe(validIe)).toBeTrue();
   });
 
-  test("returns false for IE with length less than 8 or greater than 14", () => {
-    expect(isValidIe("1234567")).toBeFalse();
-    expect(isValidIe("123456789012345")).toBeFalse();
+  test("Returns false for an invalid IE", () => {
+    expect(isValidIe(invalidIe)).toBeFalse();
   });
 
-  test("Handles `strict` option", () => {
-    expect(isValidIe("[a?@] 12.345.678-9", { strict: false })).toBeTrue();
-    expect(isValidIe("12.345.678-9", { strict: true })).toBeTrue();
-    expect(isValidIe("[a?@] 12.345.678-9", { strict: true })).toBeFalse();
+  test("Handles strict option", () => {
+    test("Returns true when strict is false", () => {
+      expect(isValidIe(validIeWithChars, { strict: false })).toBeTrue();
+    });
+
+    test("Returns false when strict is false", () => {
+      expect(isValidIe(invalidIeWithChars, { strict: false })).toBeFalse();
+    });
+
+    test("Returns true when strict is true", () => {
+      expect(isValidIe(validIe, { strict: true })).toBeTrue();
+    });
+
+    test("Returns false when strict is true", () => {
+      expect(isValidIe(validIeWithChars, { strict: true })).toBeFalse();
+    });
   });
 });

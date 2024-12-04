@@ -3,8 +3,9 @@ import { describe, test, expect } from "bun:test";
 import { isValidCnpj } from "./isValidCnpj";
 
 describe("isValidCnpj", () => {
-  const validCnpj = "00023456000177";
-  const invalidCnpj = "11223344556677";
+  const validCnpj = "00.023.456/0001-77";
+  const invalidCnpj = "11.223.344/5566-77";
+
   const validCnpjWithChars = "[a?@] 00.023.456/0001-77";
   const invalidCnpjWithChars = "[a?@] 11.223.344/5566-77";
 
@@ -16,26 +17,21 @@ describe("isValidCnpj", () => {
     expect(isValidCnpj(invalidCnpj)).toBeFalse();
   });
 
-  describe("Handles `strict` option", () => {
+  describe("Handles strict option", () => {
     test("Returns true when strict is false", () => {
       expect(isValidCnpj(validCnpjWithChars, { strict: false })).toBeTrue();
     });
+
     test("Returns false when strict is false", () => {
       expect(isValidCnpj(invalidCnpjWithChars, { strict: false })).toBeFalse();
     });
+
     test("Returns true when strict is true", () => {
-      expect(isValidCnpj(validCnpj, { strict: true })).toBe(true);
+      expect(isValidCnpj(validCnpj, { strict: true })).toBeTrue();
     });
+
     test("Returns false when strict is true", () => {
-      expect(isValidCnpj(validCnpjWithChars, { strict: true })).toBe(false);
+      expect(isValidCnpj(validCnpjWithChars, { strict: true })).toBeFalse();
     });
   });
-  //   expect(
-  //     isValidCnpj("[a?@] 00.023.456/0001-77", { strict: false }),
-  //   ).toBeTrue();
-  //   expect(isValidCnpj("00.023.456/0001-77", { strict: true })).toBeTrue();
-  //   expect(
-  //     isValidCnpj("[a?@] 00.023.456/0001-77", { strict: true }),
-  //   ).toBeFalse();
-  // });
 });
