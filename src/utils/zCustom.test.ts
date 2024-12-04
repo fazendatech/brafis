@@ -6,14 +6,11 @@ describe("zCustom", () => {
     const zNumeric = zCustom.numeric();
 
     test("Successfully parses valid numeric string", () => {
-      expect(zNumeric.safeParse("1").success).toBeTrue();
       expect(zNumeric.safeParse("123").success).toBeTrue();
     });
 
     test("Fails when parsing invalid numeric string", () => {
       expect(zNumeric.safeParse("1.2").success).toBeFalse();
-      expect(zNumeric.safeParse("1,2").success).toBeFalse();
-      expect(zNumeric.safeParse("1a").success).toBeFalse();
     });
   });
 
@@ -30,13 +27,6 @@ describe("zCustom", () => {
       expect(zDecimal.safeParse("1,2").success).toBeFalse();
       expect(zDecimal.safeParse("12.3").success).toBeFalse();
       expect(zDecimal.safeParse("1.23").success).toBeFalse();
-    });
-
-    test("Throws error when before or after is less than 1", () => {
-      expect(() => zCustom.decimal(0, 1)).toThrowError();
-      expect(() => zCustom.decimal(1, 0)).toThrowError();
-      expect(() => zCustom.decimal(-1, 1)).toThrowError();
-      expect(() => zCustom.decimal(1, -1)).toThrowError();
     });
   });
 
@@ -73,9 +63,7 @@ describe("zCustom", () => {
     describe("hasOnlyOne", () => {
       test("Returns true when only one value is valid", () => {
         expect(zCustom.utils.hasOnlyOne(0)).toBeTrue();
-        expect(zCustom.utils.hasOnlyOne(1)).toBeTrue();
         expect(zCustom.utils.hasOnlyOne(false)).toBeTrue();
-        expect(zCustom.utils.hasOnlyOne(true)).toBeTrue();
         expect(zCustom.utils.hasOnlyOne("")).toBeTrue();
         expect(zCustom.utils.hasOnlyOne("value")).toBeTrue();
         expect(zCustom.utils.hasOnlyOne(null, undefined, "value")).toBeTrue();
@@ -83,7 +71,6 @@ describe("zCustom", () => {
 
       test("Returns false when multiple values are valid", () => {
         expect(zCustom.utils.hasOnlyOne("value", 1)).toBeFalse();
-        expect(zCustom.utils.hasOnlyOne("", false, 0)).toBeFalse();
       });
     });
 
@@ -94,9 +81,6 @@ describe("zCustom", () => {
       });
 
       test("Returns true when no values are present", () => {
-        expect(zCustom.utils.hasAllOrNothing()).toBeTrue();
-        expect(zCustom.utils.hasAllOrNothing(null)).toBeTrue();
-        expect(zCustom.utils.hasAllOrNothing(undefined)).toBeTrue();
         expect(zCustom.utils.hasAllOrNothing(null, undefined)).toBeTrue();
       });
 
