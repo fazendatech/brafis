@@ -6,19 +6,13 @@ import { isValidIe } from "@/utils/validators/isValidIe";
 
 const length = (min: number, max: number) => z.string().min(min).max(max);
 const numeric = () => z.string().regex(/^\d+$/, "Deve possuir apenas dígitos.");
-const decimal = (before: number, after: number) => {
-  if (before < 1 || after < 1) {
-    throw new Error(
-      "Decimal must have at least 1 digit before and after the dot.",
-    );
-  }
-  return z
+const decimal = (before: number, after: number) =>
+  z
     .string()
     .regex(
       new RegExp(`^\\d{1,${before}}(\\.\\d{1,${after}})?$`),
       "Use apenas números decimais separados por ponto",
     );
-};
 const date = () =>
   z
     .string()
