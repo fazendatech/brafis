@@ -9,7 +9,7 @@ describe("errorHasMessage", () => {
 
     const result = errorHasMessage(error, message);
 
-    expect(result).toBe(true);
+    expect(result).toBeTrue();
   });
 
   test("Returns false if the error has a different message", () => {
@@ -18,7 +18,7 @@ describe("errorHasMessage", () => {
 
     const result = errorHasMessage(error, message);
 
-    expect(result).toBe(false);
+    expect(result).toBeFalse();
   });
 
   test("Returns false if the error is not an instance of Error", () => {
@@ -27,6 +27,6 @@ describe("errorHasMessage", () => {
 
     const result = errorHasMessage(error, message);
 
-    expect(result).toBe(false);
+    expect(result).toBeFalse();
   });
 });
