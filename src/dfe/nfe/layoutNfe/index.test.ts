@@ -1,7 +1,5 @@
 import { describe, expect, test } from "bun:test";
-
 import { CertificateP12 } from "@/certificate";
-
 import { signNfe } from ".";
 import type { NfeInfNfe } from "./groupA";
 
@@ -155,11 +153,14 @@ describe("generateAndSignNfe", async () => {
 
   console.log(validNfe);
 
-  const regex =
+  const signRegex =
     /<Signature xmlns="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#">[\s\S]*?<SignedInfo>[\s\S]*?<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#rsa-sha1"\/>[\s\S]*?<Reference URI="#NFe[\w\d]+">[\s\S]*?<Transforms>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#enveloped-signature"\/>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<\/Transforms>[\s\S]*?<DigestMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#sha1"\/>[\s\S]*?<DigestValue>[\w\+\/=]+<\/DigestValue>[\s\S]*?<\/Reference>[\s\S]*?<\/SignedInfo>[\s\S]*?<SignatureValue>[\w\+\/=]+<\/SignatureValue>[\s\S]*?<KeyInfo>[\s\S]*?<X509Data>[\s\S]*?<X509Certificate>[\w\+\/=]+<\/X509Certificate>[\s\S]*?<\/X509Data>[\s\S]*?<\/KeyInfo>[\s\S]*?<\/Signature>/;
 
-  test("Match snapshot when generate and sign the XML correctly", async () => {
-    const signedXML = await signNfe(validNfe, key, cert);
-    expect(regex.test(signedXML)).toBeTrue();
+  test("Returns true when generate and sign the XML correctly", async () => {
+    const signedXML = await signNfe(validNfe, {
+      privateKey: key,
+      publicCert: cert,
+    });
+    expect(signRegex.test(signedXML.Nfe)).toBeTrue();
   });
 });
