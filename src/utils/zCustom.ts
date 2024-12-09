@@ -20,9 +20,14 @@ const date = () =>
     .describe(
       "Formato de data esperado: AAAA-MM-DDThh:mm:ssTZD (ex: 2020-01-01T00:00:00Z)",
     );
-const ie = () => z.string().refine((value) => isValidIe(value));
-const cnpj = () => z.string().refine((value) => isValidCnpj(value));
-const cpf = () => z.string().refine((value) => isValidCpf(value));
+const ie = () =>
+  z.string().refine((value) => isValidIe(value), { message: "IE inválida." });
+const cnpj = () =>
+  z
+    .string()
+    .refine((value) => isValidCnpj(value), { message: "CNPJ inválido." });
+const cpf = () =>
+  z.string().refine((value) => isValidCpf(value), { message: "CPF inválido." });
 const phone = () => numeric().min(6).max(14);
 const placa = () =>
   z.string().regex(/^[a-zA-Z]{2,4}[0-9]{3,4}$/, {
