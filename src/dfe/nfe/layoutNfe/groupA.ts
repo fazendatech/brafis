@@ -35,7 +35,7 @@ const schemaNfeInfNfe = z
     dest: schemaNfeDest,
     retirada: schemaNfeRetirada.optional(),
     entrega: schemaNfeEntrega.optional(),
-    autXml: z.array(schemaNfeAutXml).max(10).optional(),
+    autXML: z.array(schemaNfeAutXml).max(10).optional(),
     det: z
       .array(schemaNfeDet)
       .min(1)
@@ -63,7 +63,10 @@ const schemaNfeInfNfe = z
         "No caso de NFC-e (modelo 65) informar dest.indIEDest=9 e não informar a tag dest.IE",
     },
   )
-  .refine(({ ide, "@_Id": id }) => ide.cDV === id.slice(-1))
+  .refine(({ ide, "@_Id": id }) => ide.cDV === id.slice(-1), {
+    message:
+      "O dígito verificador do Id da nota deve ser igual ao campo cDV da tag ide.",
+  })
   .describe("infNFe:A01");
 
 /**
