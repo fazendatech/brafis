@@ -26,7 +26,9 @@ const schemaNfeNfRef = z
           .numeric()
           .min(1)
           .max(9)
-          .refine((value) => Number(value) > 0)
+          .refine((value) => Number(value) > 0, {
+            message: "Número da NF deve ser maior que 0.",
+          })
           .describe("BA09"),
       })
       .optional()
@@ -54,7 +56,9 @@ const schemaNfeNfRef = z
           .numeric()
           .min(1)
           .max(9)
-          .refine((value) => Number(value) > 0)
+          .refine((value) => Number(value) > 0, {
+            message: "Número da NF deve ser maior que 0.",
+          })
           .describe("BA18"),
       })
       .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
