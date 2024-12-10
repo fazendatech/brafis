@@ -241,7 +241,7 @@ const schemaNfeICMS70 = z.object({});
 
 const schemaNfeICMS90 = z.object({});
 
-const schemaNfeICMS = z
+const schemaNfeIcms = z
   .object({
     ICMS00: schemaNfeICMS00,
   })
@@ -290,6 +290,6 @@ const schemaNfeICMS = z
 /**
  * @description Grupo N01. ICMS Normal e ST
  */
-type NfeICMS = z.infer<typeof schemaNfeICMS>;
+type NfeIcms = z.infer<typeof schemaNfeIcms>;
 
-export { schemaNfeICMS, type NfeICMS };
+export { schemaNfeIcms, type NfeIcms };
