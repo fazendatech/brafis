@@ -17,10 +17,13 @@ export async function signNfe(
   nfeData: NfeInfNfe,
   { privateKey, publicCert }: SignNfeInfo,
 ): Promise<{ Nfe: string }> {
-  const parsedObject = schemaNfeInfNfe.parseAsync(nfeData);
+  const parsedObject = schemaNfeInfNfe.safeParse(nfeData);
 
-  const builder = new XMLBuilder({ ignoreAttributes: false });
-  const xml = builder.build(parsedObject);
+  const builder = new XMLBuilder({
+    ignoreAttributes: false,
+    attributeNamePrefix: "@_",
+  });
+  const xml = builder.build({ NFe: nfeData });
 
   const sig = new SignedXml({
     privateKey,
