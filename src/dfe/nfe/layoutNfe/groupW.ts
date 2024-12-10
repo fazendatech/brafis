@@ -34,6 +34,8 @@ const schemaNfeTotal = z
         retTrib: schemaNfeRetTrib.optional(),
       })
       .describe("ICMSTot:W02"),
+    ISSQNtot: schemaNfeIssqnTot.optional().describe("W17"),
+    retTrib: schemaNfeRetTrib.optional().describe("W23"),
   })
   .describe("total:W01");
 
