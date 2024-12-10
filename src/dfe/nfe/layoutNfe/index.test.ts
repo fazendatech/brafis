@@ -13,15 +13,15 @@ describe("generateAndSignNfe", async () => {
 
   const validNfe: NfeInfNfe = {
     "@_versao": "4.00",
-    "@_Id": "NFe12345678901234567890123456789012345678901234",
+    "@_Id": "NFe12345678901234567890123456789012345678901235",
     ide: {
       cUF: "35",
-      cNF: "12345678",
+      cNF: "00012345",
       natOp: "Venda",
       mod: "55",
       serie: "001",
       nNF: "123456",
-      dhEmi: "2024-12-06T08:00:00",
+      dhEmi: "2024-12-06T08:00:00Z",
       tpNF: "1",
       idDest: "1",
       cMunFG: "3550308",
@@ -52,7 +52,7 @@ describe("generateAndSignNfe", async () => {
       CRT: "3",
     },
     dest: {
-      CPF: "12345678909",
+      CPF: "11155599900",
       xNome: "Destinatário Exemplo",
       enderDest: {
         xLgr: "Avenida Exemplo",
@@ -139,8 +139,9 @@ describe("generateAndSignNfe", async () => {
       ],
     },
     infIntermed: {
-      CNPJ: "98765432000195",
-      idCadIntTran: "Intermediador123",
+      CNPJ: "00023456000177",
+      idCadIntTran:
+        "123456789012345678901234567890123456789012345678901234567890",
     },
     infAdic: {},
     infRespTec: {
@@ -151,8 +152,6 @@ describe("generateAndSignNfe", async () => {
     },
   };
 
-  console.log(validNfe);
-
   const signRegex =
     /<Signature xmlns="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#">[\s\S]*?<SignedInfo>[\s\S]*?<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#rsa-sha1"\/>[\s\S]*?<Reference URI="#NFe[\w\d]+">[\s\S]*?<Transforms>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#enveloped-signature"\/>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<\/Transforms>[\s\S]*?<DigestMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#sha1"\/>[\s\S]*?<DigestValue>[\w\+\/=]+<\/DigestValue>[\s\S]*?<\/Reference>[\s\S]*?<\/SignedInfo>[\s\S]*?<SignatureValue>[\w\+\/=]+<\/SignatureValue>[\s\S]*?<KeyInfo>[\s\S]*?<X509Data>[\s\S]*?<X509Certificate>[\w\+\/=]+<\/X509Certificate>[\s\S]*?<\/X509Data>[\s\S]*?<\/KeyInfo>[\s\S]*?<\/Signature>/;
 
@@ -161,6 +160,7 @@ describe("generateAndSignNfe", async () => {
       privateKey: key,
       publicCert: cert,
     });
+    console.log(signedXML.Nfe);
     expect(signRegex.test(signedXML.Nfe)).toBeTrue();
   });
 });
