@@ -44,13 +44,49 @@ describe("layouteNfe", () => {
       cMunFG: "3550308",
       tpImp: "1",
       tpEmis: "1",
-      cDV: "4",
+      cDV: "5",
       tpAmb: "1",
       finNFe: "1",
       indFinal: "1",
       indPres: "1",
       procEmi: "0",
       verProc: "1.0.0",
+      NFref: [
+        {
+          refNFe: "12345678901234567890123456789012345678901234",
+        },
+        {
+          refNF: {
+            cUF: "35",
+            AAMM: "2412",
+            CNPJ: "12345678000195",
+            mod: "01",
+            serie: "001",
+            nNF: "123456",
+          },
+        },
+        {
+          refNFP: {
+            cUF: "35",
+            AAMM: "2412",
+            CPF: "11155599900",
+            IE: "1234567890",
+            mod: "04",
+            serie: "001",
+            nNF: "123456",
+          },
+        },
+        {
+          refCTe: "12345678901234567890123456789012345678901234",
+        },
+        {
+          refECF: {
+            mod: "2B",
+            nECF: "123",
+            nCOO: "123456",
+          },
+        },
+      ],
     },
     emit: {
       CNPJ: "12345678000195",
@@ -68,6 +104,19 @@ describe("layouteNfe", () => {
       IE: "1234567890",
       CRT: "3",
     },
+    avulsa: {
+      CNPJ: "12345678000195",
+      xOrgao: "Secretaria da Fazenda",
+      matr: "123456789",
+      xAgente: "Agente da Fazenda",
+      fone: "11999999999",
+      UF: "SP",
+      nDAR: "123456789012345678901234567890123456789012345678901234567890",
+      dEmi: "2024-12-06",
+      vDAR: "500.00",
+      repEmi: "0",
+      dPag: "2024-12-06",
+    },
     dest: {
       CPF: "11155599900",
       xNome: "Destinatário Exemplo",
@@ -82,6 +131,29 @@ describe("layouteNfe", () => {
       },
       indIEDest: "9",
     },
+    retirada: {
+      CNPJ: "12345678000195",
+      xLgr: "Rua Exemplo",
+      nro: "123",
+      xBairro: "Bairro Exemplo",
+      cMun: "3550308",
+      xMun: "São Paulo",
+      UF: "SP",
+    },
+    entrega: {
+      CNPJ: "12345678000195",
+      xLgr: "Rua Exemplo",
+      nro: "123",
+      xBairro: "Bairro Exemplo",
+      cMun: "3550308",
+      xMun: "São Paulo",
+      UF: "SP",
+    },
+    autXML: [
+      {
+        CNPJ: "12345678000195",
+      },
+    ],
     det: [
       {
         nItem: "1",
@@ -99,6 +171,46 @@ describe("layouteNfe", () => {
           qTrib: "10.0000",
           vUnTrib: "50.0000000000",
           indTot: "1",
+          DI: [
+            {
+              nDI: "123456",
+              dDI: "2024-12-06",
+              xLocDesemb: "Local Desembaraço",
+              UFDesemb: "SP",
+              dDesemb: "2024-12-06",
+              cExportador: "123456789",
+              adi: [
+                {
+                  nAdicao: "1",
+                  nSeqAdic: "1",
+                  cFabricante: "123456789",
+                  vDescDI: "0.00",
+                  nDraw: "12345678901",
+                },
+              ],
+              tpViaTransp: "7",
+              tpIntermedio: "1",
+            },
+          ],
+          detExport: [
+            {
+              nDraw: "12345678901",
+              exportInd: {
+                nRE: "123456789012",
+                chNFe: "12345678901212345678901234567890123456789012",
+                qExport: "10.000",
+              },
+            },
+          ],
+          rastro: [
+            {
+              nLote: "1",
+              qLote: "10.000",
+              dFab: "2024-12-06",
+              dVal: "2024-12-06",
+              cAgreg: "123456789",
+            },
+          ],
         },
         imposto: {
           ICMS: {
@@ -194,148 +306,252 @@ describe("layouteNfe", () => {
 
   describe("zod schemas", () => {
     describe("groupA", () => {
-      test("Returns true for a valid infNfe schema", () => {
-        expect(schemaNfeInfNfe.safeParse(validNfe).error).toBeFalsy();
+      const parse = schemaNfeInfNfe.safeParse(validNfe);
+      test("Returns success for a valid infNfe schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid infNfe schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupB", () => {
-      test("Returns true for a valid ide schema", () => {
-        expect(schemaNfeIde.safeParse(validNfe.ide).error).toBeFalsy();
+      const parse = schemaNfeIde.safeParse(validNfe.ide);
+      test("Returns success for a valid ide schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid ide schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupBA", () => {
-      test("Returns true for a valid NFref schema", () => {
-        expect(schemaNfeNfRef.safeParse(validNfe.ide.NFref).error).toBeFalsy();
-      });
+      for (const NFref of validNfe.ide.NFref ?? []) {
+        const parse = schemaNfeNfRef.safeParse(NFref);
+        test("Returns success for a valid NFref schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid NFref schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupC", () => {
-      test("Returns true for a valid emit schema", () => {
-        expect(schemaNfeEmit.safeParse(validNfe.emit).error).toBeFalsy();
+      const parse = schemaNfeEmit.safeParse(validNfe.emit);
+      test("Returns success for a valid emit schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid emit schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupD", () => {
-      test("Returns true for a valid avulsa schema", () => {
-        expect(schemaNfeAvulsa.safeParse(validNfe.avulsa).error).toBeFalsy();
+      const parse = schemaNfeAvulsa.safeParse(validNfe.avulsa);
+      test("Returns success for a valid avulsa schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid avulsa schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupE", () => {
-      test("Returns true for a valid dest schema", () => {
-        expect(schemaNfeDest.safeParse(validNfe.dest).error).toBeFalsy();
+      const parse = schemaNfeDest.safeParse(validNfe.dest);
+      test("Returns success for a valid dest schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid dest schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupF", () => {
-      test("Returns true for a valid retirada schema", () => {
-        expect(
-          schemaNfeRetirada.safeParse(validNfe.retirada).error,
-        ).toBeFalsy();
+      const parse = schemaNfeRetirada.safeParse(validNfe.retirada);
+      test("Returns success for a valid retirada schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid retirada schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupG", () => {
-      test("Returns true for a valid entrega schema", () => {
-        expect(schemaNfeEntrega.safeParse(validNfe.entrega).error).toBeFalsy();
+      const parse = schemaNfeEntrega.safeParse(validNfe.entrega);
+      test("Returns success for a valid entrega schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid entrega schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupGA", () => {
-      test("Returns true for a valid autXML schema", () => {
-        expect(schemaNfeAutXml.safeParse(validNfe.autXML).error).toBeFalsy();
-      });
+      for (const autXML of validNfe.autXML ?? []) {
+        const parse = schemaNfeAutXml.safeParse(autXML);
+        test("Returns success for a valid autXML schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid autXML schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupH", () => {
-      test("Returns true for a valid det schema", () => {
-        expect(schemaNfeDet.safeParse(validNfe.det).error).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        const parse = schemaNfeDet.safeParse(det);
+        test("Returns success for a valid det schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid det schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupI", () => {
-      test("Returns true for a valid prod schema", () => {
-        expect(schemaNfeProd.safeParse(validNfe.det[0].prod).error).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        const parse = schemaNfeProd.safeParse(det.prod);
+        test("Returns success for a valid prod schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid prod schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupI01", () => {
-      test("Returns true for a valid DI schema", () => {
-        expect(
-          schemaNfeDi.safeParse(validNfe.det[0].prod.DI).error,
-        ).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        for (const DI of det.prod.DI ?? []) {
+          const parse = schemaNfeDi.safeParse(DI);
+          test("Returns success for a valid DI schema", () => {
+            expect(parse.success).toBeTrue();
+          });
+          test("Returns no error for a valid DI schema", () => {
+            expect(parse.error).toBeFalsy();
+          });
+        }
+      }
     });
     describe("groupI03", () => {
-      test("Returns true for a valid detExport schema", () => {
-        expect(
-          schemaNfeDetExport.safeParse(validNfe.det[0].prod.detExport).error,
-        ).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        for (const detExport of det.prod.detExport ?? []) {
+          const parse = schemaNfeDetExport.safeParse(detExport);
+          test("Returns success for a valid detExport schema", () => {
+            expect(parse.success).toBeTrue();
+          });
+          test("Returns no error for a valid detExport schema", () => {
+            expect(parse.error).toBeFalsy();
+          });
+        }
+      }
     });
     describe("groupI80", () => {
-      test("Returns true for a valid rastro schema", () => {
-        expect(
-          schemaNfeRastro.safeParse(validNfe.det[0].prod.rastro).error,
-        ).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        for (const rastro of det.prod.rastro ?? []) {
+          const parse = schemaNfeRastro.safeParse(rastro);
+          test("Returns success for a valid rastro schema", () => {
+            expect(parse.success).toBeTrue();
+          });
+          test("Returns no error for a valid rastro schema", () => {
+            expect(parse.error).toBeFalsy();
+          });
+        }
+      }
     });
     describe("groupM", () => {
-      test("Returns true for a valid imposto schema", () => {
-        expect(
-          schemaNfeImposto.safeParse(validNfe.det[0].imposto).error,
-        ).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        const parse = schemaNfeImposto.safeParse(det.imposto);
+        test("Returns success for a valid imposto schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid imposto schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupN01", () => {
-      test("Returns true for a valid ICMS schema", () => {
-        expect(
-          schemaNfeIcms.safeParse(validNfe.det[0].imposto.ICMS).error,
-        ).toBeFalsy();
-      });
+      for (const det of validNfe.det) {
+        const parse = schemaNfeIcms.safeParse(det.imposto.ICMS);
+        test("Returns success for a valid ICMS schema", () => {
+          expect(parse.success).toBeTrue();
+        });
+        test("Returns no error for a valid ICMS schema", () => {
+          expect(parse.error).toBeFalsy();
+        });
+      }
     });
     describe("groupW", () => {
-      test("Returns true for a valid total schema", () => {
-        expect(schemaNfeTotal.safeParse(validNfe.total).error).toBeFalsy();
+      const parse = schemaNfeTotal.safeParse(validNfe.total);
+      test("Returns success for a valid total schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid total schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupW01", () => {
-      test("Returns true for a valid ISSQNtotTot schema", () => {
-        expect(
-          schemaNfeIssqnTot.safeParse(validNfe.total.ISSQNtot).error,
-        ).toBeFalsy();
+      const parse = schemaNfeIssqnTot.safeParse(validNfe.total.ISSQNtot);
+      test("Returns success for a valid ISSQNtot schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid ISSQNtot schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupW02", () => {
-      test("Returns true for a valid retTrib schema", () => {
-        expect(
-          schemaNfeRetTrib.safeParse(validNfe.total.retTrib).error,
-        ).toBeFalsy();
+      const parse = schemaNfeRetTrib.safeParse(validNfe.total.retTrib);
+      test("Returns success for a valid retTrib schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid retTrib schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupX", () => {
-      test("Returns true for a valid transp schema", () => {
-        expect(schemaNfeTransp.safeParse(validNfe.transp).error).toBeFalsy();
+      const parse = schemaNfeTransp.safeParse(validNfe.transp);
+      test("Returns success for a valid transp schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid transp schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupY", () => {
-      test("Returns true for a valid cobr schema", () => {
-        expect(schemaNfeCobr.safeParse(validNfe.cobr).error).toBeFalsy();
+      const parse = schemaNfeCobr.safeParse(validNfe.cobr);
+      test("Returns success for a valid cobr schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid cobr schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupYA", () => {
-      test("Returns true for a valid pag schema", () => {
-        expect(schemaNfePag.safeParse(validNfe.pag).error).toBeFalsy();
+      const parse = schemaNfePag.safeParse(validNfe.pag);
+      test("Returns success for a valid pag schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid pag schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupYB", () => {
-      test("Returns true for a valid infIntermed schema", () => {
-        expect(
-          schemaNfeInfIntermed.safeParse(validNfe.infIntermed).error,
-        ).toBeFalsy();
+      const parse = schemaNfeInfIntermed.safeParse(validNfe.infIntermed);
+      test("Returns success for a valid infIntermed schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid infIntermed schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupZ", () => {
-      test("Returns true for a valid infAdic schema", () => {
-        expect(schemaNfeInfAdic.safeParse(validNfe.infAdic).error).toBeFalsy();
+      const parse = schemaNfeInfAdic.safeParse(validNfe.infAdic);
+      test("Returns success for a valid infAdic schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid infAdic schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
     describe("groupZD", () => {
-      test("Returns true for a valid groupZD schema", () => {
-        expect(
-          schemaNfeInfRespTec.safeParse(validNfe.infRespTec).error,
-        ).toBeFalsy();
+      const parse = schemaNfeInfRespTec.safeParse(validNfe.infRespTec);
+      test("Returns success for a valid groupZD schema", () => {
+        expect(parse.success).toBeTrue();
+      });
+      test("Returns no error for a valid groupZD schema", () => {
+        expect(parse.error).toBeFalsy();
       });
     });
   });
@@ -351,16 +567,13 @@ describe("layouteNfe", () => {
     const signRegex =
       /<Signature xmlns="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#">[\s\S]*?<SignedInfo>[\s\S]*?<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#rsa-sha1"\/>[\s\S]*?<Reference URI="#NFe[\w\d]+">[\s\S]*?<Transforms>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#enveloped-signature"\/>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<\/Transforms>[\s\S]*?<DigestMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#sha1"\/>[\s\S]*?<DigestValue>[\w\+\/=]+<\/DigestValue>[\s\S]*?<\/Reference>[\s\S]*?<\/SignedInfo>[\s\S]*?<SignatureValue>[\w\+\/=]+<\/SignatureValue>[\s\S]*?<KeyInfo>[\s\S]*?<X509Data>[\s\S]*?<X509Certificate>[\w\+\/=]+<\/X509Certificate>[\s\S]*?<\/X509Data>[\s\S]*?<\/KeyInfo>[\s\S]*?<\/Signature>/;
 
-    test.todo(
-      "Returns true when generate and sign the XML correctly",
-      async () => {
-        const signedXML = await signNfe(validNfe, {
-          privateKey: key,
-          publicCert: cert,
-        });
-        console.log(signedXML.Nfe);
-        expect(signRegex.test(signedXML.Nfe)).toBeTrue();
-      },
-    );
+    test("Returns true when generate and sign the XML correctly", async () => {
+      const signedXML = await signNfe(validNfe, {
+        privateKey: key,
+        publicCert: cert,
+      });
+      console.log(signedXML.Nfe);
+      expect(signRegex.test(signedXML.Nfe)).toBeTrue();
+    });
   });
 });
