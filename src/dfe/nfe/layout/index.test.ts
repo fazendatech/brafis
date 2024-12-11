@@ -26,8 +26,9 @@ import { schemaNfePag } from "./groupYA";
 import { schemaNfeInfIntermed } from "./groupYB";
 import { schemaNfeInfAdic } from "./groupZ";
 import { schemaNfeInfRespTec } from "./groupZD";
+import { ZodError } from "zod";
 
-describe("layouteNfe", () => {
+describe("layout", () => {
   const validNfe: NfeInfNfe = {
     "@_versao": "4.00",
     "@_Id": "NFe12345678901234567890123456789012345678901235",
@@ -306,121 +307,79 @@ describe("layouteNfe", () => {
 
   describe("zod schemas", () => {
     describe("groupA", () => {
-      const parse = schemaNfeInfNfe.safeParse(validNfe);
       test("Returns success for a valid infNfe schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid infNfe schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeInfNfe.parse(validNfe)).not.toThrow(ZodError);
       });
     });
     describe("groupB", () => {
-      const parse = schemaNfeIde.safeParse(validNfe.ide);
       test("Returns success for a valid ide schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid ide schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeIde.parse(validNfe.ide)).not.toThrow(ZodError);
       });
     });
     describe("groupBA", () => {
       for (const NFref of validNfe.ide.NFref ?? []) {
-        const parse = schemaNfeNfRef.safeParse(NFref);
         test("Returns success for a valid NFref schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid NFref schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeNfRef.parse(NFref)).not.toThrow(ZodError);
         });
       }
     });
     describe("groupC", () => {
-      const parse = schemaNfeEmit.safeParse(validNfe.emit);
       test("Returns success for a valid emit schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid emit schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeEmit.parse(validNfe.emit)).not.toThrow(ZodError);
       });
     });
     describe("groupD", () => {
-      const parse = schemaNfeAvulsa.safeParse(validNfe.avulsa);
       test("Returns success for a valid avulsa schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid avulsa schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeAvulsa.parse(validNfe.avulsa)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupE", () => {
-      const parse = schemaNfeDest.safeParse(validNfe.dest);
       test("Returns success for a valid dest schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid dest schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeDest.parse(validNfe.dest)).not.toThrow(ZodError);
       });
     });
     describe("groupF", () => {
-      const parse = schemaNfeRetirada.safeParse(validNfe.retirada);
       test("Returns success for a valid retirada schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid retirada schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeRetirada.parse(validNfe.retirada)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupG", () => {
-      const parse = schemaNfeEntrega.safeParse(validNfe.entrega);
       test("Returns success for a valid entrega schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid entrega schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeEntrega.parse(validNfe.entrega)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupGA", () => {
       for (const autXML of validNfe.autXML ?? []) {
-        const parse = schemaNfeAutXml.safeParse(autXML);
         test("Returns success for a valid autXML schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid autXML schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeAutXml.parse(autXML)).not.toThrow(ZodError);
         });
       }
     });
     describe("groupH", () => {
       for (const det of validNfe.det) {
-        const parse = schemaNfeDet.safeParse(det);
         test("Returns success for a valid det schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid det schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeDet.parse(det)).not.toThrow(ZodError);
         });
       }
     });
     describe("groupI", () => {
       for (const det of validNfe.det) {
-        const parse = schemaNfeProd.safeParse(det.prod);
         test("Returns success for a valid prod schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid prod schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeProd.parse(det.prod)).not.toThrow(ZodError);
         });
       }
     });
     describe("groupI01", () => {
       for (const det of validNfe.det) {
         for (const DI of det.prod.DI ?? []) {
-          const parse = schemaNfeDi.safeParse(DI);
           test("Returns success for a valid DI schema", () => {
-            expect(parse.success).toBeTrue();
-          });
-          test("Returns no error for a valid DI schema", () => {
-            expect(parse.error).toBeFalsy();
+            expect(() => schemaNfeDi.parse(DI)).not.toThrow(ZodError);
           });
         }
       }
@@ -428,12 +387,10 @@ describe("layouteNfe", () => {
     describe("groupI03", () => {
       for (const det of validNfe.det) {
         for (const detExport of det.prod.detExport ?? []) {
-          const parse = schemaNfeDetExport.safeParse(detExport);
           test("Returns success for a valid detExport schema", () => {
-            expect(parse.success).toBeTrue();
-          });
-          test("Returns no error for a valid detExport schema", () => {
-            expect(parse.error).toBeFalsy();
+            expect(() => schemaNfeDetExport.parse(detExport)).not.toThrow(
+              ZodError,
+            );
           });
         }
       }
@@ -441,138 +398,106 @@ describe("layouteNfe", () => {
     describe("groupI80", () => {
       for (const det of validNfe.det) {
         for (const rastro of det.prod.rastro ?? []) {
-          const parse = schemaNfeRastro.safeParse(rastro);
           test("Returns success for a valid rastro schema", () => {
-            expect(parse.success).toBeTrue();
-          });
-          test("Returns no error for a valid rastro schema", () => {
-            expect(parse.error).toBeFalsy();
+            expect(() => schemaNfeRastro.parse(rastro)).not.toThrow(ZodError);
           });
         }
       }
     });
     describe("groupM", () => {
       for (const det of validNfe.det) {
-        const parse = schemaNfeImposto.safeParse(det.imposto);
         test("Returns success for a valid imposto schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid imposto schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeImposto.parse(det.imposto)).not.toThrow(
+            ZodError,
+          );
         });
       }
     });
     describe("groupN01", () => {
       for (const det of validNfe.det) {
-        const parse = schemaNfeIcms.safeParse(det.imposto.ICMS);
         test("Returns success for a valid ICMS schema", () => {
-          expect(parse.success).toBeTrue();
-        });
-        test("Returns no error for a valid ICMS schema", () => {
-          expect(parse.error).toBeFalsy();
+          expect(() => schemaNfeIcms.parse(det.imposto.ICMS)).not.toThrow(
+            ZodError,
+          );
         });
       }
     });
     describe("groupW", () => {
-      const parse = schemaNfeTotal.safeParse(validNfe.total);
       test("Returns success for a valid total schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid total schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeTotal.parse(validNfe.total)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupW01", () => {
-      const parse = schemaNfeIssqnTot.safeParse(validNfe.total.ISSQNtot);
       test("Returns success for a valid ISSQNtot schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid ISSQNtot schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() =>
+          schemaNfeIssqnTot.parse(validNfe.total.ISSQNtot),
+        ).not.toThrow(ZodError);
       });
     });
     describe("groupW02", () => {
-      const parse = schemaNfeRetTrib.safeParse(validNfe.total.retTrib);
       test("Returns success for a valid retTrib schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid retTrib schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() =>
+          schemaNfeRetTrib.parse(validNfe.total.retTrib),
+        ).not.toThrow(ZodError);
       });
     });
     describe("groupX", () => {
-      const parse = schemaNfeTransp.safeParse(validNfe.transp);
       test("Returns success for a valid transp schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid transp schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeTransp.parse(validNfe.transp)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupY", () => {
-      const parse = schemaNfeCobr.safeParse(validNfe.cobr);
       test("Returns success for a valid cobr schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid cobr schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeCobr.parse(validNfe.cobr)).not.toThrow(ZodError);
       });
     });
     describe("groupYA", () => {
-      const parse = schemaNfePag.safeParse(validNfe.pag);
       test("Returns success for a valid pag schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid pag schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfePag.parse(validNfe.pag)).not.toThrow(ZodError);
       });
     });
     describe("groupYB", () => {
-      const parse = schemaNfeInfIntermed.safeParse(validNfe.infIntermed);
       test("Returns success for a valid infIntermed schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid infIntermed schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() =>
+          schemaNfeInfIntermed.parse(validNfe.infIntermed),
+        ).not.toThrow(ZodError);
       });
     });
     describe("groupZ", () => {
-      const parse = schemaNfeInfAdic.safeParse(validNfe.infAdic);
       test("Returns success for a valid infAdic schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid infAdic schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() => schemaNfeInfAdic.parse(validNfe.infAdic)).not.toThrow(
+          ZodError,
+        );
       });
     });
     describe("groupZD", () => {
-      const parse = schemaNfeInfRespTec.safeParse(validNfe.infRespTec);
       test("Returns success for a valid groupZD schema", () => {
-        expect(parse.success).toBeTrue();
-      });
-      test("Returns no error for a valid groupZD schema", () => {
-        expect(parse.error).toBeFalsy();
+        expect(() =>
+          schemaNfeInfRespTec.parse(validNfe.infRespTec),
+        ).not.toThrow(ZodError);
       });
     });
   });
 
-  describe("generateAndSignNfe", async () => {
-    const { cert, key } = (
-      await CertificateP12.fromFilepath({
-        filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
-        password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
-      })
-    ).asPem();
-
-    const signRegex =
-      /<Signature xmlns="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#">[\s\S]*?<SignedInfo>[\s\S]*?<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#rsa-sha1"\/>[\s\S]*?<Reference URI="#NFe[\w\d]+">[\s\S]*?<Transforms>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#enveloped-signature"\/>[\s\S]*?<Transform Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>[\s\S]*?<\/Transforms>[\s\S]*?<DigestMethod Algorithm="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#sha1"\/>[\s\S]*?<DigestValue>[\w\+\/=]+<\/DigestValue>[\s\S]*?<\/Reference>[\s\S]*?<\/SignedInfo>[\s\S]*?<SignatureValue>[\w\+\/=]+<\/SignatureValue>[\s\S]*?<KeyInfo>[\s\S]*?<X509Data>[\s\S]*?<X509Certificate>[\w\+\/=]+<\/X509Certificate>[\s\S]*?<\/X509Data>[\s\S]*?<\/KeyInfo>[\s\S]*?<\/Signature>/;
-
+  describe("generateAndSignNfe", () => {
     test("Returns true when generate and sign the XML correctly", async () => {
-      const signedXML = await signNfe(validNfe, {
-        privateKey: key,
-        publicCert: cert,
-      });
-      expect(signRegex.test(signedXML)).toBeTrue();
+      const { cert, key } = (
+        await CertificateP12.fromFilepath({
+          filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
+          password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
+        })
+      ).asPem();
+
+      expect(
+        signNfe(validNfe, {
+          privateKey: key,
+          publicCert: cert,
+        }),
+      ).toMatchSnapshot();
     });
   });
 });

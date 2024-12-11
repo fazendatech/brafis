@@ -13,10 +13,10 @@ export interface SignNfeInfo {
 /**
  * @description Gera o XML assinado da NFe a partir do schema implementado com zod.
  */
-export async function signNfe(
+export function signNfe(
   nfeData: NfeInfNfe,
   { privateKey, publicCert }: SignNfeInfo,
-): Promise<string> {
+): string {
   schemaNfeInfNfe.parse(nfeData);
 
   const builder = new XMLBuilder({
@@ -31,12 +31,9 @@ export async function signNfe(
     signatureAlgorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
     canonicalizationAlgorithm:
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
-    getKeyInfoContent: () =>
-      `<X509Data><X509Certificate>${publicCert}</X509Certificate></X509Data>`,
   });
   sig.addReference({
     xpath: "//*[local-name(.)='NFe']",
-    uri: `#${nfeData["@_Id"]}`,
     transforms: [
       "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
