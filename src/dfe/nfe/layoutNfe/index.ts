@@ -16,8 +16,8 @@ export interface SignNfeInfo {
 export async function signNfe(
   nfeData: NfeInfNfe,
   { privateKey, publicCert }: SignNfeInfo,
-): Promise<{ Nfe: string }> {
-  const parsedObject = schemaNfeInfNfe.safeParse(nfeData);
+): Promise<string> {
+  schemaNfeInfNfe.parse(nfeData);
 
   const builder = new XMLBuilder({
     ignoreAttributes: false,
@@ -32,17 +32,18 @@ export async function signNfe(
     canonicalizationAlgorithm:
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
     getKeyInfoContent: () =>
-      `<KeyInfo><X509Data><X509Certificate>${publicCert}</X509Certificate></X509Data></KeyInfo>`,
+      `<X509Data><X509Certificate>${publicCert}</X509Certificate></X509Data>`,
   });
   sig.addReference({
+    xpath: "//*[local-name(.)='NFe']",
     uri: `#${nfeData["@_Id"]}`,
     transforms: [
-      "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
       "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
+      "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
     ],
     digestAlgorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
   });
 
   sig.computeSignature(xml);
-  return { Nfe: sig.getSignedXml() };
+  return sig.getSignedXml();
 }

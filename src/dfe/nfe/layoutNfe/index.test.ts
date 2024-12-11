@@ -572,8 +572,7 @@ describe("layouteNfe", () => {
         privateKey: key,
         publicCert: cert,
       });
-      console.log(signedXML.Nfe);
-      expect(signRegex.test(signedXML.Nfe)).toBeTrue();
+      expect(signRegex.test(signedXML)).toBeTrue();
     });
   });
 });
