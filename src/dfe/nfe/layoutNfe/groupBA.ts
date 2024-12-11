@@ -4,7 +4,7 @@ import { zUfCode } from "./misc";
 
 const schemaNfeNfRef = z
   .object({
-    refNfe: zCustom.numeric().length(44).optional().describe("BA02"),
+    refNFe: zCustom.numeric().length(44).optional().describe("BA02"),
     refNF: z
       .object({
         cUF: zUfCode().describe("BA04"),
@@ -77,8 +77,8 @@ const schemaNfeNfRef = z
       .describe("BA20"),
   })
   .refine(
-    ({ refNfe, refNF, refNFP, refCTe, refECF }) =>
-      zCustom.utils.hasOnlyOne(refNfe, refNF, refNFP, refCTe, refECF),
+    ({ refNFe, refNF, refNFP, refCTe, refECF }) =>
+      zCustom.utils.hasOnlyOne(refNFe, refNF, refNFP, refCTe, refECF),
     {
       message:
         "Informe apenas uma das referências: refNfe, refNF, refNFP, refCTe ou refECF.",
