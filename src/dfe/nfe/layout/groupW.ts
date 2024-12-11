@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
-import { schemaNfeISSQNTot } from "./groupW01";
+import { schemaNfeIssqnTot } from "./groupW01";
 import { schemaNfeRetTrib } from "./groupW02";
 
 const schemaNfeTotal = z
@@ -30,10 +30,12 @@ const schemaNfeTotal = z
         vOutro: zCustom.decimal(13, 2).describe("W15"),
         vNF: zCustom.decimal(13, 2).describe("W16"),
         vTotTrib: zCustom.decimal(13, 2).optional().describe("W16a"),
-        ISSQNtot: schemaNfeISSQNTot.optional(),
+        ISSQNtot: schemaNfeIssqnTot.optional(),
         retTrib: schemaNfeRetTrib.optional(),
       })
       .describe("ICMSTot:W02"),
+    ISSQNtot: schemaNfeIssqnTot.optional().describe("W17"),
+    retTrib: schemaNfeRetTrib.optional().describe("W23"),
   })
   .describe("total:W01");
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
-import { zUf } from ".";
+import { zUf } from "./misc";
 
 const schemaNfeTransp = z
   .object({

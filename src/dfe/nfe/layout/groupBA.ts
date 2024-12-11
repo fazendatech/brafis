@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
-import { zUfCode } from ".";
+import { zUfCode } from "./misc";
 
 const schemaNfeNfRef = z
   .object({
-    refNfe: zCustom.numeric().length(44).optional().describe("BA02"),
+    refNFe: zCustom.numeric().length(44).optional().describe("BA02"),
     refNF: z
       .object({
         cUF: zUfCode().describe("BA04"),
@@ -26,7 +26,9 @@ const schemaNfeNfRef = z
           .numeric()
           .min(1)
           .max(9)
-          .refine((value) => Number(value) > 0)
+          .refine((value) => Number(value) > 0, {
+            message: "Número da NF deve ser maior que 0.",
+          })
           .describe("BA09"),
       })
       .optional()
@@ -54,7 +56,9 @@ const schemaNfeNfRef = z
           .numeric()
           .min(1)
           .max(9)
-          .refine((value) => Number(value) > 0)
+          .refine((value) => Number(value) > 0, {
+            message: "Número da NF deve ser maior que 0.",
+          })
           .describe("BA18"),
       })
       .refine(({ CNPJ, CPF }) => zCustom.utils.hasOnlyOne(CNPJ, CPF), {
@@ -73,8 +77,8 @@ const schemaNfeNfRef = z
       .describe("BA20"),
   })
   .refine(
-    ({ refNfe, refNF, refNFP, refCTe, refECF }) =>
-      zCustom.utils.hasOnlyOne(refNfe, refNF, refNFP, refCTe, refECF),
+    ({ refNFe, refNF, refNFP, refCTe, refECF }) =>
+      zCustom.utils.hasOnlyOne(refNFe, refNF, refNFP, refCTe, refECF),
     {
       message:
         "Informe apenas uma das referências: refNfe, refNF, refNFP, refCTe ou refECF.",

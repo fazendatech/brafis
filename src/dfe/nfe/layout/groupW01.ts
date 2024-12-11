@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
 
-const schemaNfeISSQNTot = z
+const schemaNfeIssqnTot = z
   .object({
     vServ: zCustom.decimal(13, 2).optional().describe("W18"),
     vBC: zCustom.decimal(13, 2).optional().describe("W19"),
@@ -24,6 +24,6 @@ const schemaNfeISSQNTot = z
 /**
  * @description Grupo W01. Total da NF-e / ISSQN
  */
-type NfeISSQNTot = z.infer<typeof schemaNfeISSQNTot>;
+type NfeIssqnTot = z.infer<typeof schemaNfeIssqnTot>;
 
-export { schemaNfeISSQNTot, type NfeISSQNTot };
+export { schemaNfeIssqnTot, type NfeIssqnTot };
