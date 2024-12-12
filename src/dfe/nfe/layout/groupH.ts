@@ -5,7 +5,7 @@ import { schemaNfeImposto } from "./groupM";
 
 const schemaNfeDet = z
   .object({
-    nItem: zCustom
+    "@_nItem": zCustom
       .numeric()
       .max(3)
       .refine(
