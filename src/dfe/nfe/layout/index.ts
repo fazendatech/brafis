@@ -11,19 +11,19 @@ export interface SignNfeInfo {
 }
 
 /**
- * @description Gera o XML assinado da NFe a partir do schema implementado com zod.
+ * @description Gera o XML assinado da NFe.
  */
 export function signNfe(
-  nfeData: NfeInfNfe,
+  infNfe: NfeInfNfe,
   { privateKey, publicCert }: SignNfeInfo,
 ): string {
-  schemaNfeInfNfe.parse(nfeData);
+  schemaNfeInfNfe.parse(infNfe);
 
   const builder = new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: "@_",
   });
-  const xml = builder.build({ NFe: nfeData });
+  const xml = builder.build({ NFe: infNfe });
 
   const sig = new SignedXml({
     privateKey,
