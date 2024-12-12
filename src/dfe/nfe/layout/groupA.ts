@@ -41,7 +41,8 @@ const schemaNfeInfNfe = z
       .min(1)
       .max(990)
       .refine(
-        (array) => array.every(({ nItem }, i) => Number(nItem) === i + 1),
+        (array) =>
+          array.every(({ "@_nItem": nItem }, i) => Number(nItem) === i + 1),
         { message: "nItem deve ser sequencial a partir de 1" },
       ),
     total: schemaNfeTotal,
