@@ -53,7 +53,7 @@ const messageFcpst =
 const messageDes =
   "No caso de ICMS Desoneração, então vICMSDeson e motDesICMS devem ser ambos informados";
 
-const schemaNfeICMS00 = z
+const schemaNfeIcms00 = z
   .object({
     orig: zOrig(),
     CST: zCST("00"),
@@ -81,7 +81,7 @@ const schemaNfeICMS00 = z
   )
   .describe("ICMS00:N02");
 
-const schemaNfeICMS10 = z
+const schemaNfeIcms10 = z
   .object({
     orig: zOrig(),
     CST: zCST("10"),
@@ -118,7 +118,7 @@ const schemaNfeICMS10 = z
   )
   .describe("ICMS10:N03");
 
-const schemaNfeICMS20 = z
+const schemaNfeIcms20 = z
   .object({
     orig: zOrig(),
     CST: zCST("20"),
@@ -149,7 +149,7 @@ const schemaNfeICMS20 = z
   )
   .describe("ICMS20:N04");
 
-const schemaNfeICMS30 = z
+const schemaNfeIcms30 = z
   .object({
     orig: zOrig(),
     CST: zCST("30"),
@@ -181,7 +181,7 @@ const schemaNfeICMS30 = z
   )
   .describe("ICMS30:N05");
 
-const schemaNfeICMS40 = z
+const schemaNfeIcms40 = z
   .object({
     orig: zOrig(),
     CST: z.enum(["40", "41", "50"]).describe("N12"),
@@ -210,7 +210,7 @@ const schemaNfeICMS40 = z
   )
   .describe("ICMS40:N06");
 
-const schemaNfeICMS51 = z
+const schemaNfeIcms51 = z
   .object({
     orig: zOrig(),
     CST: zCST("51"),
@@ -235,54 +235,54 @@ const schemaNfeICMS51 = z
   )
   .describe("ICMS51:N07");
 
-const schemaNfeICMS60 = z.object({});
+const schemaNfeIcms60 = z.object({});
 
-const schemaNfeICMS70 = z.object({});
+const schemaNfeIcms70 = z.object({});
 
-const schemaNfeICMS90 = z.object({});
+const schemaNfeIcms90 = z.object({});
 
 const schemaNfeIcms = z
   .object({
-    ICMS00: schemaNfeICMS00,
+    ICMS00: schemaNfeIcms00,
   })
   .or(
     z.object({
-      ICMS10: schemaNfeICMS10,
+      ICMS10: schemaNfeIcms10,
     }),
   )
   .or(
     z.object({
-      ICMS20: schemaNfeICMS20,
+      ICMS20: schemaNfeIcms20,
     }),
   )
   .or(
     z.object({
-      ICMS30: schemaNfeICMS30,
+      ICMS30: schemaNfeIcms30,
     }),
   )
   .or(
     z.object({
-      ICMS40: schemaNfeICMS40,
+      ICMS40: schemaNfeIcms40,
     }),
   )
   .or(
     z.object({
-      ICMS51: schemaNfeICMS51,
+      ICMS51: schemaNfeIcms51,
     }),
   )
   .or(
     z.object({
-      ICMS60: schemaNfeICMS60,
+      ICMS60: schemaNfeIcms60,
     }),
   )
   .or(
     z.object({
-      ICMS70: schemaNfeICMS70,
+      ICMS70: schemaNfeIcms70,
     }),
   )
   .or(
     z.object({
-      ICMS90: schemaNfeICMS90,
+      ICMS90: schemaNfeIcms90,
     }),
   )
   .describe("ICMS:N01");
