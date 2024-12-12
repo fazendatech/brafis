@@ -1,46 +1,28 @@
-import { XMLBuilder } from "fast-xml-parser";
-import { SignedXml } from "xml-crypto";
-import { schemaNfeInfNfe, type NfeInfNfe } from "./groupA";
+import { z } from "zod";
+import { schemaNfeInfNfe } from "./groupA";
+
+const schemaNfe = z
+  .object({
+    NFe: z.object({
+      "@_xmlns": z.literal("http://www.portalfiscal.inf.br/nfe"),
+      infNFe: schemaNfeInfNfe,
+    }),
+  })
+  .describe("NFe (TAG Raíz)");
 
 /**
- * @description Representa as informações necessárias para assinar uma NFe.
+ * @description Tipo que infere a estrutura da NFe.
  */
-export interface SignNfeInfo {
-  privateKey: string;
-  publicCert: string;
-}
+export type NfeLayout = z.infer<typeof schemaNfe>;
 
 /**
- * @description Gera o XML assinado da NFe.
+ * @description Realiza a validação da NFe.
+ *
+ * @param {NfeLayout} nfe - Objeto NFe.
+ *
+ * @returns {NfeLayout} O próprio objeto da NFe passada como parâmetro.
+ * @throws {Zod.ZodError} Se a NFe não for válida.
  */
-export function signNfe(
-  infNfe: NfeInfNfe,
-  { privateKey, publicCert }: SignNfeInfo,
-): string {
-  schemaNfeInfNfe.parse(infNfe);
-
-  const builder = new XMLBuilder({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-  });
-  const xml = builder.build({ NFe: infNfe });
-
-  const sig = new SignedXml({
-    privateKey,
-    publicCert,
-    signatureAlgorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
-    canonicalizationAlgorithm:
-      "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
-  });
-  sig.addReference({
-    xpath: "//*[local-name(.)='NFe']",
-    transforms: [
-      "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
-      "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
-    ],
-    digestAlgorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
-  });
-
-  sig.computeSignature(xml);
-  return sig.getSignedXml();
+export function parseNfe(nfe: NfeLayout): NfeLayout {
+  return schemaNfe.parse(nfe);
 }
