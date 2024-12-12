@@ -26,7 +26,7 @@ const schemaNfeInfNfe = z
       .startsWith("NFe")
       .length(47)
       .refine((value) => isValidAccessCode(value.slice(3), { strict: true }), {
-        message: "O Id da nota está em formato invalido.",
+        message: "O Id da nota está em formato inválido.",
       })
       .describe("A03"),
     ide: schemaNfeIde,
