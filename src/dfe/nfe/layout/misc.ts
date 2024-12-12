@@ -283,7 +283,28 @@ export const NFE_TEST_DATA: NfeLayout = {
         idCadIntTran:
           "123456789012345678901234567890123456789012345678901234567890",
       },
-      infAdic: {},
+      infAdic: {
+        infAdFisco: "Informações Fisco",
+        infCpl: "Informações Complementares",
+        obsFisco: [
+          {
+            xCampo: "Campo Exemplo",
+            xTexto: "Texto Exemplo",
+          },
+        ],
+        obsCont: [
+          {
+            xCampo: "Campo Exemplo",
+            xTexto: "Texto Exemplo",
+          },
+        ],
+        procRef: [
+          {
+            nProc: "123456789012345",
+            indProc: "0",
+          },
+        ],
+      },
       infRespTec: {
         CNPJ: "12345678000195",
         xContato: "Responsável Técnico",
