@@ -18,7 +18,7 @@ describe("sign", () => {
       ).toMatchSnapshot();
     });
 
-    test("É possível fazer o parse e build novamente da nfe assinada", async () => {
+    test("Parses and rebuilds signed NFe correctly", async () => {
       const parser = new XMLParser({
         parseTagValue: false,
         ignoreAttributes: false,
