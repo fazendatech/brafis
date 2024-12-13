@@ -5,20 +5,17 @@ import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
 describe("sign", () => {
-  describe("signNfe", () => {
-    test("Returns true when generate and sign the XML correctly", async () => {
-      expect(
-        signNfe(
-          NFE_TEST_DATA,
-          await CertificateP12.fromFilepath({
-            filepath: "./misc/sample-certificates/cert.pfx",
-            password: "senha",
-          }),
-        ),
-      ).toMatchSnapshot();
+  describe("signNfe", async () => {
+    const certificate = await CertificateP12.fromFilepath({
+      filepath: "misc/sample-certificates/cert.pfx",
+      password: "senha",
     });
 
-    test("Parses and rebuilds signed NFe correctly", async () => {
+    test("Signs NFe XML correctly", () => {
+      expect(signNfe(NFE_TEST_DATA, certificate)).toMatchSnapshot();
+    });
+
+    test("Parses and rebuilds signed NFe correctly", () => {
       const parser = new XMLParser({
         parseTagValue: false,
         ignoreAttributes: false,
@@ -30,14 +27,9 @@ describe("sign", () => {
         ignoreAttributes: false,
       });
 
-      const signedNfe = signNfe(
-        NFE_TEST_DATA,
-        await CertificateP12.fromFilepath({
-          filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
-          password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
-        }),
-      );
+      const signedNfe = signNfe(NFE_TEST_DATA, certificate);
       const signedNfeObject = parser.parse(signedNfe);
+
       expect(builder.build(signedNfeObject)).toEqual(signedNfe);
     });
   });

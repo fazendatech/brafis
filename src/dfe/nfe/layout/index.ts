@@ -8,7 +8,7 @@ const schemaNfe = z
       infNFe: schemaNfeInfNfe,
     }),
   })
-  .describe("NFe (TAG Raíz)");
+  .describe("NFe (TAG Raiz)");
 
 /**
  * @description Tipo que infere a estrutura da NFe.
@@ -20,7 +20,7 @@ export type NfeLayout = z.infer<typeof schemaNfe>;
  *
  * @param {NfeLayout} nfe - Objeto NFe.
  *
- * @returns {NfeLayout} O próprio objeto da NFe passada como parâmetro.
+ * @returns {NfeLayout} O objeto da NFe validado.
  * @throws {Zod.ZodError} Se a NFe não for válida.
  */
 export function parseNfe(nfe: NfeLayout): NfeLayout {

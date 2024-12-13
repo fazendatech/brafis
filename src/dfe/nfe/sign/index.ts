@@ -6,12 +6,13 @@ import type { CertificateP12 } from "@/certificate";
 /**
  * @description Gera o XML assinado da NFe.
  *
- * @param nfe - NFe a ser assinada.
- * @param certificate - O certificado usado na assinatura.
+ * @param {NfeLayout} nfe - NFe a ser assinada.
+ * @param {CertificateP12} certificate - O certificado usado na assinatura.
+ *
+ * @returns {string} O XML assinado da NFe.
  */
 export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
   parseNfe(nfe);
-  const { key, cert } = certificate.asPem();
 
   const builder = new XMLBuilder({
     ignoreAttributes: false,
@@ -19,6 +20,7 @@ export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
   });
   const xml = builder.build(nfe);
 
+  const { key, cert } = certificate.asPem();
   const sig = new SignedXml({
     privateKey: key,
     publicCert: cert,
