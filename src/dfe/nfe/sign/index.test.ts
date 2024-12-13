@@ -11,8 +11,8 @@ describe("sign", () => {
         signNfe(
           NFE_TEST_DATA,
           await CertificateP12.fromFilepath({
-            filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
-            password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
+            filepath: "./misc/sample-certificates/cert.pfx",
+            password: "senha",
           }),
         ),
       ).toMatchSnapshot();
