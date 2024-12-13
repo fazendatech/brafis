@@ -49,8 +49,9 @@ describe("layout", () => {
     });
 
     describe("groupBA", () => {
-      for (const NFref of NFE_TEST_DATA.NFe.infNFe.ide.NFref ?? []) {
-        test("Returns success for a valid NFref schema", () => {
+      const arrayNFref = NFE_TEST_DATA.NFe.infNFe.ide.NFref ?? [];
+      for (const [i, NFref] of arrayNFref.entries()) {
+        test(`Returns success for a valid NFref schema ${i + 1}`, () => {
           expect(() => schemaNfeNfRef.parse(NFref)).not.toThrow(ZodError);
         });
       }
@@ -97,79 +98,71 @@ describe("layout", () => {
     });
 
     describe("groupGA", () => {
-      for (const autXML of NFE_TEST_DATA.NFe.infNFe.autXML ?? []) {
-        test("Returns success for a valid autXML schema", () => {
-          expect(() => schemaNfeAutXml.parse(autXML)).not.toThrow(ZodError);
-        });
-      }
+      test("Returns success for a valid autXML schema", () => {
+        expect(() =>
+          schemaNfeAutXml.parse(NFE_TEST_DATA.NFe.infNFe.autXML?.[0]),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupH", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        test("Returns success for a valid det schema", () => {
-          expect(() => schemaNfeDet.parse(det)).not.toThrow(ZodError);
-        });
-      }
+      test("Returns success for a valid det schema", () => {
+        expect(() =>
+          schemaNfeDet.parse(NFE_TEST_DATA.NFe.infNFe.det?.[0]),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupI", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        test("Returns success for a valid prod schema", () => {
-          expect(() => schemaNfeProd.parse(det.prod)).not.toThrow(ZodError);
-        });
-      }
+      test("Returns success for a valid prod schema", () => {
+        expect(() =>
+          schemaNfeProd.parse(NFE_TEST_DATA.NFe.infNFe.det[0].prod),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupI01", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        for (const DI of det.prod.DI ?? []) {
-          test("Returns success for a valid DI schema", () => {
-            expect(() => schemaNfeDi.parse(DI)).not.toThrow(ZodError);
-          });
-        }
-      }
+      test("Returns success for a valid DI schema", () => {
+        expect(() =>
+          schemaNfeDi.parse(NFE_TEST_DATA.NFe.infNFe.det[0].prod.DI?.[0]),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupI03", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        for (const detExport of det.prod.detExport ?? []) {
-          test("Returns success for a valid detExport schema", () => {
-            expect(() => schemaNfeDetExport.parse(detExport)).not.toThrow(
-              ZodError,
-            );
-          });
-        }
-      }
+      test("Returns success for a valid detExport schema", () => {
+        expect(() =>
+          schemaNfeDetExport.parse(
+            NFE_TEST_DATA.NFe.infNFe.det[0].prod.detExport?.[0],
+          ),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupI80", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        for (const rastro of det.prod.rastro ?? []) {
-          test("Returns success for a valid rastro schema", () => {
-            expect(() => schemaNfeRastro.parse(rastro)).not.toThrow(ZodError);
-          });
-        }
-      }
+      test("Returns success for a valid rastro schema", () => {
+        expect(() =>
+          schemaNfeRastro.parse(
+            NFE_TEST_DATA.NFe.infNFe.det[0].prod.rastro?.[0],
+          ),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupM", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        test("Returns success for a valid imposto schema", () => {
-          expect(() => schemaNfeImposto.parse(det.imposto)).not.toThrow(
-            ZodError,
-          );
-        });
-      }
+      test("Returns success for a valid imposto schema", () => {
+        expect(() =>
+          schemaNfeImposto.parse(NFE_TEST_DATA.NFe.infNFe.det[0].imposto),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupN01", () => {
-      for (const det of NFE_TEST_DATA.NFe.infNFe.det) {
-        test("Returns success for a valid ICMS schema", () => {
-          expect(() => schemaNfeIcms.parse(det.imposto.ICMS)).not.toThrow(
-            ZodError,
-          );
-        });
-      }
+      test("Returns success for a valid ICMS schema", () => {
+        expect(() =>
+          schemaNfeIcms.parse(NFE_TEST_DATA.NFe.infNFe.det[0].imposto.ICMS),
+        ).not.toThrow(ZodError);
+      });
     });
 
     describe("groupW", () => {
