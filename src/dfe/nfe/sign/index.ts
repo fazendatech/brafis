@@ -27,7 +27,7 @@ export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
   });
   sig.addReference({
-    xpath: "//*[local-name(.)='infNFe']",
+    xpath: `//*[@Id='${nfe.NFe.infNFe["@_Id"]}']`,
     transforms: [
       "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
