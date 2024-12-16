@@ -14,7 +14,6 @@ import type { NfeWebServiceResponse } from "./common";
 export type NfeAutorizacaoOptions = {
   idLote: string;
   nfe: NfeLayout;
-  certificate: CertificateP12;
 };
 
 export type NfeAutorizacaoRequest = WithXmlns<{
