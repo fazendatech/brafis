@@ -9,7 +9,8 @@ import type { NfeWebServiceResponse } from "./common";
 /**
  * @description Opções para configurar o web service de NFe autorização.
  *
- * @property {array} Nfe - Objeto com informações da NFe.
+ * @property {string} idLote - Identificador do lote.
+ * @property {NfeLayout} nfe - Objeto com informações da NFe.
  */
 export type NfeAutorizacaoOptions = {
   idLote: string;
