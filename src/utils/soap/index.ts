@@ -1,11 +1,7 @@
-import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { makeBuilder, makeParser } from "@/utils/xml";
 
 export function buildSoap<Body>(body: Body): string {
-  const xmlBuilder = new XMLBuilder({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-  });
-  return xmlBuilder.build({
+  return makeBuilder().build({
     "?xml": {
       "@_version": "1.0",
       "@_encoding": "UTF-8",
@@ -20,11 +16,9 @@ export function buildSoap<Body>(body: Body): string {
 }
 
 export function parseSoap<Body>(xml: string): Body {
-  const xmlParser = new XMLParser({
+  return makeParser({
     ignoreDeclaration: true,
     removeNSPrefix: true,
     parseTagValue: false,
-  });
-  const parsed = xmlParser.parse(xml);
-  return parsed.Envelope?.Body;
+  }).parse(xml).Envelope?.Body;
 }
