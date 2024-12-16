@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import { CertificateP12 } from "@/certificate";
 import { signNfe } from ".";
 import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
-import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { makeParser, makeBuilder } from "@/utils/xml";
 
 describe("sign", () => {
