@@ -3,6 +3,7 @@ import { CertificateP12 } from "@/certificate";
 import { signNfe } from ".";
 import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { makeParser, makeBuilder } from "@/utils/xml";
 
 describe("sign", () => {
   describe("signNfe", async () => {
@@ -16,21 +17,10 @@ describe("sign", () => {
     });
 
     test("Parses and rebuilds signed NFe correctly", () => {
-      const parser = new XMLParser({
-        parseTagValue: false,
-        ignoreAttributes: false,
-        attributeNamePrefix: "@_",
-      });
-      const builder = new XMLBuilder({
-        attributeNamePrefix: "@_",
-        suppressEmptyNode: true,
-        ignoreAttributes: false,
-      });
-
       const signedNfe = signNfe(NFE_TEST_DATA, certificate);
-      const signedNfeObject = parser.parse(signedNfe);
+      const signedNfeObject = makeParser().parse(signedNfe);
 
-      expect(builder.build(signedNfeObject)).toEqual(signedNfe);
+      expect(makeBuilder().build(signedNfeObject)).toEqual(signedNfe);
     });
   });
 });
