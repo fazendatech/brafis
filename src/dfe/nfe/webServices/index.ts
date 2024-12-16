@@ -28,7 +28,16 @@ import type {
   NfeStatusServicoResponseRaw,
   NfeStatusServicoStatus,
 } from "./requests/statusServico";
+import type {
+  NfeAutorizacaoOptions,
+  NfeAutorizacaoRequest,
+  NfeAutorizacaoResponse,
+  NfeAutorizacaoResponseRaw,
+  NfeAutorizacaoStatus,
+} from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
+import { signNfe } from "@/dfe/nfe/sign";
+import { makeBuilder, makeParser } from "@/utils/xml";
 
 export class NfeWebServices {
   private uf: UF;
@@ -182,7 +191,49 @@ export class NfeWebServices {
     };
   }
 
-  autorizacao() {
-    throw new Error("Method not implemented.");
+  /**
+   * @description Envia uma NFe para autorização.
+   *
+   * @param {NfeAutorizacaoOptions} options - Opções para a autorização.
+   *
+   * @returns {Promise<NfeAutorizacaoResponse>} O resultado da autorização.
+   *
+   * @throws {Zod.ZodError} Se as opções não forem válidas.
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
+  async autorizacao(
+    options: NfeAutorizacaoOptions,
+  ): Promise<NfeAutorizacaoResponse> {
+    const NFe = signNfe(options.nfe, this.certificate);
+    const { retEnviNFe } = await this.request<
+      NfeAutorizacaoRequest,
+      { retEnviNFe: NfeAutorizacaoResponseRaw }
+    >(this.getUrl("NFeAutorizacao"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns":
+          "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
+        enviNFe: {
+          ...this.xmlNamespace,
+          "@_versao": "4.00",
+          idLote: options.idLote,
+          indSinc: "0",
+          //NOTE: Testar se é possível passar o objeto NFe diretamente e assinar depois o XML completo
+          NFe: makeBuilder().build(makeParser().parse(NFe).NFe),
+        },
+      },
+    });
+
+    const statusMap: Record<string, NfeAutorizacaoStatus> = {
+      "100": "uso-autorizado",
+      "110": "uso-denegado",
+    };
+
+    return {
+      status: statusMap[retEnviNFe.cStat] ?? "outro",
+      description: retEnviNFe.xMotivo ?? "",
+      raw: retEnviNFe,
+    };
   }
 }
