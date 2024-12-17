@@ -228,6 +228,7 @@ export class NfeWebServices {
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
       "100": "uso-autorizado",
       "110": "uso-denegado",
+      "150": "uso-autorizado",
     };
 
     return {
