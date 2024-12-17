@@ -3,6 +3,8 @@ import { mock, clearMocks } from "bun-bagel";
 import { XMLBuilder } from "fast-xml-parser";
 
 import { CertificateP12 } from "@/certificate";
+import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
+import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 
 import { NfeWebServices } from ".";
 import { NfeServiceRequestError } from "./errors";
@@ -28,28 +30,26 @@ function buildMockResponse<Obj>(obj: Obj): string {
   });
 }
 
-describe("NfeWebServices", () => {
-  const certificate = new CertificateP12({
-    pfx: new Uint8Array(),
-    password: "",
+describe("NfeWebServices", async () => {
+  const certificate = await CertificateP12.fromFilepath({
+    filepath: "misc/sample-certificates/cert.pfx",
+    password: "senha",
   });
-  const service = new NfeWebServices({
-    uf: "DF",
-    env: "homologacao",
-    certificate,
-  });
+  const uf = "DF";
+  const env = "homologacao";
+  const service = new NfeWebServices({ uf, env, certificate });
 
-  beforeEach(() => {
-    spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
-  });
+  // NOTE: Não lembro o motivo desse mock mas precisei desativar para a a autorização funcionar, estou considerando apagar
+  // beforeEach(() => {
+  //   spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
+  // });
 
   afterEach(() => {
     clearMocks();
   });
 
   describe("statusServico", () => {
-    const url =
-      "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx";
+    const url = getWebServiceUrl({ uf, env, service: "NfeStatusServico" });
 
     test("Returns status success", async () => {
       const mockResponse = {
@@ -105,8 +105,7 @@ describe("NfeWebServices", () => {
   });
 
   describe("consultaCadastro", () => {
-    const url =
-      "https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx";
+    const url = getWebServiceUrl({ uf, env, service: "NfeConsultaCadastro" });
 
     test("Returns valid response", async () => {
       const mockResponse = {
@@ -133,6 +132,47 @@ describe("NfeWebServices", () => {
       expect(await service.consultaCadastro({})).toMatchObject({
         status: "uma-ocorrencia",
         description: raw.infCons.xMotivo,
+        raw,
+      });
+    });
+  });
+
+  describe("autorizacao", () => {
+    const url = getWebServiceUrl({ uf, env, service: "NFeAutorizacao" });
+
+    test("Returns valid response", async () => {
+      const mockResponse = {
+        nfeResultMsg: {
+          retEnviNFe: {
+            cStat: "100",
+            xMotivo: "Autorizado o uso da NF-e",
+            cUF: "53",
+            infRec: {
+              nRec: "123456789",
+              tMed: "1",
+            },
+          },
+        },
+      };
+      mock(url, {
+        method: "POST",
+        response: {
+          headers: {
+            "content-type": "application/soap+xml; charset=utf-8",
+          },
+          data: buildMockResponse(mockResponse),
+        },
+      });
+
+      const raw = mockResponse.nfeResultMsg.retEnviNFe;
+      expect(
+        await service.autorizacao({
+          idLote: "1",
+          nfe: NFE_TEST_DATA,
+        }),
+      ).toMatchObject({
+        status: "uso-autorizado",
+        description: raw.xMotivo,
         raw,
       });
     });
