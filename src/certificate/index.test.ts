@@ -4,6 +4,7 @@ import forge from "node-forge";
 
 import { CertificateP12 } from ".";
 import {
+  CertificateExpiredError,
   InvalidPasswordError,
   InvalidPfxError,
   NoCertificatesFoundError,
@@ -11,12 +12,17 @@ import {
 } from "./errors";
 
 describe("CertificateP12", async () => {
-  const selfSignedPath = "./misc/sample-certificates/";
-  const selfSignedPfxBuffer = await file(`${selfSignedPath}cert.pfx`).bytes();
-  const password = "senha";
+  const sampleCertificatesPath = "./misc/sample-certificates/";
+  const pfxCertificate = await file(
+    `${sampleCertificatesPath}cert.pfx`,
+  ).bytes();
+  const pfxCertificateExpired = await file(
+    `${sampleCertificatesPath}cert-expired.pfx`,
+  ).bytes();
+  const pfxPassword = "senha";
 
-  const selfSignedPemCert = await file(`${selfSignedPath}cert.pem`).text();
-  const selfSignedPemKey = await file(`${selfSignedPath}key.pem`).text();
+  const pemCertificate = await file(`${sampleCertificatesPath}cert.pem`).text();
+  const pemKey = await file(`${sampleCertificatesPath}key.pem`).text();
 
   afterEach(() => {
     mock.restore();
@@ -25,25 +31,41 @@ describe("CertificateP12", async () => {
   describe("asPem", () => {
     test("Converts PFX to PEM format", () => {
       const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
-        password,
+        pfx: pfxCertificate,
+        password: pfxPassword,
       });
+
       const pem = certificate.asPem();
 
-      expect(pem.cert).toEqual(selfSignedPemCert);
-      expect(pem.key).toEqual(selfSignedPemKey);
+      expect(pem.cert).toEqual(pemCertificate);
+      expect(pem.key).toEqual(pemKey);
+    });
+
+    test("Converts PFX to PEM format on expired certificate", () => {
+      const certificate = new CertificateP12({
+        pfx: pfxCertificateExpired,
+        password: pfxPassword,
+      });
+
+      const pem = certificate.asPem({ allowExpired: true });
+
+      expect(pem.cert).toEqual(pemCertificate);
+      expect(pem.key).toEqual(pemKey);
     });
 
     test("Throws InvalidPfxError", () => {
       const invalidPfx = new Uint8Array();
-      const certificate = new CertificateP12({ pfx: invalidPfx, password });
+      const certificate = new CertificateP12({
+        pfx: invalidPfx,
+        password: pfxPassword,
+      });
 
       expect(() => certificate.asPem()).toThrowError(InvalidPfxError);
     });
 
     test("Throws InvalidPasswordError", () => {
       const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
+        pfx: pfxCertificate,
         password: "wrongpass",
       });
 
@@ -60,8 +82,8 @@ describe("CertificateP12", async () => {
       });
 
       const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
-        password,
+        pfx: pfxCertificate,
+        password: pfxPassword,
       });
 
       expect(() => certificate.asPem()).toThrowError(NoPrivateKeyFoundError);
@@ -85,32 +107,41 @@ describe("CertificateP12", async () => {
       );
 
       const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
-        password,
+        pfx: pfxCertificate,
+        password: pfxPassword,
       });
 
       expect(() => certificate.asPem()).toThrowError(NoCertificatesFoundError);
+    });
+
+    test("Throws CertificateExpiredError", () => {
+      const certificate = new CertificateP12({
+        pfx: pfxCertificateExpired,
+        password: pfxPassword,
+      });
+
+      expect(() => certificate.asPem()).toThrowError(CertificateExpiredError);
     });
   });
 
   describe("fromFilepath", () => {
     test("Loads PFX from file", async () => {
       const certificate = await CertificateP12.fromFilepath({
-        filepath: `${selfSignedPath}cert.pfx`,
-        password,
+        filepath: `${sampleCertificatesPath}cert.pfx`,
+        password: pfxPassword,
       });
       const pem = certificate.asPem();
 
-      expect(pem.cert).toEqual(selfSignedPemCert);
-      expect(pem.key).toEqual(selfSignedPemKey);
+      expect(pem.cert).toEqual(pemCertificate);
+      expect(pem.key).toEqual(pemKey);
     });
   });
 
   describe("getPemFields", () => {
     test("Extracts certificate fields", () => {
       const certificate = new CertificateP12({
-        pfx: selfSignedPfxBuffer,
-        password,
+        pfx: pfxCertificate,
+        password: pfxPassword,
       });
       const info = certificate.getPemFields();
 
