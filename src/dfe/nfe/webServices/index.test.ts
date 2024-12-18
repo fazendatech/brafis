@@ -65,10 +65,6 @@ describe("NfeWebServices", async () => {
       mock(url, {
         method: "POST",
         response: {
-          status: 200,
-          headers: {
-            "content-type": "application/soap+xml; charset=utf-8",
-          },
           data: buildMockResponse(mockResponse),
         },
       });
@@ -81,7 +77,34 @@ describe("NfeWebServices", async () => {
       });
     });
 
-    test("Request timeout", () => {
+    test("Request throws NfeServiceRequestError on status not success", () => {
+      mock(url, {
+        method: "POST",
+        response: {
+          status: 403,
+        },
+      });
+
+      expect(() => service.statusServico()).toThrowError(
+        // NOTE: Não existe atributo `MockResponse.statusText` no bun-bagel
+        new NfeServiceRequestError(`403 (403) - ${url}`),
+      );
+    });
+
+    test("Request throws NfeServiceRequestError on `nfeResultMsg` not present in response", () => {
+      mock(url, {
+        method: "POST",
+        response: {
+          data: "request failed",
+        },
+      });
+
+      expect(() => service.statusServico()).toThrowError(
+        new NfeServiceRequestError(`URL: ${url}\nrequest failed`),
+      );
+    });
+
+    test("Request throws error on timeout", () => {
       mock(url, {
         method: "POST",
         throw: new Error("The operation timed out."),
@@ -92,14 +115,14 @@ describe("NfeWebServices", async () => {
       );
     });
 
-    test("Request throw NfeServiceRequestError", () => {
+    test("Request throws NfeServiceRequestError on generic error", () => {
       mock(url, {
         method: "POST",
         throw: new Error("An error occurred during the request."),
       });
 
       expect(() => service.statusServico()).toThrowError(
-        NfeServiceRequestError,
+        new NfeServiceRequestError("An error occurred during the request."),
       );
     });
   });
@@ -121,9 +144,6 @@ describe("NfeWebServices", async () => {
       mock(url, {
         method: "POST",
         response: {
-          headers: {
-            "content-type": "application/soap+xml; charset=utf-8",
-          },
           data: buildMockResponse(mockResponse),
         },
       });
@@ -157,9 +177,6 @@ describe("NfeWebServices", async () => {
       mock(url, {
         method: "POST",
         response: {
-          headers: {
-            "content-type": "application/soap+xml; charset=utf-8",
-          },
           data: buildMockResponse(mockResponse),
         },
       });

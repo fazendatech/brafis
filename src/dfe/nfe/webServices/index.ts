@@ -97,16 +97,31 @@ export class NfeWebServices {
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
     })
-      .then((res) => res.text())
-      .then(
-        (xml) =>
-          parseSoap<{ nfeResultMsg: NfeRequestResponse }>(xml).nfeResultMsg,
-      )
+      .then((response) => {
+        if (!response.ok) {
+          throw new NfeServiceRequestError(
+            `${response.statusText} (${response.status}) - ${url}`,
+          );
+        }
+        return response.text();
+      })
+      .then((responseBody) => {
+        const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
+          responseBody,
+        );
+        if (!parsedResponse?.nfeResultMsg) {
+          throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
+        }
+        return parsedResponse.nfeResultMsg;
+      })
       .catch((error: Error) => {
-        if (error instanceof TimeoutError) {
+        if (
+          error instanceof TimeoutError ||
+          error instanceof NfeServiceRequestError
+        ) {
           throw error;
         }
-        throw new NfeServiceRequestError(error, { url, xml: soapBody });
+        throw new NfeServiceRequestError(error.message);
       });
   }
 

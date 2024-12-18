@@ -15,10 +15,12 @@ export function buildSoap<Body>(body: Body): string {
   });
 }
 
-export function parseSoap<Body>(xml: string): Body {
-  return makeParser({
-    ignoreDeclaration: true,
-    removeNSPrefix: true,
-    parseTagValue: false,
-  }).parse(xml).Envelope?.Body;
+export function parseSoap<Body>(xml: string): Body | null {
+  return (
+    makeParser({
+      ignoreDeclaration: true,
+      removeNSPrefix: true,
+      parseTagValue: false,
+    }).parse(xml).Envelope?.Body ?? null
+  );
 }
