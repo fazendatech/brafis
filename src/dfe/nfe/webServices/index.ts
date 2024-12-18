@@ -227,8 +227,7 @@ export class NfeWebServices {
     >(this.getUrl("NFeAutorizacao"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns":
-          "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4",
         enviNFe: {
           ...this.xmlNamespace,
           "@_versao": "4.00",
