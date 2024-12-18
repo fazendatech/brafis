@@ -4,6 +4,7 @@ import forge from "node-forge";
 import { errorHasMessage } from "@/utils/errors";
 
 import {
+  CertificateExpiredError,
   InvalidPasswordError,
   InvalidPfxError,
   NoCertificatesFoundError,
@@ -14,6 +15,7 @@ import type {
   P12Payload,
   PemPayload,
   CertificateFields,
+  CertificateP12AsPemOptions,
 } from "./types";
 
 /**
@@ -98,7 +100,7 @@ export class CertificateP12 {
    * @throws {NoPrivateKeyFoundError} Quando o arquivo não contém qualquer chave privada.
    * @throws {NoCertificatesFoundError} Quando o arquivo não possui qualquer certificado válido.
    */
-  asPem(): PemPayload {
+  asPem(options?: CertificateP12AsPemOptions): PemPayload {
     // NOTE: Uint8Array -> base64 -> forge.Bytes
     const base64 = forge.util.binary.base64.encode(this.payload.raw);
     const p12Der = forge.util.decode64(base64);
@@ -133,6 +135,16 @@ export class CertificateP12 {
 
     if (!certificate) {
       throw new NoCertificatesFoundError();
+    }
+
+    if (certificate.validity.notAfter < new Date()) {
+      if (options?.allowExpired) {
+        // FIXME: Atualizar quando implementar o logger
+        // biome-ignore lint/suspicious/noConsole:
+        console.warn(`Certificate expired on ${certificate.validity.notAfter}`);
+      } else {
+        throw new CertificateExpiredError();
+      }
     }
 
     const rsaPrivateKey = forge.pki.privateKeyToAsn1(privateKey);
