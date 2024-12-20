@@ -7,8 +7,8 @@ import { makeParser, makeBuilder } from "@/utils/xml";
 describe("sign", () => {
   describe("signNfe", async () => {
     const certificate = await CertificateP12.fromFilepath({
-      filepath: "misc/sample-certificates/cert.pfx",
-      password: "senha",
+      filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
+      password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
     });
 
     test("Signs NFe XML correctly", () => {
