@@ -16,6 +16,7 @@ import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 
 import { NfeWebServices } from ".";
 import { NfeServiceRequestError } from "./errors";
+import { ZodError } from "zod";
 
 function buildMockResponse<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({
@@ -203,6 +204,15 @@ describe("NfeWebServices", async () => {
         description: raw.xMotivo,
         raw,
       });
+    });
+
+    test("Webservice throws Zod.ZodError for an invalid NFe", () => {
+      const nfe = NFE_TEST_DATA;
+      nfe.NFe.infNFe.ide.cUF = "invalid";
+
+      expect(() => service.autorizacao({ idLote: "1", nfe })).toThrowError(
+        ZodError,
+      );
     });
   });
 });
