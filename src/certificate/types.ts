@@ -49,3 +49,7 @@ export interface CertificateFields {
   serialNumber: string;
   signatureAlgorithm: string;
 }
+
+export interface CertificateP12AsPemOptions {
+  allowExpired?: boolean;
+}

@@ -3,20 +3,20 @@
 exports[`CertificateP12 getPemFields Extracts certificate fields 1`] = `
 {
   "issuer": {
-    "commonName": "fazendatech.com.br",
+    "commonName": "www.exemplo.com.br",
     "countryName": "BR",
-    "organizationName": "FazendaTech",
-    "organizationalUnitName": "Dev Team",
+    "organizationName": "Minha Empresa LTDA",
+    "organizationalUnitName": "Departamento de TI",
   },
-  "serialNumber": "04d4ebda664c5e6ab7f316fad375f68cae8ea018",
+  "serialNumber": "19351e033813ae02bfb5cbad7d512190304916b9",
   "signatureAlgorithm": "sha256WithRSAEncryption",
   "subject": {
-    "commonName": "fazendatech.com.br",
+    "commonName": "www.exemplo.com.br",
     "countryName": "BR",
-    "organizationName": "FazendaTech",
-    "organizationalUnitName": "Dev Team",
+    "organizationName": "Minha Empresa LTDA",
+    "organizationalUnitName": "Departamento de TI",
   },
-  "validFrom": 2024-10-01T21:07:24.000Z,
-  "validTo": 2025-10-01T21:07:24.000Z,
+  "validFrom": 2024-12-18T12:56:56.000Z,
+  "validTo": 2099-11-30T12:56:56.000Z,
 }
 `;
