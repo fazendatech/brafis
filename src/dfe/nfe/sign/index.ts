@@ -1,8 +1,9 @@
-import { XMLBuilder } from "fast-xml-parser";
 import { SignedXml } from "xml-crypto";
-import { parseNfe, type NfeLayout } from "../layout";
+
 import type { CertificateP12 } from "@/certificate";
 import { makeBuilder } from "@/utils/xml";
+
+import type { NfeLayout } from "@/dfe/nfe/layout";
 
 /**
  * @description Gera o XML assinado da NFe.
@@ -13,12 +14,6 @@ import { makeBuilder } from "@/utils/xml";
  * @returns {string} O XML assinado da NFe.
  */
 export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
-  parseNfe(nfe);
-
-  const builder = new XMLBuilder({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-  });
   const xml = makeBuilder().build(nfe);
 
   const { key, cert } = certificate.asPem();
