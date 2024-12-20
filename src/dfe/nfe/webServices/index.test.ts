@@ -1,5 +1,13 @@
-import { describe, test, expect, afterEach } from "bun:test";
-import { mock, clearMocks } from "bun-bagel";
+import {
+  describe,
+  test,
+  expect,
+  afterEach,
+  beforeEach,
+  spyOn,
+  mock,
+} from "bun:test";
+import { mock as mockRequest, clearMocks } from "bun-bagel";
 import { XMLBuilder } from "fast-xml-parser";
 
 import { CertificateP12 } from "@/certificate";
@@ -31,18 +39,18 @@ function buildMockResponse<Obj>(obj: Obj): string {
 }
 
 describe("NfeWebServices", async () => {
-  const certificate = await CertificateP12.fromFilepath({
-    filepath: "misc/sample-certificates/cert.pfx",
-    password: "senha",
+  const certificate = new CertificateP12({
+    pfx: new Uint8Array(),
+    password: "",
   });
+
   const uf = "DF";
   const env = "homologacao";
   const service = new NfeWebServices({ uf, env, certificate });
 
-  // NOTE: Não lembro o motivo desse mock mas precisei desativar para a a autorização funcionar, estou considerando apagar
-  // beforeEach(() => {
-  //   spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
-  // });
+  beforeEach(() => {
+    spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
+  });
 
   afterEach(() => {
     clearMocks();
@@ -62,7 +70,7 @@ describe("NfeWebServices", async () => {
           },
         },
       };
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         response: {
           data: buildMockResponse(mockResponse),
@@ -78,7 +86,7 @@ describe("NfeWebServices", async () => {
     });
 
     test("Request throws NfeServiceRequestError on status not success", () => {
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         response: {
           status: 403,
@@ -92,7 +100,7 @@ describe("NfeWebServices", async () => {
     });
 
     test("Request throws NfeServiceRequestError on `nfeResultMsg` not present in response", () => {
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         response: {
           data: "request failed",
@@ -105,7 +113,7 @@ describe("NfeWebServices", async () => {
     });
 
     test("Request throws error on timeout", () => {
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         throw: new Error("The operation timed out."),
       });
@@ -116,7 +124,7 @@ describe("NfeWebServices", async () => {
     });
 
     test("Request throws NfeServiceRequestError on generic error", () => {
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         throw: new Error("An error occurred during the request."),
       });
@@ -141,7 +149,7 @@ describe("NfeWebServices", async () => {
           },
         },
       };
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         response: {
           data: buildMockResponse(mockResponse),
@@ -161,6 +169,9 @@ describe("NfeWebServices", async () => {
     const url = getWebServiceUrl({ uf, env, service: "NFeAutorizacao" });
 
     test("Returns valid response", async () => {
+      mock.module("../sign", () => ({
+        signNfe: () => "",
+      }));
       const mockResponse = {
         nfeResultMsg: {
           retEnviNFe: {
@@ -174,14 +185,14 @@ describe("NfeWebServices", async () => {
           },
         },
       };
-      mock(url, {
+      mockRequest(url, {
         method: "POST",
         response: {
           data: buildMockResponse(mockResponse),
         },
       });
-
       const raw = mockResponse.nfeResultMsg.retEnviNFe;
+
       expect(
         await service.autorizacao({
           idLote: "1",
