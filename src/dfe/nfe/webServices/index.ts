@@ -38,6 +38,7 @@ import type {
 import type { NfeWebServicesOptions } from "./types";
 import { signNfe } from "@/dfe/nfe/sign";
 import { makeBuilder, makeParser } from "@/utils/xml";
+import { parseNfe } from "../layout";
 
 export class NfeWebServices {
   private uf: UF;
@@ -220,6 +221,8 @@ export class NfeWebServices {
   async autorizacao(
     options: NfeAutorizacaoOptions,
   ): Promise<NfeAutorizacaoResponse> {
+    parseNfe(options.nfe);
+
     const NFe = signNfe(options.nfe, this.certificate);
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
@@ -251,4 +254,15 @@ export class NfeWebServices {
       raw: retEnviNFe,
     };
   }
+
+  /**
+   * @description Inutiliza um segmento de numerações de NFe.
+   *
+   * @param {NfeInutilizacaoOptions} options - Opções para a inutilização.
+   *
+   * @returns {Promise<NfeInutilizacaoResponse>} O resultado da inutilização.
+   *
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
 }
