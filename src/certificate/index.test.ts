@@ -13,16 +13,23 @@ import {
 
 describe("CertificateP12", async () => {
   const sampleCertificatesPath = "./misc/sample-certificates/";
+  const pfxPassword = "senha";
+
   const pfxCertificate = await file(
     `${sampleCertificatesPath}cert.pfx`,
   ).bytes();
+  const pemCertificate = await file(`${sampleCertificatesPath}cert.pem`).text();
+  const pemKey = await file(`${sampleCertificatesPath}key.pem`).text();
+
   const pfxCertificateExpired = await file(
     `${sampleCertificatesPath}cert-expired.pfx`,
   ).bytes();
-  const pfxPassword = "senha";
-
-  const pemCertificate = await file(`${sampleCertificatesPath}cert.pem`).text();
-  const pemKey = await file(`${sampleCertificatesPath}key.pem`).text();
+  const pemCertificateExpired = await file(
+    `${sampleCertificatesPath}cert-expired.pem`,
+  ).text();
+  const pemKeyExpired = await file(
+    `${sampleCertificatesPath}key-expired.pem`,
+  ).text();
 
   afterEach(() => {
     mock.restore();
@@ -49,8 +56,8 @@ describe("CertificateP12", async () => {
 
       const pem = certificate.asPem({ allowExpired: true });
 
-      expect(pem.cert).toEqual(pemCertificate);
-      expect(pem.key).toEqual(pemKey);
+      expect(pem.cert).toEqual(pemCertificateExpired);
+      expect(pem.key).toEqual(pemKeyExpired);
     });
 
     test("Throws InvalidPfxError", () => {
