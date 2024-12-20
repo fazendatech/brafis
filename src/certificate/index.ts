@@ -95,19 +95,23 @@ export class CertificateP12 {
   /**
    * @description Converte um certificado PKCS#12 para o formato PEM.
    *
+   * @param {CertificateP12AsPemOptions} options - Opções para a conversão.
+   *
    * @returns {PemPayload} Um objeto contendo o certificado e a chave privada no formato PEM.
    *
    * @throws {NoPrivateKeyFoundError} Quando o arquivo não contém qualquer chave privada.
    * @throws {NoCertificatesFoundError} Quando o arquivo não possui qualquer certificado válido.
    */
   asPem(options?: CertificateP12AsPemOptions): PemPayload {
-    // NOTE: Uint8Array -> base64 -> forge.Bytes
-    const base64 = forge.util.binary.base64.encode(this.payload.raw);
-    const p12Der = forge.util.decode64(base64);
     let privateKey: forge.pki.PrivateKey | null = null;
     let certificate: forge.pki.Certificate | null = null;
+
     try {
-      const p12Asn1 = forge.asn1.fromDer(p12Der);
+      // NOTE: Uint8Array -> base64 -> forge.Bytes -> ASN.1
+      const p12Asn1 = forge.asn1.fromDer(
+        forge.util.decode64(forge.util.binary.base64.encode(this.payload.raw)),
+      );
+
       const p12 = forge.pkcs12.pkcs12FromAsn1(
         p12Asn1,
         true,
