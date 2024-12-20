@@ -1,4 +1,3 @@
-import type { CertificateP12 } from "@/certificate";
 import type { NfeLayout } from "@/dfe/nfe/layout";
 import type { UF } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
