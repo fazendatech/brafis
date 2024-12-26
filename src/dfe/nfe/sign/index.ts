@@ -1,24 +1,37 @@
 import { SignedXml } from "xml-crypto";
 
 import type { CertificateP12 } from "@/certificate";
-import { makeBuilder, makeParser } from "@/utils/xml";
-
-import type { NfeLayout, NfeLayoutWithSignature } from "@/dfe/nfe/layout";
+import { makeParser } from "@/utils/xml";
 
 /**
- * @description Gera o XML assinado da NFe.
+ * @description Options for signing XML documents
+ *
+ * @property {CertificateP12} certificate - The digital certificate in PKCS#12 format used for signing
+ * @property {string} xml - The XML document content to be signed
+ * @property {string} [id] - Optional ID attribute value for the element to be signed
+ * @property {string} [xpath] - Optional XPath expression to locate the element to be signed
+ */
+interface signXmlOptions {
+  certificate: CertificateP12;
+  xml: string;
+  id?: string;
+  xpath?: string;
+}
+
+/**
+ * @description Gera o XML assinado.
  *
  * @param {NfeLayout} nfe - NFe a ser assinada.
  * @param {CertificateP12} certificate - O certificado usado na assinatura.
  *
- * @returns {string} O XML assinado da NFe.
+ * @returns {string} O XML assinado.
  */
-export function signNfe(
-  nfe: NfeLayout,
-  certificate: CertificateP12,
-): NfeLayoutWithSignature {
-  const xml = makeBuilder().build(nfe);
-
+export function signXml({
+  certificate,
+  xml,
+  xpath,
+  id,
+}: signXmlOptions): string {
   const { key, cert } = certificate.asPem();
   const sig = new SignedXml({
     privateKey: key,
@@ -27,8 +40,9 @@ export function signNfe(
     canonicalizationAlgorithm:
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
   });
+
   sig.addReference({
-    xpath: `//*[@Id='${nfe.NFe.infNFe["@_Id"]}']`,
+    xpath: xpath ?? `//*[@Id='${id}']`,
     transforms: [
       "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
       "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
