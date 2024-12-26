@@ -21,7 +21,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
     idLote: string;
     // NOTE: Envio sincrono em lote está em desuso, por isso não é permito o campo ser `"1"`
     indSinc: "0";
-    NFe: string;
+    NFe: NfeLayout;
   }>;
 }>;
 
