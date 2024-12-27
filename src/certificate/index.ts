@@ -145,9 +145,13 @@ export class CertificateP12 {
       if (options?.allowExpired) {
         // FIXME: Atualizar quando implementar o logger
         // biome-ignore lint/suspicious/noConsole:
-        console.warn(`Certificate expired on ${certificate.validity.notAfter}`);
+        console.warn(
+          `Certificate expired on ${certificate.validity.notAfter.toISOString()}`,
+        );
       } else {
-        throw new CertificateExpiredError();
+        throw new CertificateExpiredError(
+          `Certificate expired on ${certificate.validity.notAfter.toISOString()}`,
+        );
       }
     }
 
