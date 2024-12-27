@@ -13,11 +13,11 @@ describe("signXml", async () => {
   const xml = makeBuilder().build({ testXml: { "@_Id": id } });
   const xpath = `//*[@Id='${id}']`;
 
-  test("Signs XML correctly with xpath", () => {
-    expect(signXml({ xml, xpath, certificate })).toMatchSnapshot();
+  test("Signs NFe XML correctly", () => {
+    expect(signXml({ xml, sign: { xpath }, certificate })).toMatchSnapshot();
   });
 
-  test("Signs XML correctly with ID", () => {
-    expect(signXml({ xml, id, certificate })).toMatchSnapshot();
+  test("Signs NFe XML correctly with ID", () => {
+    expect(signXml({ xml, sign: { id }, certificate })).toMatchSnapshot();
   });
 });

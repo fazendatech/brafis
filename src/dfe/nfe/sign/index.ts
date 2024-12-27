@@ -14,8 +14,10 @@ import { makeParser } from "@/utils/xml";
 interface signXmlOptions {
   certificate: CertificateP12;
   xml: string;
-  id?: string;
-  xpath?: string;
+  sign: {
+    id?: string;
+    xpath?: string;
+  };
 }
 
 /**
@@ -29,8 +31,7 @@ interface signXmlOptions {
 export function signXml({
   certificate,
   xml,
-  xpath,
-  id,
+  sign: { id, xpath },
 }: signXmlOptions): string {
   const { key, cert } = certificate.asPem();
   const sig = new SignedXml({
