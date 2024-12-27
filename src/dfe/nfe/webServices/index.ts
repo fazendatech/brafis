@@ -333,7 +333,7 @@ export class NfeWebServices {
       },
     });
     const statusMap: Record<string, NfeInutilizacaoStatus> = {
-      "102": "inutilização-homologada",
+      "102": "homologada",
     };
 
     return {

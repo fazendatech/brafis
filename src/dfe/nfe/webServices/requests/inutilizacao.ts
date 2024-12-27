@@ -74,7 +74,7 @@ export interface NfeInutilizacaoResponseRaw {
   };
 }
 
-export type NfeInutilizacaoStatus = "inutilização-homologada";
+export type NfeInutilizacaoStatus = "homologada";
 
 export type NfeInutilizacaoResponse = NfeWebServiceResponse<
   NfeInutilizacaoStatus,
