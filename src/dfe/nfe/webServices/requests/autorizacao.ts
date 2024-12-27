@@ -21,7 +21,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
     idLote: string;
     // NOTE: Envio assíncrono em lote se tornará obsoleto para NF-e. Estamos tratando apenas o caso síncrono (indSinc=1).
     indSinc: "1";
-    NFe: NfeLayoutWithSignature["NFe"];
+    NFe: NfeLayout["NFe"];
   }>;
 }>;
 
