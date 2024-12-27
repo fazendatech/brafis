@@ -30,7 +30,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
  *
  * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - .
+ * @property cStat - Código do status da resposta.
  * @property xMotivo - Descrição da resposta.
  * @property cUF - Código da UF consultada.
  * @property dhRecbto - Data e hora da consulta.
@@ -41,7 +41,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
 export interface NfeAutorizacaoResponseRaw {
   tpAmb: string;
   verAplic: string;
-  cStat: LiteralStringUnion<"100">;
+  cStat: LiteralStringUnion<"103" | "104" | "105" | "106">;
   xMotivo: string;
   cUF: UF;
   dhRecbto: string;
@@ -56,7 +56,7 @@ export interface NfeAutorizacaoResponseRaw {
       dhRecbto: string;
       nProt?: string;
       digVal?: string;
-      cStat: string;
+      cStat: LiteralStringUnion<"100">;
       xMotivo: string;
     };
   };
@@ -75,11 +75,12 @@ export type NfeAutorizacaoStatusProtocolo = "uso-autorizado" | "erro";
 
 export type NfeAutorizacaoResponse = NfeWebServiceResponse<
   NfeAutorizacaoStatus,
-  NfeAutorizacaoResponseRaw
-> & {
-  protocolo: {
-    status: NfeAutorizacaoStatusProtocolo;
-    description: string;
-  } | null;
-  xml: string | null;
-};
+  NfeAutorizacaoResponseRaw,
+  {
+    protocolo: {
+      status: NfeAutorizacaoStatusProtocolo;
+      description: string;
+    } | null;
+    xml: string | null;
+  }
+>;
