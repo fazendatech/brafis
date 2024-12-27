@@ -6,8 +6,8 @@ import { signNfe } from ".";
 describe("sign", () => {
   describe("signNfe", async () => {
     const certificate = await CertificateP12.fromFilepath({
-      filepath: process.env.TEST_CERTIFICATE_PATH ?? "",
-      password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
+      filepath: "misc/sample-certificates/cert.pfx",
+      password: "senha",
     });
 
     test("Signs NFe XML correctly", () => {
