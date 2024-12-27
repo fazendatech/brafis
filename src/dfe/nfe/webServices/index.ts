@@ -11,6 +11,9 @@ import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import type { WithXmlns } from "@/utils/soap/types";
 import { TimeoutError } from "@/utils/errors";
+import { signNfe } from "@/dfe/nfe/sign";
+import { makeBuilder } from "@/utils/xml";
+import { parseNfe } from "@/dfe/nfe/layout";
 
 import { NfeServiceRequestError } from "./errors";
 import type { NfeRequestOptions } from "./requests/common";
@@ -37,9 +40,6 @@ import type {
   NfeAutorizacaoStatusProtocolo,
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
-import { signNfe } from "@/dfe/nfe/sign";
-import { makeBuilder, makeParser } from "@/utils/xml";
-import { parseNfe } from "../layout";
 
 export class NfeWebServices {
   private uf: UF;
@@ -219,12 +219,13 @@ export class NfeWebServices {
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
-  async autorizacao(
-    options: NfeAutorizacaoOptions,
-  ): Promise<NfeAutorizacaoResponse> {
-    parseNfe(options.nfe);
+  async autorizacao({
+    idLote,
+    nfe,
+  }: NfeAutorizacaoOptions): Promise<NfeAutorizacaoResponse> {
+    parseNfe(nfe);
 
-    const NFe = signNfe(options.nfe, this.certificate);
+    const signedNfe = signNfe(nfe, this.certificate);
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
       { retEnviNFe: NfeAutorizacaoResponseRaw }
@@ -235,10 +236,9 @@ export class NfeWebServices {
         enviNFe: {
           ...this.xmlNamespace,
           "@_versao": "4.00",
-          idLote: options.idLote,
+          idLote,
           indSinc: "1",
-          //NOTE: Testar se é possível passar o objeto NFe diretamente e assinar depois o XML completo
-          NFe: makeParser().parse(NFe).NFe,
+          NFe: signedNfe.NFe,
         },
       },
     });
@@ -254,8 +254,16 @@ export class NfeWebServices {
     };
     const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
 
-    const buildNfeProc = (protNfe: unknown) =>
-      `<?xml version="1.0" encoding="UTF-8"?><nfeProc versao="4.00" xmlns="${this.xmlNamespace["@_xmlns"]}">${NFe}${makeBuilder().build(protNfe)}</nfeProc>`;
+    const buildNfeProc = (protNFe: NfeAutorizacaoResponseRaw["protNFe"]) =>
+      makeBuilder().build({
+        "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
+        nfeProc: {
+          "@_versao": "4.00",
+          "@_xmlns": this.xmlNamespace["@_xmlns"],
+          ...signedNfe,
+          protNFe,
+        },
+      });
 
     return {
       status: statusMap[retEnviNFe.cStat] ?? "outro",
@@ -267,9 +275,7 @@ export class NfeWebServices {
             description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
           }
         : null,
-      xml: cStatProtocolo
-        ? buildNfeProc({ protNfe: retEnviNFe.protNFe })
-        : null,
+      xml: cStatProtocolo ? buildNfeProc(retEnviNFe.protNFe) : null,
     };
   }
 

@@ -1,9 +1,9 @@
 import { SignedXml } from "xml-crypto";
 
 import type { CertificateP12 } from "@/certificate";
-import { makeBuilder } from "@/utils/xml";
+import { makeBuilder, makeParser } from "@/utils/xml";
 
-import type { NfeLayout } from "@/dfe/nfe/layout";
+import type { NfeLayout, NfeLayoutWithSignature } from "@/dfe/nfe/layout";
 
 /**
  * @description Gera o XML assinado da NFe.
@@ -13,7 +13,10 @@ import type { NfeLayout } from "@/dfe/nfe/layout";
  *
  * @returns {string} O XML assinado da NFe.
  */
-export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
+export function signNfe(
+  nfe: NfeLayout,
+  certificate: CertificateP12,
+): NfeLayoutWithSignature {
   const xml = makeBuilder().build(nfe);
 
   const { key, cert } = certificate.asPem();
@@ -34,5 +37,5 @@ export function signNfe(nfe: NfeLayout, certificate: CertificateP12): string {
   });
 
   sig.computeSignature(xml);
-  return sig.getSignedXml();
+  return makeParser().parse(sig.getSignedXml());
 }
