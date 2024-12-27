@@ -34,6 +34,7 @@ import type {
   NfeAutorizacaoResponse,
   NfeAutorizacaoResponseRaw,
   NfeAutorizacaoStatus,
+  NfeAutorizacaoStatusProtocolo,
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
 import { signNfe } from "@/dfe/nfe/sign";
@@ -235,23 +236,40 @@ export class NfeWebServices {
           ...this.xmlNamespace,
           "@_versao": "4.00",
           idLote: options.idLote,
-          indSinc: "0",
+          indSinc: "1",
           //NOTE: Testar se é possível passar o objeto NFe diretamente e assinar depois o XML completo
-          NFe: makeBuilder().build(makeParser().parse(NFe).NFe),
+          NFe: makeParser().parse(NFe).NFe,
         },
       },
     });
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
-      "100": "uso-autorizado",
-      "110": "uso-denegado",
-      "150": "uso-autorizado",
+      "103": "lote-recebido",
+      "104": "lote-processado",
+      "105": "lote-em-processamento",
+      "106": "lote-nao-localizado",
     };
+    const statusProtocoloMap: Record<string, NfeAutorizacaoStatusProtocolo> = {
+      "100": "uso-autorizado",
+    };
+    const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
+
+    const buildNfeProc = (protNfe: unknown) =>
+      `<?xml version="1.0" encoding="UTF-8"?><nfeProc versao="4.00" xmlns="${this.xmlNamespace["@_xmlns"]}">${NFe}${makeBuilder().build(protNfe)}</nfeProc>`;
 
     return {
       status: statusMap[retEnviNFe.cStat] ?? "outro",
       description: retEnviNFe.xMotivo ?? "",
       raw: retEnviNFe,
+      protocolo: cStatProtocolo
+        ? {
+            status: statusProtocoloMap[cStatProtocolo] ?? "erro",
+            description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
+          }
+        : null,
+      xml: cStatProtocolo
+        ? buildNfeProc({ protNfe: retEnviNFe.protNFe })
+        : null,
     };
   }
 

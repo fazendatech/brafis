@@ -1,4 +1,3 @@
-import type { CertificateP12 } from "@/certificate";
 import type { NfeLayout } from "@/dfe/nfe/layout";
 import type { UF } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
@@ -20,8 +19,8 @@ export type NfeAutorizacaoOptions = {
 export type NfeAutorizacaoRequest = WithXmlns<{
   enviNFe: WithXmlnsVersao<{
     idLote: string;
-    // NOTE: Envio sincrono em lote está em desuso, por isso não é permito o campo ser `"1"`
-    indSinc: "0";
+    // NOTE: Envio assíncrono em lote se tornará obsoleto para NF-e. Estamos tratando apenas o caso síncrono (indSinc=1).
+    indSinc: "1";
     NFe: string;
   }>;
 }>;
@@ -47,11 +46,40 @@ export interface NfeAutorizacaoResponseRaw {
   cUF: UF;
   dhRecbto: string;
   infRec?: { nRec: string; tMed: string };
+  protNFe?: {
+    "@_versao": string;
+    infProt: {
+      "@_Id"?: string;
+      tpAmb: string;
+      verAplic: string;
+      chNFe: string;
+      dhRecbto: string;
+      nProt?: string;
+      digVal?: string;
+      cStat: string;
+      xMotivo: string;
+    };
+  };
 }
 
-export type NfeAutorizacaoStatus = "uso-autorizado" | "uso-denegado";
+export type NfeAutorizacaoStatus =
+  | "lote-recebido"
+  | "lote-processado"
+  | "lote-em-processamento"
+  | "lote-nao-localizado";
+
+/**
+ * @description Status do protocolo. cStat 100 = "uso-autorizado". Qualquer outro valor é considerado erro.
+ */
+export type NfeAutorizacaoStatusProtocolo = "uso-autorizado" | "erro";
 
 export type NfeAutorizacaoResponse = NfeWebServiceResponse<
   NfeAutorizacaoStatus,
   NfeAutorizacaoResponseRaw
->;
+> & {
+  protocolo: {
+    status: NfeAutorizacaoStatusProtocolo;
+    description: string;
+  } | null;
+  xml: string | null;
+};
