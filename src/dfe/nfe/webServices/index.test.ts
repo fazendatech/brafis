@@ -171,39 +171,42 @@ describe("NfeWebServices", async () => {
 
     test("Returns valid response", async () => {
       mock.module("../sign", () => ({
-        signNfe: () => "",
+        signNfe: () =>
+          "<NFe><infNFe>mock nfe</infNFe><Signature>mock signature</Signature></NFe>",
       }));
-      const mockResponse = {
-        nfeResultMsg: {
-          retEnviNFe: {
-            cStat: "100",
-            xMotivo: "Autorizado o uso da NF-e",
-            cUF: "53",
-            infRec: {
-              nRec: "123456789",
-              tMed: "1",
-            },
-          },
-        },
-      };
       mockRequest(url, {
         method: "POST",
         response: {
-          data: buildMockResponse(mockResponse),
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retEnviNFe: {
+                cStat: "104",
+                xMotivo: "Lote processado",
+                protNFe: {
+                  "@_versao": "4.00",
+                  infProt: {
+                    tpAmb: "2",
+                    verAplic: "SVRS202101041234",
+                    chNFe: "0".repeat(44),
+                    dhRecbto: "2021-01-04T12:34:56-03:00",
+                    nProt: "123456789012345",
+                    digVal: "123456789012345",
+                    cStat: "100",
+                    xMotivo: "Autorizado o uso da NF-e",
+                  },
+                },
+              },
+            },
+          }),
         },
       });
-      const raw = mockResponse.nfeResultMsg.retEnviNFe;
 
       expect(
         await service.autorizacao({
           idLote: "1",
           nfe: NFE_TEST_DATA,
         }),
-      ).toMatchObject({
-        status: "uso-autorizado",
-        description: raw.xMotivo,
-        raw,
-      });
+      ).toMatchSnapshot();
     });
 
     test("Webservice throws Zod.ZodError for an invalid NFe", () => {

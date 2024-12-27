@@ -1,0 +1,30 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NfeWebServices autorizacao Returns valid response 1`] = `
+{
+  "description": "Lote processado",
+  "protocolo": {
+    "description": "Autorizado o uso da NF-e",
+    "status": "uso-autorizado",
+  },
+  "raw": {
+    "cStat": "104",
+    "protNFe": {
+      "@_versao": "4.00",
+      "infProt": {
+        "cStat": "100",
+        "chNFe": "00000000000000000000000000000000000000000000",
+        "dhRecbto": "2021-01-04T12:34:56-03:00",
+        "digVal": "123456789012345",
+        "nProt": "123456789012345",
+        "tpAmb": "2",
+        "verAplic": "SVRS202101041234",
+        "xMotivo": "Autorizado o uso da NF-e",
+      },
+    },
+    "xMotivo": "Lote processado",
+  },
+  "status": "lote-processado",
+  "xml": "<?xml version="1.0" encoding="UTF-8"?><nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><NFe><infNFe>mock nfe</infNFe><Signature>mock signature</Signature></NFe><protNfe versao="4.00"><infProt><tpAmb>2</tpAmb><verAplic>SVRS202101041234</verAplic><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRecbto>2021-01-04T12:34:56-03:00</dhRecbto><nProt>123456789012345</nProt><digVal>123456789012345</digVal><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo></infProt></protNfe></nfeProc>",
+}
+`;
