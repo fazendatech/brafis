@@ -37,5 +37,6 @@ export function signNfe(
   });
 
   sig.computeSignature(xml);
-  return makeParser().parse(sig.getSignedXml());
+  const signedXml = sig.getSignedXml();
+  return makeParser().parse(signedXml);
 }

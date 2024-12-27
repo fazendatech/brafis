@@ -238,7 +238,7 @@ export class NfeWebServices {
           "@_versao": "4.00",
           idLote,
           indSinc: "1",
-          NFe: signedNfe.NFe,
+          ...signedNfe,
         },
       },
     });
