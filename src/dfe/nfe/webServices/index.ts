@@ -243,39 +243,41 @@ export class NfeWebServices {
       },
     });
 
+    const statusProtocoloMap: Record<string, NfeAutorizacaoStatusProtocolo> = {
+      "100": "uso-autorizado",
+    };
+    const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
+    const protocolo = cStatProtocolo
+      ? {
+          status: statusProtocoloMap[cStatProtocolo] ?? "erro",
+          description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
+        }
+      : null;
+    const xml = cStatProtocolo
+      ? makeBuilder().build({
+          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
+          nfeProc: {
+            "@_versao": "4.00",
+            "@_xmlns": this.xmlNamespace["@_xmlns"],
+            ...signedNfe,
+            protNFe: retEnviNFe.protNFe,
+          },
+        })
+      : null;
+
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
       "103": "lote-recebido",
       "104": "lote-processado",
       "105": "lote-em-processamento",
       "106": "lote-nao-localizado",
     };
-    const statusProtocoloMap: Record<string, NfeAutorizacaoStatusProtocolo> = {
-      "100": "uso-autorizado",
-    };
-    const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
-
-    const buildNfeProc = (protNFe: NfeAutorizacaoResponseRaw["protNFe"]) =>
-      makeBuilder().build({
-        "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
-        nfeProc: {
-          "@_versao": "4.00",
-          "@_xmlns": this.xmlNamespace["@_xmlns"],
-          ...signedNfe,
-          protNFe,
-        },
-      });
 
     return {
       status: statusMap[retEnviNFe.cStat] ?? "outro",
       description: retEnviNFe.xMotivo ?? "",
       raw: retEnviNFe,
-      protocolo: cStatProtocolo
-        ? {
-            status: statusProtocoloMap[cStatProtocolo] ?? "erro",
-            description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
-          }
-        : null,
-      xml: cStatProtocolo ? buildNfeProc(retEnviNFe.protNFe) : null,
+      protocolo,
+      xml,
     };
   }
 
