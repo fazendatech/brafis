@@ -4,13 +4,13 @@ import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
 describe("xml", () => {
   describe("parseXml", () => {
-    test("Successfully creates an XML Parser", () => {
+    test("Creates an XML Parser", () => {
       expect(makeParser()).toBeInstanceOf(XMLParser);
     });
   });
 
   describe("buildXml", () => {
-    test("Successfully creates an XML Builder", () => {
+    test("Creates an XML Builder", () => {
       expect(makeBuilder()).toBeInstanceOf(XMLBuilder);
     });
   });
