@@ -16,9 +16,9 @@ const decimal = (before: number, after: number) =>
 const date = () =>
   z
     .string()
-    .datetime({ precision: 0 })
+    .datetime({ precision: 0, offset: true })
     .describe(
-      "Formato de data esperado: AAAA-MM-DDThh:mm:ssTZD (ex: 2020-01-01T00:00:00Z)",
+      "Formato de data esperado: AAAA-MM-DDThh:mm:ssTZD (ex: 2020-01-01T00:00:00-03:00)",
     );
 const ie = () =>
   z.string().refine((value) => isValidIe(value), { message: "IE inválida." });
