@@ -41,6 +41,13 @@ import type {
   NfeAutorizacaoStatusProtocolo,
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
+import type {
+  NfeInutilizacaoOptions,
+  NfeInutilizacaoRequest,
+  NfeInutilizacaoResponse,
+  NfeInutilizacaoResponseRaw,
+  NfeInutilizacaoStatus,
+} from "./requests/inutilizacao";
 
 export class NfeWebServices {
   private uf: UF;
@@ -281,6 +288,58 @@ export class NfeWebServices {
       raw: retEnviNFe,
       protocolo,
       xml,
+    };
+  }
+
+  /**
+   * @description Inutiliza um segmento de numerações de NFe.
+   *
+   * @param {NfeInutilizacaoOptions} options - Opções para a inutilização.
+   *
+   * @returns {Promise<NfeInutilizacaoResponse>} O resultado da inutilização.
+   *
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
+  async inutilizacao(
+    options: NfeInutilizacaoOptions,
+  ): Promise<NfeInutilizacaoResponse> {
+    const id = `ID${options.cUF}${options.ano}${options.cnpj}${options.mod}${options.serie}${options.nNfIni}${options.nNfFin}}`;
+
+    const { retInutNFe } = await this.request<
+      NfeInutilizacaoRequest,
+      { retInutNFe: NfeInutilizacaoResponseRaw }
+    >(this.getUrl("NfeInutilizacao"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
+        inutNFe: {
+          ...this.xmlNamespace,
+          "@_versao": "4.00",
+          infInut: {
+            "@_Id": id,
+            tpAmb: this.tpAmb,
+            xServ: "INUTILIZAR",
+            cUF: this.cUF,
+            ano: options.ano,
+            CNPJ: options.cnpj,
+            mod: options.mod,
+            serie: options.serie,
+            nNFIni: options.nNfIni,
+            nNFFin: options.nNfFin,
+            xJust: options.xJust,
+          },
+        },
+      },
+    });
+    const statusMap: Record<string, NfeInutilizacaoStatus> = {
+      "102": "inutilização-homologada",
+    };
+
+    return {
+      status: statusMap[retInutNFe.infInut.cStat] ?? "outro",
+      description: retInutNFe.infInut.xMotivo ?? "",
+      raw: retInutNFe,
     };
   }
 }
