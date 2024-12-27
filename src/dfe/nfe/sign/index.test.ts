@@ -15,15 +15,15 @@ describe("sign", () => {
     const xpath = `//*[@Id='${id}']`;
 
     test("Signs NFe XML correctly", () => {
-      expect(signXml({ xml, xpath, certificate })).toMatchSnapshot();
+      expect(signXml({ xml, sign: { xpath }, certificate })).toMatchSnapshot();
     });
 
     test("Signs NFe XML correctly with ID", () => {
-      expect(signXml({ xml, id, certificate })).toMatchSnapshot();
+      expect(signXml({ xml, sign: { id }, certificate })).toMatchSnapshot();
     });
 
     test("Parses and rebuilds signed NFe correctly", () => {
-      const signedNfe = signXml({ xml, xpath, certificate });
+      const signedNfe = signXml({ xml, sign: { xpath }, certificate });
       const signedNfeObject = makeParser().parse(signedNfe);
 
       expect(makeBuilder().build(signedNfeObject)).toEqual(signedNfe);
