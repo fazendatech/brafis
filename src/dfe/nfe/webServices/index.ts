@@ -10,7 +10,6 @@ import type { UF, UFCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import type { WithXmlns } from "@/utils/soap/types";
-import { TimeoutError } from "@/utils/errors";
 import { signNfe } from "@/dfe/nfe/sign";
 import { makeBuilder } from "@/utils/xml";
 import { parseNfe } from "@/dfe/nfe/layout";
@@ -92,39 +91,27 @@ export class NfeWebServices {
     const { cert, key } = this.certificate.asPem();
     const soapBody = buildSoap({ nfeDadosMsg: body });
 
-    return fetchWithTls(url, {
+    const response = await fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
       body: soapBody,
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new NfeServiceRequestError(
-            `${response.statusText} (${response.status}) - ${url}`,
-          );
-        }
-        return response.text();
-      })
-      .then((responseBody) => {
-        const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
-          responseBody,
-        );
-        if (!parsedResponse?.nfeResultMsg) {
-          throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
-        }
-        return parsedResponse.nfeResultMsg;
-      })
-      .catch((error: Error) => {
-        if (
-          error instanceof TimeoutError ||
-          error instanceof NfeServiceRequestError
-        ) {
-          throw error;
-        }
-        throw new NfeServiceRequestError(error.message);
-      });
+    });
+
+    if (!response.ok) {
+      throw new NfeServiceRequestError(
+        `${response.statusText} (${response.status}) - ${url}`,
+      );
+    }
+    const responseBody = await response.text();
+    const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
+      responseBody,
+    );
+    if (!parsedResponse?.nfeResultMsg) {
+      throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
+    }
+    return parsedResponse.nfeResultMsg;
   }
 
   /**
@@ -280,15 +267,4 @@ export class NfeWebServices {
       xml,
     };
   }
-
-  /**
-   * @description Inutiliza um segmento de numerações de NFe.
-   *
-   * @param {NfeInutilizacaoOptions} options - Opções para a inutilização.
-   *
-   * @returns {Promise<NfeInutilizacaoResponse>} O resultado da inutilização.
-   *
-   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
-   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
-   */
 }

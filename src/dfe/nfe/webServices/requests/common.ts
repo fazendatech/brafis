@@ -3,8 +3,8 @@ export interface NfeRequestOptions<Body> {
   timeout: number;
 }
 
-export interface NfeWebServiceResponse<Status, Raw> {
+export type NfeWebServiceResponse<Status, Raw, Extra = unknown> = {
   status: Status | "outro";
   description: string;
   raw: Raw;
-}
+} & Extra;
