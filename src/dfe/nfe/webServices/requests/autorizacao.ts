@@ -1,4 +1,4 @@
-import type { NfeLayout } from "@/dfe/nfe/layout";
+import type { NfeLayout, NfeLayoutWithSignature } from "@/dfe/nfe/layout";
 import type { UF } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
@@ -21,7 +21,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
     idLote: string;
     // NOTE: Envio assíncrono em lote se tornará obsoleto para NF-e. Estamos tratando apenas o caso síncrono (indSinc=1).
     indSinc: "1";
-    NFe: string;
+    NFe: NfeLayoutWithSignature["NFe"];
   }>;
 }>;
 
