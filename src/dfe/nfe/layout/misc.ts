@@ -26,7 +26,7 @@ export const NFE_TEST_DATA: NfeLayout = {
         mod: "55",
         serie: "001",
         nNF: "123456",
-        dhEmi: "2024-12-06T08:00:00Z",
+        dhEmi: "2024-12-06T08:00:00-03:00",
         tpNF: "1",
         idDest: "1",
         cMunFG: "3550308",

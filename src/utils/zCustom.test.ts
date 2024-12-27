@@ -34,7 +34,7 @@ describe("zCustom", () => {
     const zDate = zCustom.date();
 
     test("Successfully parses valid date string", () => {
-      expect(zDate.safeParse("2020-01-01T00:00:00Z").success).toBeTrue();
+      expect(zDate.safeParse("2020-01-01T00:00:00-03:00").success).toBeTrue();
     });
 
     test("Fails when parsing invalid date string", () => {
