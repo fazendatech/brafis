@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-// export interface NfeRequestOptions<Body> {
-//   body: Body;
-//   timeout: number;
-//   sign?: { xpath?: string; id?: string };
-// }
-
 export const schemaNfeRequestOptions = z
   .object({
     body: z.any(),
@@ -33,7 +27,11 @@ export const schemaNfeRequestOptions = z
     { message: "sign must have either xpath or id" },
   );
 
-export type NfeRequestOptions = z.infer<typeof schemaNfeRequestOptions>;
+export interface NfeRequestOptions<Body> {
+  body: Body;
+  timeout: number;
+  sign?: { xpath?: string; id?: string };
+}
 
 export interface NfeWebServiceResponse<Status, Raw> {
   status: Status | "outro";

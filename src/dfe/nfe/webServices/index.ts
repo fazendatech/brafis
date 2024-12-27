@@ -1,5 +1,7 @@
 import type { CertificateP12 } from "@/certificate";
 import { loadNfeCa } from "@/dfe/nfe/ca";
+import { parseNfe } from "@/dfe/nfe/layout";
+import { signXml } from "@/dfe/nfe/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
   Environment,
@@ -13,7 +15,10 @@ import type { WithXmlns } from "@/utils/soap/types";
 import { TimeoutError } from "@/utils/errors";
 
 import { NfeServiceRequestError } from "./errors";
-import type { NfeRequestOptions } from "./requests/common";
+import {
+  schemaNfeRequestOptions,
+  type NfeRequestOptions,
+} from "./requests/common";
 import {
   schemaNfeConsultaCadastroOptions,
   type NfeConsultaCadastroOptions,
@@ -86,10 +91,21 @@ export class NfeWebServices {
 
   private async request<Body, NfeRequestResponse>(
     url: string,
-    { body, timeout }: NfeRequestOptions<Body>,
+    options: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
+    schemaNfeRequestOptions.parse(options);
+
+    const { body, timeout, sign } = options;
     const { cert, key } = this.certificate.asPem();
-    const soapBody = buildSoap({ nfeDadosMsg: body });
+    let soapBody = buildSoap({ nfeDadosMsg: body });
+
+    if (sign) {
+      soapBody = signXml({
+        xml: soapBody,
+        certificate: this.certificate,
+        sign,
+      });
+    }
 
     return fetchWithTls(url, {
       method: "POST",
@@ -98,18 +114,18 @@ export class NfeWebServices {
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
     })
-      .then((response) => {
+      .then(async (response) => {
         if (!response.ok) {
           throw new NfeServiceRequestError(
             `${response.statusText} (${response.status}) - ${url}`,
           );
         }
-        return response.text();
-      })
-      .then((responseBody) => {
+
+        const responseBody = await response.text();
         const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
           responseBody,
         );
+
         if (!parsedResponse?.nfeResultMsg) {
           throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
         }
@@ -223,7 +239,6 @@ export class NfeWebServices {
   ): Promise<NfeAutorizacaoResponse> {
     parseNfe(options.nfe);
 
-    const NFe = signNfe(options.nfe, this.certificate);
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
       { retEnviNFe: NfeAutorizacaoResponseRaw }
@@ -236,9 +251,11 @@ export class NfeWebServices {
           "@_versao": "4.00",
           idLote: options.idLote,
           indSinc: "0",
-          //NOTE: Testar se é possível passar o objeto NFe diretamente e assinar depois o XML completo
-          NFe: makeBuilder().build(makeParser().parse(NFe).NFe),
+          NFe: options.nfe,
         },
+      },
+      sign: {
+        id: options.nfe.NFe.infNFe["@_Id"],
       },
     });
 
