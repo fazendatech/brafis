@@ -41,9 +41,13 @@ import type {
   NfeAutorizacaoStatus,
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
-import { signNfe } from "@/dfe/nfe/sign";
-import { makeBuilder, makeParser } from "@/utils/xml";
-import { parseNfe } from "../layout";
+import type {
+  NfeInutilizacaoOptions,
+  NfeInutilizacaoRequest,
+  NfeInutilizacaoResponse,
+  NfeInutilizacaoResponseRaw,
+  NfeInutilizacaoStatus,
+} from "./requests/inutilizacao";
 
 export class NfeWebServices {
   private uf: UF;
@@ -282,4 +286,45 @@ export class NfeWebServices {
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
+  async inutilizacao(
+    options: NfeInutilizacaoOptions,
+  ): Promise<NfeInutilizacaoResponse> {
+    const id = `ID${options.cUF}${options.ano}${options.cnpj}${options.mod}${options.serie}${options.nNfIni}${options.nNfFin}}`;
+
+    const { retInutNFe } = await this.request<
+      NfeInutilizacaoRequest,
+      { retInutNFe: NfeInutilizacaoResponseRaw }
+    >(this.getUrl("NfeInutilizacao"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
+        inutNFe: {
+          ...this.xmlNamespace,
+          "@_versao": "4.00",
+          infInut: {
+            "@_Id": id,
+            tpAmb: this.tpAmb,
+            xServ: "INUTILIZAR",
+            cUF: this.cUF,
+            ano: options.ano,
+            CNPJ: options.cnpj,
+            mod: options.mod,
+            serie: options.serie,
+            nNFIni: options.nNfIni,
+            nNFFin: options.nNfFin,
+            xJust: options.xJust,
+          },
+        },
+      },
+    });
+    const statusMap: Record<string, NfeInutilizacaoStatus> = {
+      "102": "inutilização-homologada",
+    };
+
+    return {
+      status: statusMap[retInutNFe.infInut.cStat] ?? "outro",
+      description: retInutNFe.infInut.xMotivo ?? "",
+      raw: retInutNFe,
+    };
+  }
 }
