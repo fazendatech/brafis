@@ -42,8 +42,8 @@ export class NoCertificatesFoundError extends Error {
  * @description Certificado expirado.
  */
 export class CertificateExpiredError extends Error {
-  constructor() {
-    super("Certificate is expired.");
+  constructor(message = "Certificate is expired.") {
+    super(message);
     this.name = "CertificateExpiredError";
   }
 }
