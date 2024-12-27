@@ -1,5 +1,7 @@
 import type { CertificateP12 } from "@/certificate";
 import { loadNfeCa } from "@/dfe/nfe/ca";
+import { parseNfe } from "@/dfe/nfe/layout";
+import { signXml } from "@/dfe/nfe/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
   Environment,
@@ -10,12 +12,12 @@ import type { UF, UFCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import type { WithXmlns } from "@/utils/soap/types";
-import { signNfe } from "@/dfe/nfe/sign";
-import { makeBuilder } from "@/utils/xml";
-import { parseNfe } from "@/dfe/nfe/layout";
 
 import { NfeServiceRequestError } from "./errors";
-import type { NfeRequestOptions } from "./requests/common";
+import {
+  schemaNfeRequestOptions,
+  type NfeRequestOptions,
+} from "./requests/common";
 import {
   schemaNfeConsultaCadastroOptions,
   type NfeConsultaCadastroOptions,
@@ -86,10 +88,21 @@ export class NfeWebServices {
 
   private async request<Body, NfeRequestResponse>(
     url: string,
-    { body, timeout }: NfeRequestOptions<Body>,
+    options: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
+    schemaNfeRequestOptions.parse(options);
+
+    const { body, timeout, sign } = options;
     const { cert, key } = this.certificate.asPem();
-    const soapBody = buildSoap({ nfeDadosMsg: body });
+    let soapBody = buildSoap({ nfeDadosMsg: body });
+
+    if (sign) {
+      soapBody = signXml({
+        xml: soapBody,
+        certificate: this.certificate,
+        sign,
+      });
+    }
 
     const response = await fetchWithTls(url, {
       method: "POST",
@@ -212,7 +225,6 @@ export class NfeWebServices {
   }: NfeAutorizacaoOptions): Promise<NfeAutorizacaoResponse> {
     parseNfe(nfe);
 
-    const signedNfe = signNfe(nfe, this.certificate);
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
       { retEnviNFe: NfeAutorizacaoResponseRaw }
@@ -223,10 +235,13 @@ export class NfeWebServices {
         enviNFe: {
           ...this.xmlNamespace,
           "@_versao": "4.00",
-          idLote,
+          idLote: idLote,
           indSinc: "1",
-          ...signedNfe,
+          ...nfe,
         },
+      },
+      sign: {
+        id: nfe.NFe.infNFe["@_Id"],
       },
     });
 
@@ -240,17 +255,18 @@ export class NfeWebServices {
           description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
         }
       : null;
-    const xml = cStatProtocolo
-      ? makeBuilder().build({
-          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
-          nfeProc: {
-            "@_versao": "4.00",
-            "@_xmlns": this.xmlNamespace["@_xmlns"],
-            ...signedNfe,
-            protNFe: retEnviNFe.protNFe,
-          },
-        })
-      : null;
+    const xml = null;
+    // const xml = cStatProtocolo
+    //   ? makeBuilder().build({
+    //       "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
+    //       nfeProc: {
+    //         "@_versao": "4.00",
+    //         "@_xmlns": this.xmlNamespace["@_xmlns"],
+    //         ...signedNfe,
+    //         protNFe: retEnviNFe.protNFe,
+    //       },
+    //     })
+    //   : null;
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
       "103": "lote-recebido",

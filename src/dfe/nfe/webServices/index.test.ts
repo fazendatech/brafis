@@ -171,7 +171,7 @@ describe("NfeWebServices", async () => {
 
     test("Returns valid response", async () => {
       mock.module("../sign", () => ({
-        signNfe: () => ({ ...NFE_TEST_DATA, Signature: "mock signature" }),
+        signXml: () => "<signed-xml></signed-xml>",
       }));
       mockRequest(url, {
         method: "POST",
