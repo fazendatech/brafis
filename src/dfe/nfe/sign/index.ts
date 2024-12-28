@@ -4,10 +4,11 @@ import type { CertificateP12 } from "@/certificate";
 import { makeParser } from "@/utils/xml";
 
 /**
- * @description Options for signing XML documents
+ * @description Opções para assinar documentos XML
  *
- * @property {CertificateP12} certificate - The digital certificate in PKCS#12 format used for signing
- * @property {string} xml - The XML document content to be signed
+ * @property {CertificateP12} certificate - O certificado digital no formato PKCS#12 usado para assinar
+ * @property {string} xml - O conteúdo do documento XML a ser assinado
+ * @property {string} signId - O ID do elemento a ser assinado
  */
 interface signXmlOptions {
   certificate: CertificateP12;
