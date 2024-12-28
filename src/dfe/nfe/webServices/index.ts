@@ -15,10 +15,7 @@ import type { WithXmlns } from "@/utils/soap/types";
 import { TimeoutError } from "@/utils/errors";
 
 import { NfeServiceRequestError } from "./errors";
-import {
-  schemaNfeRequestOptions,
-  type NfeRequestOptions,
-} from "./requests/common";
+import type { NfeRequestOptions } from "./requests/common";
 import {
   schemaNfeConsultaCadastroOptions,
   type NfeConsultaCadastroOptions,
@@ -48,6 +45,7 @@ import type {
   NfeInutilizacaoResponseRaw,
   NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
+import { zCustom } from "@/utils/zCustom";
 
 export class NfeWebServices {
   private uf: UF;
@@ -95,55 +93,43 @@ export class NfeWebServices {
 
   private async request<Body, NfeRequestResponse>(
     url: string,
-    options: NfeRequestOptions<Body>,
+    { body, timeout, signId }: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
-    schemaNfeRequestOptions.parse(options);
-
-    const { body, timeout, sign } = options;
     const { cert, key } = this.certificate.asPem();
     let soapBody = buildSoap({ nfeDadosMsg: body });
 
-    if (sign) {
+    if (signId) {
       soapBody = signXml({
         xml: soapBody,
         certificate: this.certificate,
-        sign,
+        signId,
       });
     }
 
-    return fetchWithTls(url, {
+    const response = await fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
       body: soapBody,
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new NfeServiceRequestError(
-            `${response.statusText} (${response.status}) - ${url}`,
-          );
-        }
+    });
 
-        const responseBody = await response.text();
-        const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
-          responseBody,
-        );
+    if (!response.ok) {
+      throw new NfeServiceRequestError(
+        `${response.statusText} (${response.status}) - ${url}`,
+      );
+    }
 
-        if (!parsedResponse?.nfeResultMsg) {
-          throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
-        }
-        return parsedResponse.nfeResultMsg;
-      })
-      .catch((error: Error) => {
-        if (
-          error instanceof TimeoutError ||
-          error instanceof NfeServiceRequestError
-        ) {
-          throw error;
-        }
-        throw new NfeServiceRequestError(error.message);
-      });
+    const responseBody = await response.text();
+    const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
+      responseBody,
+    );
+
+    if (!parsedResponse?.nfeResultMsg) {
+      throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
+    }
+
+    return parsedResponse.nfeResultMsg;
   }
 
   /**
@@ -234,7 +220,7 @@ export class NfeWebServices {
    *
    * @returns {Promise<NfeAutorizacaoResponse>} O resultado da autorização.
    *
-   * @throws {Zod.ZodError} Se as opções não forem válidas.
+   * @throws {Zod.ZodError} Se a NFe não estiver válida.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -258,9 +244,7 @@ export class NfeWebServices {
           NFe: options.nfe,
         },
       },
-      sign: {
-        id: options.nfe.NFe.infNFe["@_Id"],
-      },
+      signId: options.nfe.NFe.infNFe["@_Id"],
     });
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
@@ -283,14 +267,23 @@ export class NfeWebServices {
    *
    * @returns {Promise<NfeInutilizacaoResponse>} O resultado da inutilização.
    *
+   * @throws {Zod.ZodError} Se o CNPJ informado não for válido.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
-  async inutilizacao(
-    options: NfeInutilizacaoOptions,
-  ): Promise<NfeInutilizacaoResponse> {
-    const id = `ID${options.cUF}${options.ano}${options.cnpj}${options.mod}${options.serie}${options.nNfIni}${options.nNfFin}}`;
+  async inutilizacao({
+    ano,
+    cnpj,
+    mod,
+    serie,
+    nNfIni,
+    nNfFin,
+    xJust,
+  }: NfeInutilizacaoOptions): Promise<NfeInutilizacaoResponse> {
+    zCustom.cnpj().parse(cnpj);
 
+    // NOTE: Id definido na seção 5.3.1
+    const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}}`;
     const { retInutNFe } = await this.request<
       NfeInutilizacaoRequest,
       { retInutNFe: NfeInutilizacaoResponseRaw }
@@ -306,16 +299,17 @@ export class NfeWebServices {
             tpAmb: this.tpAmb,
             xServ: "INUTILIZAR",
             cUF: this.cUF,
-            ano: options.ano,
-            CNPJ: options.cnpj,
-            mod: options.mod,
-            serie: options.serie,
-            nNFIni: options.nNfIni,
-            nNFFin: options.nNfFin,
-            xJust: options.xJust,
+            ano,
+            CNPJ: cnpj,
+            mod,
+            serie,
+            nNFIni: nNfIni,
+            nNFFin: nNfFin,
+            xJust,
           },
         },
       },
+      signId: id,
     });
     const statusMap: Record<string, NfeInutilizacaoStatus> = {
       "102": "homologada",

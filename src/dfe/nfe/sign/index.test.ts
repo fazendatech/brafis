@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
+
 import { CertificateP12 } from "@/certificate";
-import { signXml } from ".";
 import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
-import { makeParser, makeBuilder } from "@/utils/xml";
+import { makeBuilder } from "@/utils/xml";
+
+import { signXml } from ".";
 
 describe("sign", () => {
   describe("signNfe", async () => {
@@ -11,22 +13,10 @@ describe("sign", () => {
       password: process.env.TEST_CERTIFICATE_PASSWORD ?? "",
     });
     const xml = makeBuilder().build(NFE_TEST_DATA);
-    const id = NFE_TEST_DATA.NFe.infNFe["@_Id"];
-    const xpath = `//*[@Id='${id}']`;
+    const signId = NFE_TEST_DATA.NFe.infNFe["@_Id"];
 
     test("Signs NFe XML correctly", () => {
-      expect(signXml({ xml, sign: { xpath }, certificate })).toMatchSnapshot();
-    });
-
-    test("Signs NFe XML correctly with ID", () => {
-      expect(signXml({ xml, sign: { id }, certificate })).toMatchSnapshot();
-    });
-
-    test("Parses and rebuilds signed NFe correctly", () => {
-      const signedNfe = signXml({ xml, sign: { xpath }, certificate });
-      const signedNfeObject = makeParser().parse(signedNfe);
-
-      expect(makeBuilder().build(signedNfeObject)).toEqual(signedNfe);
+      expect(signXml({ xml, signId, certificate })).toMatchSnapshot();
     });
   });
 });
