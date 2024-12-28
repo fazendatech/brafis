@@ -2,7 +2,6 @@ import type { UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 import type { NfeWebServiceResponse } from "./common";
-import { z } from "zod";
 
 /**
  * @description Opções para configurar o web service de NFe inutilização.
