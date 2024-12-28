@@ -309,7 +309,7 @@ export class NfeWebServices {
     zCustom.cnpj().parse(cnpj);
 
     // NOTE: Id definido na seção 5.3.1
-    const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}}`;
+    const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}`;
     const { retInutNFe } = await this.request<
       NfeInutilizacaoRequest,
       { retInutNFe: NfeInutilizacaoResponseRaw }
