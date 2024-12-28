@@ -2,6 +2,7 @@ import type { UFCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 import type { NfeWebServiceResponse } from "./common";
+import { z } from "zod";
 
 /**
  * @description Opções para configurar o web service de NFe inutilização.
@@ -9,7 +10,6 @@ import type { NfeWebServiceResponse } from "./common";
  * @property {string} idLote - Identificador do lote.
  */
 export type NfeInutilizacaoOptions = {
-  cUF: UFCode;
   ano: string;
   cnpj: string;
   mod: "55" | "65";

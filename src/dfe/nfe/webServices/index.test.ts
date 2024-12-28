@@ -51,6 +51,9 @@ describe("NfeWebServices", async () => {
 
   beforeEach(() => {
     spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
+    mock.module("../sign", () => ({
+      signXml: () => "",
+    }));
   });
 
   afterEach(() => {
@@ -215,6 +218,57 @@ describe("NfeWebServices", async () => {
       expect(() => service.autorizacao({ idLote: "1", nfe })).toThrowError(
         ZodError,
       );
+    });
+  });
+
+  describe("inutilizacao", () => {
+    const url = getWebServiceUrl({ uf, env, service: "NfeInutilizacao" });
+
+    test("Returns valid response", async () => {
+      mockRequest(url, {
+        method: "POST",
+        response: {
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retInutNFe: {
+                infInut: {
+                  cStat: "102",
+                  xMotivo: "Inutilização de número homologado",
+                  cUF: "53",
+                  nProt: "123456789",
+                  dhRecbto: "2021-01-01T00:00:00-03:00",
+                },
+              },
+            },
+          }),
+        },
+      });
+
+      expect(
+        await service.inutilizacao({
+          ano: "2021",
+          cnpj: "12345678901230",
+          mod: "55",
+          serie: "1",
+          nNfIni: "1",
+          nNfFin: "10",
+          xJust: "justificativa",
+        }),
+      ).toMatchSnapshot();
+    });
+
+    test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
+      expect(() =>
+        service.inutilizacao({
+          ano: "2021",
+          cnpj: "12345678901231",
+          mod: "55",
+          serie: "1",
+          nNfIni: "1",
+          nNfFin: "10",
+          xJust: "justificativa",
+        }),
+      ).toThrowError(ZodError);
     });
   });
 });
