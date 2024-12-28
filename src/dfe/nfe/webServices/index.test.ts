@@ -239,7 +239,6 @@ describe("NfeWebServices", async () => {
           data: buildMockResponse(mockResponse),
         },
       });
-      const raw = mockResponse.nfeResultMsg.retInutNFe;
 
       expect(
         await service.inutilizacao({

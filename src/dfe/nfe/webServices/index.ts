@@ -12,7 +12,6 @@ import type { UF, UFCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import type { WithXmlns } from "@/utils/soap/types";
-import { TimeoutError } from "@/utils/errors";
 
 import { NfeServiceRequestError } from "./errors";
 import type { NfeRequestOptions } from "./requests/common";
