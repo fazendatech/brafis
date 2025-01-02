@@ -1,48 +1,6 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`signXml Signs XML correctly with xpath 1`] = `
-{
-  "testXml": {
-    "@_Id": "12345",
-    "Signature": {
-      "@_xmlns": "http://www.w3.org/2000/09/xmldsig#",
-      "KeyInfo": {
-        "X509Data": {
-          "X509Certificate": "MIIFmzCCA4OgAwIBAgIUGTUeAzgTrgK/tcutfVEhkDBJFrkwDQYJKoZIhvcNAQELBQAwZDEbMBkGA1UEAwwSd3d3LmV4ZW1wbG8uY29tLmJyMRswGQYDVQQLDBJEZXBhcnRhbWVudG8gZGUgVEkxGzAZBgNVBAoMEk1pbmhhIEVtcHJlc2EgTFREQTELMAkGA1UEBhMCQlIwIBcNMjQxMjE4MTI1NjU2WhgPMjA5OTExMzAxMjU2NTZaMGQxGzAZBgNVBAMMEnd3dy5leGVtcGxvLmNvbS5icjEbMBkGA1UECwwSRGVwYXJ0YW1lbnRvIGRlIFRJMRswGQYDVQQKDBJNaW5oYSBFbXByZXNhIExUREExCzAJBgNVBAYTAkJSMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzeJ8QvdYLatjVqubGWeIhCrBaHgCEmdpsUX5BNWvm4H3YkemzdMW9RxvKlFTX07/x7l3Wcw2hcOfld64Ro/UqoIsSBuOOPMAi677f/cZ6EoDMEJ2IzDl8H/02kQXbn//ebsVH5J70XFJRnyRhOw2TuL+hDhzdNzhURj+zAky74T0r41jIKckfewuMgJ/Ptn1XeyaSWG8Fuh52XTSdRtQvKFqRb46f1boct9Vnln4kydtpEKKhGpa7O/yeJlvQ5e3JU9oyORLGQyi+ut/uxYDAUVMNCCm2WQn8yL5Q8n81kkRquZhVuHgnQXT7cTSjP04Nfmk7edAQj1Bjfr3NRf/LjogpN+hIv3KHR4UhMvSrCYPwUKd+fdoyQ0pGdgoUy6hwx13DZssymnL7KamN3nfGP4m8tl3BGqHVLlybsMFc61DEJAiS/k6WI2JGQNM4913O1anp+KSpTTDq5c7DitQJgcTFFkzakz8VbwEgaCPUGkjeL350hRUhVO70xL07C1K2DkSsRH73mtCPdGSchq7K6WGdhfwiY9LF4yMuMt/yf1auCrSDJrr88t1jGMwp2CiyhQYRRELBq9QgABmLlj4UqsEkfaWgL7a64FP4NYqrWvFHiROHfTNZ0PehSNARX0BrbprjJt/dYpdGB7/FJR3G/6haTbTdd5Lt3PqyMKT7wsCAwEAAaNDMEEwCwYDVR0PBAQDAgQwMBMGA1UdJQQMMAoGCCsGAQUFBwMBMB0GA1UdDgQWBBRR+xaz95xnLRi8oRgpO4g84arBSzANBgkqhkiG9w0BAQsFAAOCAgEAClUuhk8sk06Q0jqmBfST9l+kCCBsxIXo2vY9zo1X3PJ9MzkNHXCT2eMH9jKDw9az8MHpFGR6iqJl2yAJIwT9TPGaB/h3wDnulYKEEAzuTUu7zF3vwO1BThimkw8DIZpry6ZXo6Gee7UyNKvA1ooUV4QyV9FERPamzwfY4AcMSs2XeOF/oe6rTmB8fFxAmF9+Ol7zpjyxfRLEGmu/NU2gImE43GlpUU5ynKlWxm/7QYwtaNtUXu6ZVwz9UJcMoffQcwUzqyYttO74KkTKK3wUHVroSm0mtQXAZPJFboafRbe2NsuWulfInqkop2dpxY7ufv0+rkjgaBDzYyOkPD17VmkhsVKygrayaJ2hsAOyQDGuaihLYmiMsxXBxTI/dafTQdUN6aKznx4UxPthyoc/0lA+9w0pJMJbYiI0ip2gv9fu2ugAKXh2ukzX7nBbEkuUybbRBjZ9KHQwteJXqM2jvqHhohyjeBnkVW88m15CFqMDVPsYqJ/P7HkyXgj0LtAGx1FYwqVEfm5kOyD9BNMp//TxNY1QrJT0gcqb7LurAEAxcDC6qMI86tjyx1p004eTwVNXo2dueWV4Faa/g5QjHeljH+prOtqrwD2h4P+NWn0dliLIJYgANKuq5Yx5R7PtOIYuQ/X5nLoHxKmBL7BA/hBteqcm9WEVa0w+zFJVlyQ=",
-        },
-      },
-      "SignatureValue": "tRZnd/3gEYgd7eHFYFUc90iyzj7+9fjOxBI0oKMs8DV8YxN37vHqy3npzpK1JV+yEFjYDqQaZ6Y8bXrdyS9Q91kYX9dnjVZ1U1HRQcH2TMsjUH5sqtrLKiRNY7uoApkIF/530ni828gl/tf1rL4uTeR3WiPPTNT8vELSTJ/DkAulVe4tQqNzkFkDbR/IgTzUq0tFBbn6X/RBuz6yAXLzLEqdDY/IGfgl5G6YsHwvk2gIOPxx6KpErIeq+cV0J+T98kKq8eDhK8hgnlkAk43jjsMta8tMzsFMMvt7OHcMZiu/3oFPj57wxxyLR4iqs5ptT9ZdYMy3IxYikKVo9hodHDaU0SMZVgKpkYMKO7SCTf+oQ1QkEPbwYbecR4kKqIUmiVgbjb4Fj8Xu7dqi/zXGIiUVyxqyLaEgcG4DTz1q0TTKFk2a1q9zRe6cu4fP/gtyf0W0doDvo1clPDuN5qIAe9NdfGD+K5KRV4XegpVblXw83h8fR25exsTnYj8KCkyI4bxHynZ7Jpq7oD8cBpokgu+K+So9S+CM+YYPWIU8gHBNIPbUqRD3Q2QSUMIEh+237TU1hD1rPZYHwa+lA5J4YC0zoNDM8DqZY0ZXQEJFPIBiNXLw9KDFFBCyLiUuNs61VXLM8DdK+gzqj6MH+3dnexWcPvyXK9Tvh4+LZ05IUwg=",
-      "SignedInfo": {
-        "CanonicalizationMethod": {
-          "@_Algorithm": "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
-        },
-        "Reference": {
-          "@_URI": "#12345",
-          "DigestMethod": {
-            "@_Algorithm": "http://www.w3.org/2000/09/xmldsig#sha1",
-          },
-          "DigestValue": "AGw0WHU9EMB/Av19p1jK9f6f9kY=",
-          "Transforms": {
-            "Transform": [
-              {
-                "@_Algorithm": "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
-              },
-              {
-                "@_Algorithm": "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
-              },
-            ],
-          },
-        },
-        "SignatureMethod": {
-          "@_Algorithm": "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`signXml Signs XML correctly with ID 1`] = `
+exports[`signXml Signs XML 1`] = `
 {
   "testXml": {
     "@_Id": "12345",
