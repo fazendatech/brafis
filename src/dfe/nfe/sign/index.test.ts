@@ -10,10 +10,23 @@ describe("signXml", async () => {
     filepath: "misc/sample-certificates/cert.pfx",
     password: "senha",
   });
-  const signId = "12345";
-  const xml = makeBuilder().build({ testXml: { "@_Id": signId } });
 
   test("Signs XML", () => {
+    const signId = "12345";
+    const xml = makeBuilder().build({ testXml: { "@_Id": signId } });
+
     expect(signXml({ xml, signId, certificate })).toMatchSnapshot();
+  });
+
+  test("Throws error when sign ID is not found", () => {
+    const signId = "12345";
+    const invalidSignId = "123456";
+    const xml = makeBuilder().build({ testXml: { "@_Id": signId } });
+
+    expect(() =>
+      signXml({ xml, signId: invalidSignId, certificate }),
+    ).toThrowError(
+      `the following xpath cannot be signed because it was not found: //*[@Id='${invalidSignId}']`,
+    );
   });
 });
