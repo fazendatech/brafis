@@ -1,4 +1,4 @@
-import type { NfeLayout, NfeLayoutWithSignature } from "@/dfe/nfe/layout";
+import type { NfeLayout } from "@/dfe/nfe/layout";
 import type { UF } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
