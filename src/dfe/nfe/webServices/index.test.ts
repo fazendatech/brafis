@@ -173,6 +173,12 @@ describe("NfeWebServices", async () => {
     const url = getWebServiceUrl({ uf, env, service: "NFeAutorizacao" });
 
     test("Returns valid response", async () => {
+      mock.module("../../../certificate/sign", () => ({
+        signXml: () => ({
+          NFe: { infNFe: "mock NFe" },
+          Signature: "mock signature",
+        }),
+      }));
       mockRequest(url, {
         method: "POST",
         response: {

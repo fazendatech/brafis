@@ -16,20 +16,18 @@ export interface signXmlOptions<XmlObject> {
   signId: string;
 }
 
-type XmlObjectWithSignature<XmlObject> = unknown;
-
 /**
  * @description Retorna o objeto XML com assinatura.
  *
  * @param {signXmlOptions} - Opções para assinar objetos XML.
  *
- * @returns {XmlObjectWithSignature} O XML assinado.
+ * @returns Objeto XML assinado.
  */
 export function signXml<XmlObject>({
   certificate,
   xmlObject,
   signId,
-}: signXmlOptions<XmlObject>): XmlObjectWithSignature<XmlObject> {
+}: signXmlOptions<XmlObject>) {
   const xml = makeBuilder().build(xmlObject);
 
   const { key, cert } = certificate.asPem();
