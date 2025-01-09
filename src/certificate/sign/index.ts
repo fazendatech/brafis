@@ -1,30 +1,37 @@
 import { SignedXml } from "xml-crypto";
 
 import type { CertificateP12 } from "@/certificate";
-import { makeParser } from "@/utils/xml";
+import { makeBuilder, makeParser } from "@/utils/xml";
 
 /**
- * @description Opções para assinar documentos XML
+ * @description Opções para assinar objetos XML.
  *
  * @property {CertificateP12} certificate - O certificado digital no formato PKCS#12 usado para assinar
- * @property {string} xml - O conteúdo do documento XML a ser assinado
+ * @property {XmlObject} xml - O conteúdo do documento XML a ser assinado
  * @property {string} signId - O ID do elemento a ser assinado
  */
-interface signXmlOptions {
+export interface signXmlOptions<XmlObject> {
   certificate: CertificateP12;
-  xml: string;
+  xmlObject: XmlObject;
   signId: string;
 }
 
+type XmlObjectWithSignature<XmlObject> = unknown;
+
 /**
- * @description Gera o XML assinado.
+ * @description Retorna o objeto XML com assinatura.
  *
- * @param {NfeLayout} nfe - NFe a ser assinada.
- * @param {CertificateP12} certificate - O certificado usado na assinatura.
+ * @param {signXmlOptions} - Opções para assinar objetos XML.
  *
- * @returns {string} O XML assinado.
+ * @returns {XmlObjectWithSignature} O XML assinado.
  */
-export function signXml({ certificate, xml, signId }: signXmlOptions): string {
+export function signXml<XmlObject>({
+  certificate,
+  xmlObject,
+  signId,
+}: signXmlOptions<XmlObject>): XmlObjectWithSignature<XmlObject> {
+  const xml = makeBuilder().build(xmlObject);
+
   const { key, cert } = certificate.asPem();
   const sig = new SignedXml({
     privateKey: key,
