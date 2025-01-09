@@ -1,7 +1,7 @@
 import type { CertificateP12 } from "@/certificate";
 import { loadNfeCa } from "@/dfe/nfe/ca";
 import { parseNfe } from "@/dfe/nfe/layout";
-import { signXml } from "@/dfe/nfe/sign";
+import { signXml } from "@/certificate/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
   Environment,
@@ -93,18 +93,10 @@ export class NfeWebServices {
 
   private async request<Body, NfeRequestResponse>(
     url: string,
-    { body, timeout, signId }: NfeRequestOptions<Body>,
+    { body, timeout }: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
     const { cert, key } = this.certificate.asPem();
-    let soapBody = buildSoap({ nfeDadosMsg: body });
-
-    if (signId) {
-      soapBody = signXml({
-        xml: soapBody,
-        certificate: this.certificate,
-        signId,
-      });
-    }
+    const soapBody = buildSoap({ nfeDadosMsg: body });
 
     const response = await fetchWithTls(url, {
       method: "POST",
@@ -219,7 +211,7 @@ export class NfeWebServices {
    *
    * @returns {Promise<NfeAutorizacaoResponse>} O resultado da autorização.
    *
-   * @throws {Zod.ZodError} Se a NFe não estiver válida.
+   * @throws {Zod.ZodError} Se as opções não forem válidas.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -229,6 +221,11 @@ export class NfeWebServices {
   }: NfeAutorizacaoOptions): Promise<NfeAutorizacaoResponse> {
     parseNfe(nfe);
 
+    const signedNfe = signXml({
+      xmlObject: nfe,
+      certificate: this.certificate,
+      signId: nfe.NFe.infNFe["@_Id"],
+    });
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
       { retEnviNFe: NfeAutorizacaoResponseRaw }
@@ -241,10 +238,9 @@ export class NfeWebServices {
           "@_versao": "4.00",
           idLote: idLote,
           indSinc: "1",
-          ...nfe,
+          ...signedNfe,
         },
       },
-      signId: nfe.NFe.infNFe["@_Id"],
     });
 
     const statusProtocoloMap: Record<string, NfeAutorizacaoStatusProtocolo> = {

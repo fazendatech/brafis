@@ -44,3 +44,19 @@ exports[`NfeWebServices inutilizacao Returns valid response 1`] = `
   "status": "homologada",
 }
 `;
+
+exports[`NfeWebServices inutilizacao Returns valid response 1`] = `
+{
+  "description": "Inutilização de número homologado",
+  "raw": {
+    "infInut": {
+      "cStat": "102",
+      "cUF": "53",
+      "dhRecbto": "2021-01-01T00:00:00-03:00",
+      "nProt": "123456789",
+      "xMotivo": "Inutilização de número homologado",
+    },
+  },
+  "status": "homologada",
+}
+`;
