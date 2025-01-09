@@ -46,6 +46,7 @@ import type {
   NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
 import { zCustom } from "@/utils/zCustom";
+import { makeBuilder } from "@/utils/xml";
 
 export class NfeWebServices {
   private uf: UF;
@@ -253,18 +254,17 @@ export class NfeWebServices {
           description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
         }
       : null;
-    const xml = null;
-    // const xml = cStatProtocolo
-    //   ? makeBuilder().build({
-    //       "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
-    //       nfeProc: {
-    //         "@_versao": "4.00",
-    //         "@_xmlns": this.xmlNamespace["@_xmlns"],
-    //         ...signedNfe,
-    //         protNFe: retEnviNFe.protNFe,
-    //       },
-    //     })
-    //   : null;
+    const xml = cStatProtocolo
+      ? makeBuilder().build({
+          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
+          nfeProc: {
+            "@_versao": "4.00",
+            "@_xmlns": this.xmlNamespace["@_xmlns"],
+            ...signedNfe,
+            protNFe: retEnviNFe.protNFe,
+          },
+        })
+      : null;
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
       "103": "lote-recebido",
