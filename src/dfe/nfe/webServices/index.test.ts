@@ -39,6 +39,12 @@ function buildMockResponse<Obj>(obj: Obj): string {
   });
 }
 
+function mockCertificateSignXml(signedObject: unknown) {
+  mock.module("src/certificate/sign", () => ({
+    signXml: () => signedObject,
+  }));
+}
+
 describe("NfeWebServices", async () => {
   const certificate = new CertificateP12({
     pfx: new Uint8Array(),
@@ -51,11 +57,6 @@ describe("NfeWebServices", async () => {
 
   beforeEach(() => {
     spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
-    mock.module("../../../certificate/sign", () => ({
-      signXml: () => ({
-        NFe: { infNFe: "mock NFe", Signature: "mock signature" },
-      }),
-    }));
   });
 
   afterEach(() => {
@@ -175,6 +176,10 @@ describe("NfeWebServices", async () => {
     const url = getWebServiceUrl({ uf, env, service: "NFeAutorizacao" });
 
     test("Returns valid response", async () => {
+      mockCertificateSignXml({
+        NFe: { infNFe: "mock NFe", Signature: "mock signature" },
+      });
+
       mockRequest(url, {
         method: "POST",
         response: {
@@ -224,6 +229,10 @@ describe("NfeWebServices", async () => {
     const url = getWebServiceUrl({ uf, env, service: "NfeInutilizacao" });
 
     test("Returns valid response", async () => {
+      mockCertificateSignXml({
+        inutNfe: { infInut: "mock infInut", Signature: "mock signature" },
+      });
+
       mockRequest(url, {
         method: "POST",
         response: {
