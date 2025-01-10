@@ -11,7 +11,7 @@ describe("signXml", async () => {
 
   test("Signs XML", () => {
     const signId = "12345";
-    const xmlObject = { testXml: { "@_Id": signId } };
+    const xmlObject = { root: { toSign: { "@_Id": signId } } };
 
     expect(signXml({ xmlObject, signId, certificate })).toMatchSnapshot();
   });
@@ -19,7 +19,7 @@ describe("signXml", async () => {
   test("Throws error when sign ID is not found", () => {
     const signId = "12345";
     const invalidSignId = "123456";
-    const xmlObject = { testXml: { "@_Id": signId } };
+    const xmlObject = { root: { toSign: { "@_Id": signId } } };
 
     expect(() =>
       signXml({ xmlObject, signId: invalidSignId, certificate }),
