@@ -39,6 +39,8 @@ import type {
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
 import type {
+  NfeInutilizacaoInutNfe,
+  NfeInutilizacaoInutNfeWithSignature,
   NfeInutilizacaoOptions,
   NfeInutilizacaoRequest,
   NfeInutilizacaoResponse,
@@ -306,6 +308,30 @@ export class NfeWebServices {
 
     // NOTE: Id definido na seção 5.3.1
     const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}`;
+    const inutNfe: NfeInutilizacaoInutNfe = {
+      inutNFe: {
+        ...this.xmlNamespace,
+        "@_versao": "4.00",
+        infInut: {
+          "@_Id": id,
+          tpAmb: this.tpAmb,
+          xServ: "INUTILIZAR",
+          cUF: this.cUF,
+          ano,
+          CNPJ: cnpj,
+          mod,
+          serie,
+          nNFIni: nNfIni,
+          nNFFin: nNfFin,
+          xJust,
+        },
+      },
+    };
+    const signedInutNfe = signXml({
+      xmlObject: inutNfe,
+      certificate: this.certificate,
+      signId: id,
+    }) as NfeInutilizacaoInutNfeWithSignature;
     const { retInutNFe } = await this.request<
       NfeInutilizacaoRequest,
       { retInutNFe: NfeInutilizacaoResponseRaw }
@@ -313,25 +339,8 @@ export class NfeWebServices {
       timeout: this.timeout,
       body: {
         "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
-        inutNFe: {
-          ...this.xmlNamespace,
-          "@_versao": "4.00",
-          infInut: {
-            "@_Id": id,
-            tpAmb: this.tpAmb,
-            xServ: "INUTILIZAR",
-            cUF: this.cUF,
-            ano,
-            CNPJ: cnpj,
-            mod,
-            serie,
-            nNFIni: nNfIni,
-            nNFFin: nNfFin,
-            xJust,
-          },
-        },
+        ...signedInutNfe,
       },
-      signId: id,
     });
     const statusMap: Record<string, NfeInutilizacaoStatus> = {
       "102": "homologada",
