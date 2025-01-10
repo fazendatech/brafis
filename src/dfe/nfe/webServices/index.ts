@@ -239,7 +239,7 @@ export class NfeWebServices {
         enviNFe: {
           ...this.xmlNamespace,
           "@_versao": "4.00",
-          idLote: idLote,
+          idLote,
           indSinc: "1",
           ...signedNfe,
         },
@@ -304,6 +304,7 @@ export class NfeWebServices {
     nNfFin,
     xJust,
   }: NfeInutilizacaoOptions): Promise<NfeInutilizacaoResponse> {
+    // TODO: Validar resto do input.
     zCustom.cnpj().parse(cnpj);
 
     // NOTE: Id definido na seção 5.3.1
