@@ -39,9 +39,7 @@ export interface NfeInutilizacaoInutNfe {
 export type NfeInutilizacaoRequest = WithXmlns<NfeInutilizacaoInutNfe>;
 
 export type NfeInutilizacaoInutNfeWithSignature = {
-  inutNFe: NfeInutilizacaoInutNfe["inutNFe"] & {
-    Signature: Record<string, unknown>;
-  };
+  inutNFe: NfeInutilizacaoInutNfe["inutNFe"] & { Signature: unknown };
 };
 
 /**
