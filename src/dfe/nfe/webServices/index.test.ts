@@ -51,8 +51,10 @@ describe("NfeWebServices", async () => {
 
   beforeEach(() => {
     spyOn(certificate, "asPem").mockReturnValueOnce({ cert: "", key: "" });
-    mock.module("../sign", () => ({
-      signXml: () => "<signed-xml></signed-xml>",
+    mock.module("../../../certificate/sign", () => ({
+      signXml: () => ({
+        NFe: { infNFe: "mock NFe", Signature: "mock signature" },
+      }),
     }));
   });
 
@@ -173,12 +175,6 @@ describe("NfeWebServices", async () => {
     const url = getWebServiceUrl({ uf, env, service: "NFeAutorizacao" });
 
     test("Returns valid response", async () => {
-      mock.module("../../../certificate/sign", () => ({
-        signXml: () => ({
-          NFe: { infNFe: "mock NFe" },
-          Signature: "mock signature",
-        }),
-      }));
       mockRequest(url, {
         method: "POST",
         response: {
