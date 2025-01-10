@@ -1,6 +1,6 @@
 import type { CertificateP12 } from "@/certificate";
 import { loadNfeCa } from "@/dfe/nfe/ca";
-import { parseNfe } from "@/dfe/nfe/layout";
+import { parseNfe, type NfeLayoutWithSignature } from "@/dfe/nfe/layout";
 import { signXml } from "@/certificate/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
@@ -226,7 +226,7 @@ export class NfeWebServices {
       xmlObject: nfe,
       certificate: this.certificate,
       signId: nfe.NFe.infNFe["@_Id"],
-    });
+    }) as NfeLayoutWithSignature;
     const { retEnviNFe } = await this.request<
       NfeAutorizacaoRequest,
       { retEnviNFe: NfeAutorizacaoResponseRaw }

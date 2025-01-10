@@ -15,6 +15,12 @@ const schemaNfe = z
  */
 export type NfeLayout = z.infer<typeof schemaNfe>;
 
+export type NfeLayoutWithSignature = {
+  NFe: NfeLayout["NFe"] & {
+    Signature: Record<string, unknown>;
+  };
+};
+
 /**
  * @description Realiza a validação da NFe.
  *
