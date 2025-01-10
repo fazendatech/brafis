@@ -42,6 +42,5 @@ exports[`NfeWebServices inutilizacao Returns valid response 1`] = `
     },
   },
   "status": "homologada",
-  "xml": "<signedInutNfe><inutNfe><infInut>mock infInut</infInut><Signature>mock signature</Signature></inutNfe></signedInutNfe>",
 }
 `;
