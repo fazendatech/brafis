@@ -7,12 +7,12 @@ import { makeBuilder, makeParser } from "@/utils/xml";
  * @description Opções para assinar objetos XML.
  *
  * @property {CertificateP12} certificate - O certificado digital no formato PKCS#12 usado para assinar
- * @property {Record<string, unknown>} xml - O conteúdo do documento XML a ser assinado
+ * @property {unknown} xml - O conteúdo do documento XML a ser assinado
  * @property {string} signId - O ID do elemento a ser assinado
  */
 export interface signXmlOptions {
   certificate: CertificateP12;
-  xmlObject: Record<string, unknown>;
+  xmlObject: unknown;
   signId: string;
 }
 
@@ -27,7 +27,7 @@ export function signXml({
   certificate,
   xmlObject,
   signId,
-}: signXmlOptions): Record<string, unknown> {
+}: signXmlOptions): unknown {
   const xml = makeBuilder().build(xmlObject);
 
   const { key, cert } = certificate.asPem();
