@@ -8,7 +8,7 @@ import type { NfeWebServiceResponse } from "./common";
  *
  * @property {string} idLote - Identificador do lote.
  */
-export type NfeInutilizacaoOptions = {
+export interface NfeInutilizacaoOptions {
   ano: string;
   cnpj: string;
   mod: "55" | "65";
@@ -16,9 +16,9 @@ export type NfeInutilizacaoOptions = {
   nNfIni: string;
   nNfFin: string;
   xJust: string;
-};
+}
 
-export type NfeInutilizacaoRequest = WithXmlns<{
+export interface NfeInutilizacaoInutNfe {
   inutNFe: WithXmlnsVersao<{
     infInut: {
       "@_Id": string;
@@ -34,7 +34,15 @@ export type NfeInutilizacaoRequest = WithXmlns<{
       xJust: string;
     };
   }>;
-}>;
+}
+
+export type NfeInutilizacaoRequest = WithXmlns<NfeInutilizacaoInutNfe>;
+
+export type NfeInutilizacaoInutNfeWithSignature = {
+  inutNFe: NfeInutilizacaoInutNfe["inutNFe"] & {
+    Signature: Record<string, unknown>;
+  };
+};
 
 /**
  * @description Informações da consulta.
