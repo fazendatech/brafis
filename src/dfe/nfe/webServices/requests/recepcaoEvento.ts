@@ -89,52 +89,37 @@ type NfeRecepcaoEventoOptionsDescEvento =
  */
 export type NfeRecepcaoEventoOptions = {
   idLote: string;
-  eventos: (CpfOrCnpj & {
-    chaveNfe: string;
-  } & NfeRecepcaoEventoOptionsDescEvento)[];
+  autor: CpfOrCnpj;
+  nSeqEvento: string;
+  chaveNfe: string;
+  evento: NfeRecepcaoEventoOptionsDescEvento;
 };
 
-type Evento = {
-  "@_versao": "1.00";
-  infEvento: {
-    "@_Id": string;
-    cOrgao: string;
-    tpAmb: "1" | "2";
-    chNFe: string;
-    dhEvento: string;
-    nSeqEvento:
-      | "1"
-      | "2"
-      | "3"
-      | "4"
-      | "5"
-      | "6"
-      | "7"
-      | "8"
-      | "9"
-      | "10"
-      | "11"
-      | "12"
-      | "13"
-      | "14"
-      | "15"
-      | "16"
-      | "17"
-      | "18"
-      | "19"
-      | "20";
-  } & CpfOrCnpj &
-    NfeRecepcaoEventoDetEvento;
+export type NfeRecepcaoEventoEvento = {
+  evento: {
+    "@_versao": "1.00";
+    infEvento: {
+      "@_Id": string;
+      cOrgao: string;
+      tpAmb: "1" | "2";
+      chNFe: string;
+      dhEvento: string;
+      nSeqEvento: string;
+    } & CpfOrCnpj &
+      NfeRecepcaoEventoDetEvento;
+  };
 };
 
-export type EventoWithSignature = Evento & {
-  Signature: unknown;
+export type NfeRecepcaoEventoEventoWithSignature = {
+  evento: NfeRecepcaoEventoEvento["evento"] & {
+    Signature: unknown;
+  };
 };
 
 export type NfeRecepcaoEventoRequest = WithXmlns<{
   envEvento: WithXmlnsVersao<{
     idLote: string;
-    evento: EventoWithSignature[];
+    evento: NfeRecepcaoEventoEventoWithSignature["evento"][];
   }>;
 }>;
 
