@@ -4,85 +4,130 @@ import type { LiteralStringUnion } from "@/utils/types";
 import type { NfeWebServiceResponse } from "./common";
 import type { UFCode } from "@/ufCode/types";
 
+export type DescEvento =
+  | "Cancelamento"
+  | "Cancelamento por Substituição"
+  | "Carta de Correção"
+  | "Confirmação da Operação"
+  | "Ciência da Operação"
+  | "Desconhecimento da Operação"
+  | "Operação não Realizada";
+export type TpEvento =
+  | "110111"
+  | "110112"
+  | "110110"
+  | "210200"
+  | "210210"
+  | "210220"
+  | "210240";
+
 /**
  * @description Mapeamento de eventos `descEvento` para `tpEvento`
  */
-export const eventoTp = {
+export const DESC_EVENTO_MAP: Record<DescEvento, TpEvento> = {
   Cancelamento: "110111",
-  "Cancelamento por Substituicao": "110112",
-  "Carta de Correcao": "110110",
-  "Confirmacao da Operacao": "210200",
-  "Ciencia da Operacao": "210210",
-  "Desconhecimento da Operacao": "210220",
-  "Operacao nao Realizada": "210240",
+  "Cancelamento por Substituição": "110112",
+  "Carta de Correção": "110110",
+  "Confirmação da Operação": "210200",
+  "Ciência da Operação": "210210",
+  "Desconhecimento da Operação": "210220",
+  "Operação não Realizada": "210240",
 };
-
-/**
- * @description Tipos de eventos disponíveis.
- */
-export type descEvento = keyof typeof eventoTp;
 
 // NOTE: Todos os eventos estão na versão "1.00", caso um dia mude, será necessário refatorar o código.
-type NfeRecepcaoEventoBase<
-  DescEvento extends descEvento = descEvento,
-  EventoExtras = unknown,
+type NfeRecepcaoEventoInfEventoBase<
+  DescEventoKey extends DescEvento,
+  DetEventoBase extends NfeRecepcaoEventoOptionsDetEvento,
+  ExtraDetEvento = unknown,
 > = {
-  tpEvento: (typeof eventoTp)[DescEvento];
+  tpEvento: (typeof DESC_EVENTO_MAP)[DescEventoKey];
   verEvento: "1.00";
-  detEvento: {
-    "@_versao": "1.00";
-    descEvento: descEvento;
-  } & EventoExtras;
+  detEvento: DetEventoBase & { "@_versao": "1.00" } & ExtraDetEvento;
 };
 
-type NfeRecepcaoEventoDetEvento =
-  | NfeRecepcaoEventoBase<"Cancelamento", { nProt: string; xJust: string }>
-  | NfeRecepcaoEventoBase<
-      "Cancelamento por Substituicao",
+export type NfeRecepcaoEventoInfEvento =
+  | NfeRecepcaoEventoInfEventoBase<
+      "Cancelamento",
+      NfeRecepcaoEventoDetEventoOptionsCancelamento
+    >
+  | NfeRecepcaoEventoInfEventoBase<
+      "Cancelamento por Substituição",
+      NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao,
       {
         cOrgaoAutor: UFCode;
         tpAutor: "1";
         verAplic: string;
-        nProt: string;
-        xJust: string;
         chNFeRef: string;
       }
     >
-  | NfeRecepcaoEventoBase<
-      "Carta de Correcao",
+  | NfeRecepcaoEventoInfEventoBase<
+      "Carta de Correção",
+      NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao,
       {
-        xCorrecao: string;
-        xCondUso: "A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularizacao de erro ocorrido na emissao de documento fiscal, desde que o erro nao esteja relacionado com: I - as variaveis que determinam o valor do imposto tais como: base de calculo, aliquota, diferenca de preco, quantidade, valor da operacao ou da prestacao; II - a correcao de dados cadastrais que implique mudanca do remetente ou do destinatario; III - a data de emissao ou de saida.";
+        xCondUso: "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.";
       }
     >
-  | NfeRecepcaoEventoBase<"Confirmacao da Operacao">
-  | NfeRecepcaoEventoBase<"Ciencia da Operacao">
-  | NfeRecepcaoEventoBase<"Desconhecimento da Operacao">
-  | NfeRecepcaoEventoBase<"Operacao nao Realizada", { xJust: string }>;
+  | NfeRecepcaoEventoInfEventoBase<
+      "Confirmação da Operação",
+      NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao
+    >
+  | NfeRecepcaoEventoInfEventoBase<
+      "Ciência da Operação",
+      NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao
+    >
+  | NfeRecepcaoEventoInfEventoBase<
+      "Desconhecimento da Operação",
+      NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao
+    >
+  | NfeRecepcaoEventoInfEventoBase<
+      "Operação não Realizada",
+      NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada
+    >;
 
 type CpfOrCnpj = { CPF: string; CNPJ?: never } | { CNPJ: string; CPF?: never };
 
-type NfeRecepcaoEventoOptionsBase<
-  DescEvento extends descEvento = descEvento,
-  EventoExtras = unknown,
+type NfeRecepcaoEventoDetEventoBase<
+  DescEventoKey extends DescEvento,
+  Extra = unknown,
 > = {
-  descEvento: DescEvento;
-} & EventoExtras;
+  descEvento: DescEventoKey;
+} & Extra;
 
-type NfeRecepcaoEventoOptionsDescEvento =
-  | NfeRecepcaoEventoOptionsBase<
-      "Cancelamento",
-      { nProt: string; xJust: string }
-    >
-  | NfeRecepcaoEventoOptionsBase<
-      "Cancelamento por Substituicao",
-      { nProt: string; xJust: string }
-    >
-  | NfeRecepcaoEventoOptionsBase<"Carta de Correcao", { xCorrecao: string }>
-  | NfeRecepcaoEventoOptionsBase<"Confirmacao da Operacao">
-  | NfeRecepcaoEventoOptionsBase<"Ciencia da Operacao">
-  | NfeRecepcaoEventoOptionsBase<"Desconhecimento da Operacao">
-  | NfeRecepcaoEventoOptionsBase<"Operacao nao Realizada", { xJust: string }>;
+type NfeRecepcaoEventoDetEventoOptionsCancelamento =
+  NfeRecepcaoEventoDetEventoBase<
+    "Cancelamento",
+    { nProt: string; xJust: string }
+  >;
+
+type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao =
+  NfeRecepcaoEventoDetEventoBase<
+    "Cancelamento por Substituição",
+    { nProt: string; xJust: string }
+  >;
+
+type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao =
+  NfeRecepcaoEventoDetEventoBase<"Carta de Correção", { xCorrecao: string }>;
+
+type NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao =
+  NfeRecepcaoEventoDetEventoBase<"Confirmação da Operação">;
+
+type NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao =
+  NfeRecepcaoEventoDetEventoBase<"Ciência da Operação">;
+
+type NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao =
+  NfeRecepcaoEventoDetEventoBase<"Desconhecimento da Operação">;
+
+type NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada =
+  NfeRecepcaoEventoDetEventoBase<"Operação não Realizada", { xJust: string }>;
+
+type NfeRecepcaoEventoOptionsDetEvento =
+  | NfeRecepcaoEventoDetEventoOptionsCancelamento
+  | NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao
+  | NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao
+  | NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao
+  | NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao
+  | NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao
+  | NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada;
 
 /**
  * @description Opções para configurar o web service de NFe Recepção Evento.
@@ -92,7 +137,7 @@ export type NfeRecepcaoEventoOptions = {
   autor: CpfOrCnpj;
   nSeqEvento: string;
   chaveNfe: string;
-  evento: NfeRecepcaoEventoOptionsDescEvento;
+  evento: NfeRecepcaoEventoOptionsDetEvento;
 };
 
 export type NfeRecepcaoEventoEvento = {
@@ -106,7 +151,7 @@ export type NfeRecepcaoEventoEvento = {
       dhEvento: string;
       nSeqEvento: string;
     } & CpfOrCnpj &
-      NfeRecepcaoEventoDetEvento;
+      NfeRecepcaoEventoInfEvento;
   };
 };
 
