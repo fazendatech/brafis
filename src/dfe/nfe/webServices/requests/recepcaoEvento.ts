@@ -12,7 +12,7 @@ export type DescEvento =
   | "Ciência da Operação"
   | "Desconhecimento da Operação"
   | "Operação não Realizada";
-export type TpEvento =
+type TpEvento =
   | "110111"
   | "110112"
   | "110110"
@@ -162,7 +162,7 @@ export type NfeRecepcaoEventoEventoWithSignature = {
 export type NfeRecepcaoEventoRequest = WithXmlns<{
   envEvento: WithXmlnsVersao<{
     idLote: string;
-    evento: NfeRecepcaoEventoEventoWithSignature["evento"][];
+    evento: NfeRecepcaoEventoEventoWithSignature["evento"];
   }>;
 }>;
 
@@ -228,6 +228,9 @@ export interface NfeRecepcaoEventoResponseRaw {
   };
 }
 
+/**
+ * @description Status do evento. cStat 128 = "lote-processado".
+ */
 export type NfeRecepcaoEventoStatus = "lote-processado";
 
 /**
