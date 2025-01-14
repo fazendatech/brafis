@@ -91,31 +91,31 @@ type NfeRecepcaoEventoDetEventoBase<
   descEvento: DescEventoKey;
 } & Extra;
 
-type NfeRecepcaoEventoDetEventoOptionsCancelamento =
+export type NfeRecepcaoEventoDetEventoOptionsCancelamento =
   NfeRecepcaoEventoDetEventoBase<
     "Cancelamento",
     { nProt: string; xJust: string }
   >;
 
-type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao =
+export type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao =
   NfeRecepcaoEventoDetEventoBase<
     "Cancelamento por Substituição",
     { nProt: string; xJust: string; verAplic: string; chNFeRef: string }
   >;
 
-type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao =
+export type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao =
   NfeRecepcaoEventoDetEventoBase<"Carta de Correção", { xCorrecao: string }>;
 
-type NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao =
+export type NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao =
   NfeRecepcaoEventoDetEventoBase<"Confirmação da Operação">;
 
-type NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao =
+export type NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao =
   NfeRecepcaoEventoDetEventoBase<"Ciência da Operação">;
 
-type NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao =
+export type NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao =
   NfeRecepcaoEventoDetEventoBase<"Desconhecimento da Operação">;
 
-type NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada =
+export type NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada =
   NfeRecepcaoEventoDetEventoBase<"Operação não Realizada", { xJust: string }>;
 
 type NfeRecepcaoEventoOptionsDetEvento =
@@ -242,7 +242,7 @@ export type NfeRecepcaoEventoResponse = NfeWebServiceResponse<
   NfeRecepcaoEventoStatus,
   NfeRecepcaoEventoResponseRaw,
   {
-    evento: {
+    retEvento: {
       status: NfeRecepcaoEventoStatusEvento;
       description: string;
     } | null;
