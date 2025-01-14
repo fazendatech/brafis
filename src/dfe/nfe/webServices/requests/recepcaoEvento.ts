@@ -56,8 +56,6 @@ export type NfeRecepcaoEventoInfEvento =
       {
         cOrgaoAutor: UFCode;
         tpAutor: "1";
-        verAplic: string;
-        chNFeRef: string;
       }
     >
   | NfeRecepcaoEventoInfEventoBase<
@@ -102,7 +100,7 @@ type NfeRecepcaoEventoDetEventoOptionsCancelamento =
 type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao =
   NfeRecepcaoEventoDetEventoBase<
     "Cancelamento por Substituição",
-    { nProt: string; xJust: string }
+    { nProt: string; xJust: string; verAplic: string; chNFeRef: string }
   >;
 
 type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao =
