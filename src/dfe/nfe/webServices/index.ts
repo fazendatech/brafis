@@ -503,6 +503,7 @@ export class NfeWebServices {
             "@_versao": "4.00",
             "@_xmlns": this.xmlNamespace["@_xmlns"],
             ...signedEvento,
+            retEvento: retEnvEvento.retEvento,
           },
         })
       : null;
