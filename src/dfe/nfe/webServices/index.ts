@@ -49,6 +49,26 @@ import type {
 } from "./requests/inutilizacao";
 import { zCustom } from "@/utils/zCustom";
 import { makeBuilder } from "@/utils/xml";
+import {
+  DESC_EVENTO_MAP,
+  type DescEvento,
+  type NfeRecepcaoEventoInfEvento,
+  type NfeRecepcaoEventoEvento,
+  type NfeRecepcaoEventoEventoWithSignature,
+  type NfeRecepcaoEventoOptions,
+  type NfeRecepcaoEventoRequest,
+  type NfeRecepcaoEventoResponse,
+  type NfeRecepcaoEventoResponseRaw,
+  type NfeRecepcaoEventoStatus,
+  type NfeRecepcaoEventoStatusEvento,
+  type NfeRecepcaoEventoDetEventoOptionsCancelamento,
+  type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao,
+  type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao,
+  type NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao,
+  type NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao,
+  type NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao,
+  type NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada,
+} from "./requests/recepcaoEvento";
 
 export class NfeWebServices {
   private uf: UF;
@@ -351,6 +371,152 @@ export class NfeWebServices {
       status: statusMap[retInutNFe.infInut.cStat] ?? "outro",
       description: retInutNFe.infInut.xMotivo ?? "",
       raw: retInutNFe,
+    };
+  }
+
+  async recepcaoEvento({
+    idLote,
+    autor,
+    nSeqEvento,
+    chaveNfe,
+    evento,
+  }: NfeRecepcaoEventoOptions): Promise<NfeRecepcaoEventoResponse> {
+    // NOTE: Id definido na seção 5.8.1
+    const id = `ID${DESC_EVENTO_MAP[evento.descEvento]}${chaveNfe}${nSeqEvento}`;
+
+    const eventoMap: Record<DescEvento, NfeRecepcaoEventoInfEvento> = {
+      Cancelamento: {
+        tpEvento: "110111",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsCancelamento),
+        },
+      },
+      "Cancelamento por Substituição": {
+        tpEvento: "110112",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          cOrgaoAutor: this.cUF,
+          tpAutor: "1",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao),
+        },
+      },
+      "Carta de Correção": {
+        tpEvento: "110110",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          xCondUso:
+            "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao),
+        },
+      },
+      "Confirmação da Operação": {
+        tpEvento: "210200",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao),
+        },
+      },
+      "Ciência da Operação": {
+        tpEvento: "210210",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao),
+        },
+      },
+      "Desconhecimento da Operação": {
+        tpEvento: "210220",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao),
+        },
+      },
+      "Operação não Realizada": {
+        tpEvento: "210240",
+        verEvento: "1.00",
+        detEvento: {
+          "@_versao": "1.00",
+          ...(evento as NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada),
+        },
+      },
+    };
+
+    const xmlObjectEvento: NfeRecepcaoEventoEvento = {
+      evento: {
+        "@_versao": "1.00",
+        infEvento: {
+          "@_Id": id,
+          cOrgao: this.cUF,
+          tpAmb: this.tpAmb,
+          ...autor,
+          chNFe: chaveNfe,
+          dhEvento: new Date().toISOString(),
+          nSeqEvento: nSeqEvento,
+          ...eventoMap[evento.descEvento],
+        },
+      },
+    };
+
+    const signedEvento = signXml({
+      xmlObject: xmlObjectEvento,
+      certificate: this.certificate,
+      signId: id,
+    }) as NfeRecepcaoEventoEventoWithSignature;
+
+    const { retEnvEvento } = await this.request<
+      NfeRecepcaoEventoRequest,
+      { retEnvEvento: NfeRecepcaoEventoResponseRaw }
+    >(this.getUrl("RecepcaoEvento"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4",
+        envEvento: {
+          ...this.xmlNamespace,
+          "@_versao": "1.00",
+          idLote,
+          ...signedEvento,
+        },
+      },
+    });
+
+    const statusEventoMap: Record<string, NfeRecepcaoEventoStatusEvento> = {
+      "135": "evento-registrado-vinculado-a-nfe",
+      "136": "evento-registrado-nao-vinculado-a-nfe",
+    };
+    const cStatEvento = retEnvEvento.retEvento?.infEvento.cStat;
+    const retEvento = cStatEvento
+      ? {
+          status: statusEventoMap[cStatEvento] ?? "erro",
+          description: retEnvEvento.retEvento?.infEvento.xMotivo ?? "",
+        }
+      : null;
+    const xml = cStatEvento
+      ? makeBuilder().build({
+          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
+          procEventoNFe: {
+            "@_versao": "4.00",
+            "@_xmlns": this.xmlNamespace["@_xmlns"],
+            ...signedEvento,
+          },
+        })
+      : null;
+
+    const statusMap: Record<string, NfeRecepcaoEventoStatus> = {
+      "128": "lote-processado",
+    };
+
+    return {
+      status: statusMap[retEnvEvento.cStat] ?? "outro",
+      description: retEnvEvento.xMotivo ?? "",
+      raw: retEnvEvento,
+      retEvento,
+      xml,
     };
   }
 }
