@@ -44,3 +44,37 @@ exports[`NfeWebServices inutilizacao Returns valid response 1`] = `
   "status": "homologada",
 }
 `;
+
+exports[`NfeWebServices recepcaoEvento Returns valid response 1`] = `
+{
+  "description": "Lote processado",
+  "raw": {
+    "@_versao": "1.00",
+    "cOrgao": "91",
+    "cStat": "128",
+    "idLote": "1",
+    "retEvento": {
+      "@_versao": "1.00",
+      "infEvento": {
+        "@_Id": "ID123",
+        "cStat": "135",
+        "chNFe": "00000000000000000000000000000000000000000000",
+        "dhRegEvento": "2025-01-01T00:00:00-03:00",
+        "nProt": "123456789",
+        "tpEvento": "110110",
+        "xEvento": "Carta de Correção aplicada",
+        "xMotivo": "Evento registrado e vinculado a NF-e",
+      },
+    },
+    "tpAmb": "2",
+    "verAplic": "SVRS202101041234",
+    "xMotivo": "Lote processado",
+  },
+  "retEvento": {
+    "description": "Evento registrado e vinculado a NF-e",
+    "status": "evento-registrado-vinculado-a-nfe",
+  },
+  "status": "lote-processado",
+  "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><evento><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
+}
+`;
