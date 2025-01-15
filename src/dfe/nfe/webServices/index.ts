@@ -67,6 +67,7 @@ import type {
   OptionsCienciaDaOperacao,
   OptionsDesconhecimentoDeOperacao,
   OptionsOperacaoNaoRealizada,
+  CpfOrCnpj,
 } from "./requests/recepcaoEvento";
 
 export class NfeWebServices {
@@ -375,15 +376,21 @@ export class NfeWebServices {
 
   async recepcaoEvento({
     idLote,
-    autor,
+    CPF,
+    CNPJ,
+    dhEvento,
     nSeqEvento,
-    chaveNfe,
+    chNFe,
     detEvento,
   }: NfeRecepcaoEventoOptions): Promise<NfeRecepcaoEventoResponse> {
-    if (autor.CPF) {
-      zCustom.cpf().parse(autor.CPF);
+    let cpfOrCnpj: CpfOrCnpj;
+    // TODO: Validar resto do input.
+    if (CPF) {
+      zCustom.cpf().parse(CPF);
+      cpfOrCnpj = { CPF };
     } else {
-      zCustom.cnpj().parse(autor.CNPJ);
+      zCustom.cnpj().parse(CNPJ);
+      cpfOrCnpj = { CNPJ } as CpfOrCnpj;
     }
 
     const eventoMap: Record<DescEvento, NfeRecepcaoEventoInfEvento> = {
@@ -451,7 +458,7 @@ export class NfeWebServices {
 
     const infEvento = eventoMap[detEvento.descEvento];
     // NOTE: Id definido na seção 5.8.1
-    const id = `ID${infEvento.tpEvento}${chaveNfe}${nSeqEvento.padStart(2, "0")}`;
+    const id = `ID${infEvento.tpEvento}${chNFe}${nSeqEvento}`;
 
     const xmlObjectEvento: NfeRecepcaoEventoEvento = {
       evento: {
@@ -460,10 +467,10 @@ export class NfeWebServices {
           "@_Id": id,
           cOrgao: this.cUF,
           tpAmb: this.tpAmb,
-          ...autor,
-          chNFe: chaveNfe,
-          dhEvento: new Date().toISOString(),
-          nSeqEvento: nSeqEvento,
+          chNFe,
+          dhEvento,
+          nSeqEvento,
+          ...cpfOrCnpj,
           ...infEvento,
         },
       },
