@@ -329,7 +329,7 @@ describe("NfeWebServices", async () => {
           autor: { CNPJ: "12345678901230" },
           nSeqEvento: "1",
           chaveNfe: "0".repeat(44),
-          evento: {
+          detEvento: {
             descEvento: "Carta de Correção",
             xCorrecao: "correção",
           },
@@ -345,7 +345,7 @@ describe("NfeWebServices", async () => {
         autor: { CPF: "12345678999" },
         nSeqEvento: "1",
         chaveNfe: "0".repeat(44),
-        evento: {
+        detEvento: {
           descEvento: "Carta de Correção",
           xCorrecao: "correção",
         },
@@ -360,7 +360,7 @@ describe("NfeWebServices", async () => {
         autor: { CNPJ: "12345678901299" },
         nSeqEvento: "1",
         chaveNfe: "0".repeat(44),
-        evento: {
+        detEvento: {
           descEvento: "Carta de Correção",
           xCorrecao: "correção",
         },
