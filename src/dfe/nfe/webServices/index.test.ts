@@ -279,4 +279,92 @@ describe("NfeWebServices", async () => {
       ).toThrowError(ZodError);
     });
   });
+
+  describe("recepcaoEvento", () => {
+    const url = getWebServiceUrl({ uf, env, service: "RecepcaoEvento" });
+
+    test("Returns valid response", async () => {
+      mockCertificateSignXml({
+        evento: {
+          infEvento: { detEvento: "Mock detEvento" },
+          Signature: "mock signature",
+        },
+      });
+
+      mockRequest(url, {
+        method: "POST",
+        response: {
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retEnvEvento: {
+                "@_versao": "1.00",
+                idLote: "1",
+                tpAmb: "2",
+                verAplic: "SVRS202101041234",
+                cOrgao: "91",
+                cStat: "128",
+                xMotivo: "Lote processado",
+                retEvento: {
+                  "@_versao": "1.00",
+                  infEvento: {
+                    "@_Id": "ID123",
+                    tpEvento: "110110",
+                    xEvento: "Carta de Correção aplicada",
+                    cStat: "135",
+                    xMotivo: "Evento registrado e vinculado a NF-e",
+                    chNFe: "0".repeat(44),
+                    dhRegEvento: "2025-01-01T00:00:00-03:00",
+                    nProt: "123456789",
+                  },
+                },
+              },
+            },
+          }),
+        },
+      });
+
+      expect(
+        await service.recepcaoEvento({
+          idLote: "1",
+          autor: { CNPJ: "12345678901230" },
+          nSeqEvento: "1",
+          chaveNfe: "0".repeat(44),
+          evento: {
+            descEvento: "Carta de Correção",
+            xCorrecao: "correção",
+          },
+        }),
+      ).toMatchSnapshot();
+    });
+  });
+
+  test("Webservice throws Zod.ZodError for an invalid CPF", () => {
+    expect(() =>
+      service.recepcaoEvento({
+        idLote: "1",
+        autor: { CPF: "12345678999" },
+        nSeqEvento: "1",
+        chaveNfe: "0".repeat(44),
+        evento: {
+          descEvento: "Carta de Correção",
+          xCorrecao: "correção",
+        },
+      }),
+    ).toThrowError(ZodError);
+  });
+
+  test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
+    expect(() =>
+      service.recepcaoEvento({
+        idLote: "1",
+        autor: { CNPJ: "12345678901299" },
+        nSeqEvento: "1",
+        chaveNfe: "0".repeat(44),
+        evento: {
+          descEvento: "Carta de Correção",
+          xCorrecao: "correção",
+        },
+      }),
+    ).toThrowError(ZodError);
+  });
 });
