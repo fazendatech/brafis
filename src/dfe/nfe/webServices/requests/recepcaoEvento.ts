@@ -54,7 +54,9 @@ export type NfeRecepcaoEventoInfEvento =
   | NfeRecepcaoEventoInfEventoBase<"210220", OptionsDesconhecimentoDeOperacao>
   | NfeRecepcaoEventoInfEventoBase<"210240", OptionsOperacaoNaoRealizada>;
 
-type CpfOrCnpj = { CPF: string; CNPJ?: never } | { CNPJ: string; CPF?: never };
+export type CpfOrCnpj =
+  | { CPF: string; CNPJ?: never }
+  | { CNPJ: string; CPF?: never };
 
 type NfeRecepcaoEventoDetEventoBase<
   DescEventoKey extends DescEvento,
@@ -106,11 +108,11 @@ type OptionsDetEvento =
  */
 export type NfeRecepcaoEventoOptions = {
   idLote: string;
-  autor: CpfOrCnpj;
+  dhEvento: string;
   nSeqEvento: string;
-  chaveNfe: string;
+  chNFe: string;
   detEvento: OptionsDetEvento;
-};
+} & CpfOrCnpj;
 
 export type NfeRecepcaoEventoEvento = {
   evento: {

@@ -326,9 +326,10 @@ describe("NfeWebServices", async () => {
       expect(
         await service.recepcaoEvento({
           idLote: "1",
-          autor: { CNPJ: "12345678901230" },
+          CNPJ: "12345678901230",
+          dhEvento: "2025-01-01T00:00:00-03:00",
           nSeqEvento: "1",
-          chaveNfe: "0".repeat(44),
+          chNFe: "0".repeat(44),
           detEvento: {
             descEvento: "Carta de Correção",
             xCorrecao: "correção",
@@ -342,9 +343,10 @@ describe("NfeWebServices", async () => {
     expect(() =>
       service.recepcaoEvento({
         idLote: "1",
-        autor: { CPF: "12345678999" },
+        CPF: "12345678999",
+        dhEvento: "2025-01-01T00:00:00-03:00",
         nSeqEvento: "1",
-        chaveNfe: "0".repeat(44),
+        chNFe: "0".repeat(44),
         detEvento: {
           descEvento: "Carta de Correção",
           xCorrecao: "correção",
@@ -357,9 +359,10 @@ describe("NfeWebServices", async () => {
     expect(() =>
       service.recepcaoEvento({
         idLote: "1",
-        autor: { CNPJ: "12345678901299" },
+        CNPJ: "12345678901299",
+        dhEvento: "2025-01-01T00:00:00-03:00",
         nSeqEvento: "1",
-        chaveNfe: "0".repeat(44),
+        chNFe: "0".repeat(44),
         detEvento: {
           descEvento: "Carta de Correção",
           xCorrecao: "correção",
