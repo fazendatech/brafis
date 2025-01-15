@@ -451,7 +451,7 @@ export class NfeWebServices {
 
     const infEvento = eventoMap[detEvento.descEvento];
     // NOTE: Id definido na seção 5.8.1
-    const id = `ID${infEvento.tpEvento}${chaveNfe}${nSeqEvento}`;
+    const id = `ID${infEvento.tpEvento}${chaveNfe}${nSeqEvento.padStart(2, "0")}`;
 
     const xmlObjectEvento: NfeRecepcaoEventoEvento = {
       evento: {
