@@ -49,25 +49,24 @@ import type {
 } from "./requests/inutilizacao";
 import { zCustom } from "@/utils/zCustom";
 import { makeBuilder } from "@/utils/xml";
-import {
-  DESC_EVENTO_MAP,
-  type DescEvento,
-  type NfeRecepcaoEventoInfEvento,
-  type NfeRecepcaoEventoEvento,
-  type NfeRecepcaoEventoEventoWithSignature,
-  type NfeRecepcaoEventoOptions,
-  type NfeRecepcaoEventoRequest,
-  type NfeRecepcaoEventoResponse,
-  type NfeRecepcaoEventoResponseRaw,
-  type NfeRecepcaoEventoStatus,
-  type NfeRecepcaoEventoStatusEvento,
-  type NfeRecepcaoEventoDetEventoOptionsCancelamento,
-  type NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao,
-  type NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao,
-  type NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao,
-  type NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao,
-  type NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao,
-  type NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada,
+import type {
+  DescEvento,
+  NfeRecepcaoEventoInfEvento,
+  NfeRecepcaoEventoEvento,
+  NfeRecepcaoEventoEventoWithSignature,
+  NfeRecepcaoEventoOptions,
+  NfeRecepcaoEventoRequest,
+  NfeRecepcaoEventoResponse,
+  NfeRecepcaoEventoResponseRaw,
+  NfeRecepcaoEventoStatus,
+  NfeRecepcaoEventoStatusEvento,
+  OptionsCancelamento,
+  OptionsCancelamentoPorSubstituicao,
+  OptionsCartaDeCorrecao,
+  OptionsConfirmacaoDeOperacao,
+  OptionsCienciaDaOperacao,
+  OptionsDesconhecimentoDeOperacao,
+  OptionsOperacaoNaoRealizada,
 } from "./requests/recepcaoEvento";
 
 export class NfeWebServices {
@@ -379,7 +378,7 @@ export class NfeWebServices {
     autor,
     nSeqEvento,
     chaveNfe,
-    evento,
+    detEvento,
   }: NfeRecepcaoEventoOptions): Promise<NfeRecepcaoEventoResponse> {
     if (autor.CPF) {
       zCustom.cpf().parse(autor.CPF);
@@ -387,15 +386,13 @@ export class NfeWebServices {
       zCustom.cnpj().parse(autor.CNPJ);
     }
 
-    // NOTE: Id definido na seção 5.8.1
-    const id = `ID${DESC_EVENTO_MAP[evento.descEvento]}${chaveNfe}${nSeqEvento}`;
     const eventoMap: Record<DescEvento, NfeRecepcaoEventoInfEvento> = {
       Cancelamento: {
         tpEvento: "110111",
         verEvento: "1.00",
         detEvento: {
           "@_versao": "1.00",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsCancelamento),
+          ...(detEvento as OptionsCancelamento),
         },
       },
       "Cancelamento por Substituição": {
@@ -405,7 +402,7 @@ export class NfeWebServices {
           "@_versao": "1.00",
           cOrgaoAutor: this.cUF,
           tpAutor: "1",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsCancelamentoPorSubstituicao),
+          ...(detEvento as OptionsCancelamentoPorSubstituicao),
         },
       },
       "Carta de Correção": {
@@ -415,7 +412,7 @@ export class NfeWebServices {
           "@_versao": "1.00",
           xCondUso:
             "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsCartaDeCorrecao),
+          ...(detEvento as OptionsCartaDeCorrecao),
         },
       },
       "Confirmação da Operação": {
@@ -423,7 +420,7 @@ export class NfeWebServices {
         verEvento: "1.00",
         detEvento: {
           "@_versao": "1.00",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsConfirmacaoDeOperacao),
+          ...(detEvento as OptionsConfirmacaoDeOperacao),
         },
       },
       "Ciência da Operação": {
@@ -431,7 +428,7 @@ export class NfeWebServices {
         verEvento: "1.00",
         detEvento: {
           "@_versao": "1.00",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsCienciaDaOperacao),
+          ...(detEvento as OptionsCienciaDaOperacao),
         },
       },
       "Desconhecimento da Operação": {
@@ -439,7 +436,7 @@ export class NfeWebServices {
         verEvento: "1.00",
         detEvento: {
           "@_versao": "1.00",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsDesconhecimentoDeOperacao),
+          ...(detEvento as OptionsDesconhecimentoDeOperacao),
         },
       },
       "Operação não Realizada": {
@@ -447,10 +444,14 @@ export class NfeWebServices {
         verEvento: "1.00",
         detEvento: {
           "@_versao": "1.00",
-          ...(evento as NfeRecepcaoEventoDetEventoOptionsOperacaoNaoRealizada),
+          ...(detEvento as OptionsOperacaoNaoRealizada),
         },
       },
     };
+
+    const infEvento = eventoMap[detEvento.descEvento];
+    // NOTE: Id definido na seção 5.8.1
+    const id = `ID${infEvento.tpEvento}${chaveNfe}${nSeqEvento}`;
 
     const xmlObjectEvento: NfeRecepcaoEventoEvento = {
       evento: {
@@ -463,7 +464,7 @@ export class NfeWebServices {
           chNFe: chaveNfe,
           dhEvento: new Date().toISOString(),
           nSeqEvento: nSeqEvento,
-          ...eventoMap[evento.descEvento],
+          ...infEvento,
         },
       },
     };
