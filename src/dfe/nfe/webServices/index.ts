@@ -381,9 +381,14 @@ export class NfeWebServices {
     chaveNfe,
     evento,
   }: NfeRecepcaoEventoOptions): Promise<NfeRecepcaoEventoResponse> {
+    if (autor.CPF) {
+      zCustom.cpf().parse(autor.CPF);
+    } else {
+      zCustom.cnpj().parse(autor.CNPJ);
+    }
+
     // NOTE: Id definido na seção 5.8.1
     const id = `ID${DESC_EVENTO_MAP[evento.descEvento]}${chaveNfe}${nSeqEvento}`;
-
     const eventoMap: Record<DescEvento, NfeRecepcaoEventoInfEvento> = {
       Cancelamento: {
         tpEvento: "110111",
