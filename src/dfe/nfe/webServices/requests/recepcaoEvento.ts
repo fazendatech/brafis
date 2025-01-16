@@ -22,6 +22,7 @@ type TpEvento =
   | "210240";
 
 // NOTE: Todos os eventos estão na versão "1.00", caso um dia mude, será necessário refatorar o código.
+// NOTE: DetEventoBase é o tipo base para os detalhes do evento passados como parâmetro para o método, enquanto ExtraDetEvento é um tipo que contêm demais parâmetros que fazem parte da requisição mas é construído dentro do metodo do webservice.
 type NfeRecepcaoEventoInfEventoBase<
   TpEventoKey extends TpEvento,
   DetEventoBase extends OptionsDetEvento,
