@@ -374,6 +374,17 @@ export class NfeWebServices {
     };
   }
 
+  /**
+   * @description Serviço destinado à recepção de mensagem de Evento da NF-e
+   *
+   * @param {NfeRecepcaoEventoOptions} options - Opções para o evento.
+   *
+   * @returns {Promise<NfeRecepcaoEventoResponse>} O resultado da inutilização.
+   *
+   * @throws {Zod.ZodError} Se o CPF ou CNPJ informado não for válido.
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
   async recepcaoEvento({
     idLote,
     CPF,
