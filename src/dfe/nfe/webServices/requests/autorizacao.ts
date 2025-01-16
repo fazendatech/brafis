@@ -25,6 +25,21 @@ export type NfeAutorizacaoRequest = WithXmlns<{
   }>;
 }>;
 
+export interface ProtNFe {
+  "@_versao": string;
+  infProt: {
+    "@_Id"?: string;
+    tpAmb: string;
+    verAplic: string;
+    chNFe: string;
+    dhRecbto: string;
+    nProt?: string;
+    digVal?: string;
+    cStat: LiteralStringUnion<"100">;
+    xMotivo: string;
+  };
+}
+
 /**
  * @description Informações da consulta.
  *
@@ -46,20 +61,7 @@ export interface NfeAutorizacaoResponseRaw {
   cUF: UF;
   dhRecbto: string;
   infRec?: { nRec: string; tMed: string };
-  protNFe?: {
-    "@_versao": string;
-    infProt: {
-      "@_Id"?: string;
-      tpAmb: string;
-      verAplic: string;
-      chNFe: string;
-      dhRecbto: string;
-      nProt?: string;
-      digVal?: string;
-      cStat: LiteralStringUnion<"100">;
-      xMotivo: string;
-    };
-  };
+  protNFe?: ProtNFe;
 }
 
 export type NfeAutorizacaoStatus =
