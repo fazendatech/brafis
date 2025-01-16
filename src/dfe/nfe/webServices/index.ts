@@ -69,6 +69,13 @@ import type {
   OptionsOperacaoNaoRealizada,
   CpfOrCnpj,
 } from "./requests/recepcaoEvento";
+import type {
+  NfeConsultaProtocoloOptions,
+  NfeConsultaProtocoloRequest,
+  NfeConsultaProtocoloResponse,
+  NfeConsultaProtocoloResponseRaw,
+  NfeConsultaProtocoloStatus,
+} from "./requests/consultaProtocolo";
 
 export class NfeWebServices {
   private uf: UF;
@@ -542,6 +549,47 @@ export class NfeWebServices {
       raw: retEnvEvento,
       retEvento,
       xml,
+    };
+  }
+
+  /**
+   * @description Consulta a situação atual da NF-e na Base de Dados do Portal da Secretaria de Fazenda Estadual.
+   *
+   * @returns {Promise<NfeConsultaProtocoloResponse>} O status do serviço.
+   *
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
+  async consultaProtocolo({
+    chNFe,
+  }: NfeConsultaProtocoloOptions): Promise<NfeConsultaProtocoloResponse> {
+    const { retConsSitNFe } = await this.request<
+      NfeConsultaProtocoloRequest,
+      { retConsSitNFe: NfeConsultaProtocoloResponseRaw }
+    >(this.getUrl("NfeConsultaProtocolo"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns":
+          "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
+        consSitNFe: {
+          ...this.xmlNamespace,
+          "@_versao": "4.00",
+          tpAmb: this.tpAmb,
+          xServ: "CONSULTAR",
+          chNFe,
+        },
+      },
+    });
+
+    const statusMap: Record<string, NfeConsultaProtocoloStatus> = {
+      "100": "uso-autorizado",
+      "101": "cancelamento-de-nfe-homologado",
+      "110": "uso-denegado",
+    };
+    return {
+      status: statusMap[retConsSitNFe.cStat] ?? "outro",
+      description: retConsSitNFe.xMotivo ?? "",
+      raw: retConsSitNFe,
     };
   }
 }
