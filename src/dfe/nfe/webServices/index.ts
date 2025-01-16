@@ -460,7 +460,7 @@ export class NfeWebServices {
     // NOTE: Id definido na seção 5.8.1
     const id = `ID${infEvento.tpEvento}${chNFe}${nSeqEvento}`;
 
-    const xmlObjectEvento: NfeRecepcaoEventoEvento = {
+    const recepcaoEvento: NfeRecepcaoEventoEvento = {
       evento: {
         "@_versao": "1.00",
         infEvento: {
@@ -476,8 +476,8 @@ export class NfeWebServices {
       },
     };
 
-    const signedEvento = signXml({
-      xmlObject: xmlObjectEvento,
+    const signedRecepcaoEvento = signXml({
+      xmlObject: recepcaoEvento,
       certificate: this.certificate,
       signId: id,
     }) as NfeRecepcaoEventoEventoWithSignature;
@@ -493,7 +493,7 @@ export class NfeWebServices {
           ...this.xmlNamespace,
           "@_versao": "1.00",
           idLote,
-          ...signedEvento,
+          ...signedRecepcaoEvento,
         },
       },
     });
@@ -515,7 +515,7 @@ export class NfeWebServices {
           procEventoNFe: {
             "@_versao": "4.00",
             "@_xmlns": this.xmlNamespace["@_xmlns"],
-            ...signedEvento,
+            ...signedRecepcaoEvento,
             retEvento: retEnvEvento.retEvento,
           },
         })
