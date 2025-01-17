@@ -176,3 +176,6 @@ dist
 
 # Temporary files
 tmp/
+
+# XML schemas for NFe
+src/dfe/nfe/schemas/
