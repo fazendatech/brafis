@@ -277,7 +277,7 @@ export class NfeWebServices {
       "100": "uso-autorizado",
     };
     const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
-    const protocolo = cStatProtocolo
+    const protNFe = cStatProtocolo
       ? {
           status: statusProtocoloMap[cStatProtocolo] ?? "erro",
           description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
@@ -306,7 +306,7 @@ export class NfeWebServices {
       status: statusMap[retEnviNFe.cStat] ?? "outro",
       description: retEnviNFe.xMotivo ?? "",
       raw: retEnviNFe,
-      protocolo,
+      protNFe,
       xml,
     };
   }

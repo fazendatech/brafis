@@ -3,7 +3,7 @@
 exports[`NfeWebServices autorizacao Returns valid response 1`] = `
 {
   "description": "Lote processado",
-  "protocolo": {
+  "protNFe": {
     "description": "Autorizado o uso da NF-e",
     "status": "uso-autorizado",
   },
