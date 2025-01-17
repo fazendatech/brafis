@@ -337,37 +337,73 @@ describe("NfeWebServices", async () => {
         }),
       ).toMatchSnapshot();
     });
+
+    test("Webservice throws Zod.ZodError for an invalid CPF", () => {
+      expect(() =>
+        service.recepcaoEvento({
+          idLote: "1",
+          CPF: "12345678999",
+          dhEvento: "2025-01-01T00:00:00-03:00",
+          nSeqEvento: "1",
+          chNFe: "0".repeat(44),
+          detEvento: {
+            descEvento: "Carta de Correção",
+            xCorrecao: "correção",
+          },
+        }),
+      ).toThrowError(ZodError);
+    });
+
+    test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
+      expect(() =>
+        service.recepcaoEvento({
+          idLote: "1",
+          CNPJ: "12345678901299",
+          dhEvento: "2025-01-01T00:00:00-03:00",
+          nSeqEvento: "1",
+          chNFe: "0".repeat(44),
+          detEvento: {
+            descEvento: "Carta de Correção",
+            xCorrecao: "correção",
+          },
+        }),
+      ).toThrowError(ZodError);
+    });
   });
 
-  test("Webservice throws Zod.ZodError for an invalid CPF", () => {
-    expect(() =>
-      service.recepcaoEvento({
-        idLote: "1",
-        CPF: "12345678999",
-        dhEvento: "2025-01-01T00:00:00-03:00",
-        nSeqEvento: "1",
-        chNFe: "0".repeat(44),
-        detEvento: {
-          descEvento: "Carta de Correção",
-          xCorrecao: "correção",
-        },
-      }),
-    ).toThrowError(ZodError);
-  });
+  describe("consultaProtocolo", () => {
+    const url = getWebServiceUrl({ uf, env, service: "NfeConsultaProtocolo" });
 
-  test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
-    expect(() =>
-      service.recepcaoEvento({
-        idLote: "1",
-        CNPJ: "12345678901299",
-        dhEvento: "2025-01-01T00:00:00-03:00",
-        nSeqEvento: "1",
-        chNFe: "0".repeat(44),
-        detEvento: {
-          descEvento: "Carta de Correção",
-          xCorrecao: "correção",
+    test("Returns valid response", async () => {
+      mockRequest(url, {
+        method: "POST",
+        response: {
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retConsSitNFe: {
+                tpAmb: "2",
+                cStat: "100",
+                xMotivo: "Autorizado o uso da NF-e",
+                cUF: "53",
+                chNFe: "0".repeat(44),
+                protNFe: {
+                  infProt: {
+                    tpAmb: "2",
+                    chNFe: "0".repeat(44),
+                    nProt: "123456789012345",
+                    digVal: "123456789012345",
+                    cStat: "100",
+                    xMotivo: "Autorizado o uso da NF-e",
+                  },
+                },
+              },
+            },
+          }),
         },
-      }),
-    ).toThrowError(ZodError);
+      });
+      expect(
+        await service.consultaProtocolo({ chNFe: "0".repeat(44) }),
+      ).toMatchSnapshot();
+    });
   });
 });

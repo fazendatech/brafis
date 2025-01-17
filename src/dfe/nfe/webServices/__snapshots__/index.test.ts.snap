@@ -78,3 +78,27 @@ exports[`NfeWebServices recepcaoEvento Returns valid response 1`] = `
   "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><evento><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
 }
 `;
+
+exports[`NfeWebServices consultaProtocolo Returns valid response 1`] = `
+{
+  "description": "Autorizado o uso da NF-e",
+  "raw": {
+    "cStat": "100",
+    "cUF": "53",
+    "chNFe": "00000000000000000000000000000000000000000000",
+    "protNFe": {
+      "infProt": {
+        "cStat": "100",
+        "chNFe": "00000000000000000000000000000000000000000000",
+        "digVal": "123456789012345",
+        "nProt": "123456789012345",
+        "tpAmb": "2",
+        "xMotivo": "Autorizado o uso da NF-e",
+      },
+    },
+    "tpAmb": "2",
+    "xMotivo": "Autorizado o uso da NF-e",
+  },
+  "status": "uso-autorizado",
+}
+`;
