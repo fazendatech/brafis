@@ -77,7 +77,7 @@ export type NfeAutorizacaoResponse = NfeWebServiceResponse<
   NfeAutorizacaoStatus,
   NfeAutorizacaoResponseRaw,
   {
-    protocolo: {
+    protNFe: {
       status: NfeAutorizacaoStatusProtocolo;
       description: string;
     } | null;
