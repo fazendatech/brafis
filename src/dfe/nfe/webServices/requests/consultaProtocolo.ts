@@ -27,10 +27,11 @@ export type NfeConsultaProtocoloRequest = WithXmlns<{
  *
  * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - `"107"->"operando"`, `"108"->"paralisado-temporariamente"`, `"109"->"paralisado"`.
+ * @property cStat - `"100"->"uso-autorizado"`, `"101"->"cancelamento-de-nfe-homologado"`, `"110"->"uso-denegado"`.
  * @property xMotivo - Descrição da resposta.
  * @property cUF - Código da UF que atendeu a solicitação.
  * @property dhRecbto - Data e hora do processamento.
+ * @property chNFe - Chave de acesso da NF-e.
  * @property [protNFe] - Protocolo de autorização ou denegação da NF-e.
  * • Informar se localizada uma NF-e com cStat = 100-
 uso autorizado, 150-uso autorizado fora de prazo ou
