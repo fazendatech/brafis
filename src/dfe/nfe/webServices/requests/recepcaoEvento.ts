@@ -12,7 +12,7 @@ export type DescEvento =
   | "Ciência da Operação"
   | "Desconhecimento da Operação"
   | "Operação não Realizada";
-type TpEvento =
+export type TpEvento =
   | "110111"
   | "110112"
   | "110110"
@@ -33,7 +33,7 @@ type NfeRecepcaoEventoInfEventoBase<
   detEvento: { "@_versao": "1.00" } & DetEventoBase & ExtraDetEvento;
 };
 
-export type NfeRecepcaoEventoInfEvento =
+type NfeRecepcaoEventoInfEvento =
   | NfeRecepcaoEventoInfEventoBase<"110111", OptionsCancelamento>
   | NfeRecepcaoEventoInfEventoBase<
       "110112",
@@ -50,9 +50,9 @@ export type NfeRecepcaoEventoInfEvento =
         xCondUso: "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.";
       }
     >
-  | NfeRecepcaoEventoInfEventoBase<"210200", OptionsConfirmacaoDeOperacao>
+  | NfeRecepcaoEventoInfEventoBase<"210200", OptionsConfirmacaoDaOperacao>
   | NfeRecepcaoEventoInfEventoBase<"210210", OptionsCienciaDaOperacao>
-  | NfeRecepcaoEventoInfEventoBase<"210220", OptionsDesconhecimentoDeOperacao>
+  | NfeRecepcaoEventoInfEventoBase<"210220", OptionsDesconhecimentoDaOperacao>
   | NfeRecepcaoEventoInfEventoBase<"210240", OptionsOperacaoNaoRealizada>;
 
 export type CpfOrCnpj =
@@ -66,42 +66,42 @@ type NfeRecepcaoEventoDetEventoBase<
   descEvento: DescEventoKey;
 } & Extra;
 
-export type OptionsCancelamento = NfeRecepcaoEventoDetEventoBase<
+type OptionsCancelamento = NfeRecepcaoEventoDetEventoBase<
   "Cancelamento",
   { nProt: string; xJust: string }
 >;
 
-export type OptionsCancelamentoPorSubstituicao = NfeRecepcaoEventoDetEventoBase<
+type OptionsCancelamentoPorSubstituicao = NfeRecepcaoEventoDetEventoBase<
   "Cancelamento por Substituição",
   { nProt: string; xJust: string; verAplic: string; chNFeRef: string }
 >;
 
-export type OptionsCartaDeCorrecao = NfeRecepcaoEventoDetEventoBase<
+type OptionsCartaDeCorrecao = NfeRecepcaoEventoDetEventoBase<
   "Carta de Correção",
   { xCorrecao: string }
 >;
 
-export type OptionsConfirmacaoDeOperacao =
+type OptionsConfirmacaoDaOperacao =
   NfeRecepcaoEventoDetEventoBase<"Confirmação da Operação">;
 
-export type OptionsCienciaDaOperacao =
+type OptionsCienciaDaOperacao =
   NfeRecepcaoEventoDetEventoBase<"Ciência da Operação">;
 
-export type OptionsDesconhecimentoDeOperacao =
+type OptionsDesconhecimentoDaOperacao =
   NfeRecepcaoEventoDetEventoBase<"Desconhecimento da Operação">;
 
-export type OptionsOperacaoNaoRealizada = NfeRecepcaoEventoDetEventoBase<
+type OptionsOperacaoNaoRealizada = NfeRecepcaoEventoDetEventoBase<
   "Operação não Realizada",
   { xJust: string }
 >;
 
-type OptionsDetEvento =
+export type OptionsDetEvento =
   | OptionsCancelamento
   | OptionsCancelamentoPorSubstituicao
   | OptionsCartaDeCorrecao
-  | OptionsConfirmacaoDeOperacao
+  | OptionsConfirmacaoDaOperacao
   | OptionsCienciaDaOperacao
-  | OptionsDesconhecimentoDeOperacao
+  | OptionsDesconhecimentoDaOperacao
   | OptionsOperacaoNaoRealizada;
 
 /**
@@ -116,8 +116,7 @@ export type NfeRecepcaoEventoOptions = {
 } & CpfOrCnpj;
 
 export type NfeRecepcaoEventoEvento = {
-  evento: {
-    "@_versao": "1.00";
+  evento: WithXmlnsVersao<{
     infEvento: {
       "@_Id": string;
       cOrgao: string;
@@ -127,7 +126,7 @@ export type NfeRecepcaoEventoEvento = {
       nSeqEvento: string;
     } & CpfOrCnpj &
       NfeRecepcaoEventoInfEvento;
-  };
+  }>;
 };
 
 export type NfeRecepcaoEventoEventoWithSignature = {
