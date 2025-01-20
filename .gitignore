@@ -179,3 +179,6 @@ tmp/
 
 # XML schemas for NFe
 src/dfe/nfe/schemas/
+
+# Python virtual environment
+venv/
