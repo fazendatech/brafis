@@ -281,8 +281,8 @@ export class NfeWebServices {
       ? makeBuilder().build({
           "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
           nfeProc: {
+            ...this.xmlNamespace,
             "@_versao": "4.00",
-            "@_xmlns": this.xmlNamespace["@_xmlns"],
             ...signedNfe,
             protNFe: retEnviNFe.protNFe,
           },
@@ -645,13 +645,14 @@ export class NfeWebServices {
           description: retEnvEvento.retEvento?.infEvento.xMotivo ?? "",
         }
       : null;
+    const { "@_xmlns": _, ...eventoWithoutXmlns } = signedRecepcaoEvento.evento;
     const xml = cStatEvento
       ? makeBuilder().build({
           "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
           procEventoNFe: {
-            "@_versao": "4.00",
-            "@_xmlns": this.xmlNamespace["@_xmlns"],
-            ...signedRecepcaoEvento,
+            ...this.xmlNamespace,
+            "@_versao": "1.00",
+            evento: eventoWithoutXmlns,
             retEvento: retEnvEvento.retEvento,
           },
         })
