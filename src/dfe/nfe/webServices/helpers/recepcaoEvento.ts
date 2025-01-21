@@ -2,10 +2,11 @@ import { makeBuilder } from "@/utils/xml";
 import type {
   CpfOrCnpj,
   DescEvento,
+  TpEvento,
+  OptionsDetEvento,
   NfeRecepcaoEventoEvento,
   NfeRecepcaoEventoResponseRaw,
-  OptionsDetEvento,
-  TpEvento,
+  NfeRecepcaoEventoEventoWithSignature,
 } from "../requests/recepcaoEvento";
 
 function buildEvento({
@@ -224,7 +225,7 @@ function buildProcEventoNfe({
   retEvento,
 }: {
   xmlns: string;
-  evento: NfeRecepcaoEventoEvento;
+  evento: NfeRecepcaoEventoEventoWithSignature;
   retEvento: NfeRecepcaoEventoResponseRaw["retEvento"];
 }): string | null {
   const cStatEvento = retEvento?.infEvento.cStat;
