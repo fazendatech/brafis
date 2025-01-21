@@ -50,7 +50,6 @@ import type {
 import { zCustom } from "@/utils/zCustom";
 import { makeBuilder } from "@/utils/xml";
 import type {
-  DescEvento,
   NfeRecepcaoEventoEvento,
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoOptions,
@@ -60,9 +59,8 @@ import type {
   NfeRecepcaoEventoStatus,
   NfeRecepcaoEventoStatusEvento,
   CpfOrCnpj,
-  TpEvento,
-  OptionsDetEvento,
 } from "./requests/recepcaoEvento";
+import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
 
 export class NfeWebServices {
   private uf: UF;
@@ -288,7 +286,6 @@ export class NfeWebServices {
       "105": "lote-em-processamento",
       "106": "lote-nao-localizado",
     };
-
     return {
       status: statusMap[retEnviNFe.cStat] ?? "outro",
       description: retEnviNFe.xMotivo ?? "",
@@ -368,191 +365,6 @@ export class NfeWebServices {
     };
   }
 
-  //NOTE: O objeto é montado manualmente por tipo de evento devido a ordem dos campos poder invalidar a requisição para SEFAZ.
-  private mountEvento(
-    detEvento: OptionsDetEvento,
-    id: string,
-    cpfOrCnpj: CpfOrCnpj,
-    chNFe: string,
-    dhEvento: string,
-    nSeqEvento: string,
-  ): NfeRecepcaoEventoEvento {
-    if (detEvento.descEvento === "Cancelamento") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110111",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              nProt: detEvento.nProt,
-              xJust: detEvento.xJust,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Cancelamento por Substituição") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110112",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              cOrgaoAutor: this.cUF,
-              tpAutor: "1",
-              verAplic: detEvento.verAplic,
-              nProt: detEvento.nProt,
-              xJust: detEvento.xJust,
-              chNFeRef: detEvento.chNFeRef,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Carta de Correção") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110110",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              xCorrecao: detEvento.xCorrecao,
-              xCondUso:
-                "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.",
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Confirmação da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210200",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Ciência da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210210",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Desconhecimento da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210220",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Operação não Realizada") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210240",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              xJust: detEvento.xJust,
-            },
-          },
-        },
-      };
-    }
-    throw new Error("Evento não suportado");
-  }
-
   /**
    * @description Serviço destinado à recepção de mensagem de Evento da NF-e
    *
@@ -583,34 +395,21 @@ export class NfeWebServices {
       cpfOrCnpj = { CNPJ } as CpfOrCnpj;
     }
 
-    const tpEventoMap: Record<DescEvento, TpEvento> = {
-      Cancelamento: "110111",
-      "Cancelamento por Substituição": "110112",
-      "Carta de Correção": "110110",
-      "Confirmação da Operação": "210200",
-      "Ciência da Operação": "210210",
-      "Desconhecimento da Operação": "210220",
-      "Operação não Realizada": "210240",
-    };
-    const tpEvento = tpEventoMap[detEvento.descEvento];
-    // NOTE: infEvento."@_Id" é definido na seção 5.8.1
-    const id = `ID${tpEvento}${chNFe}${nSeqEvento.padStart(2, "0")}`;
-
-    const recepcaoEvento: NfeRecepcaoEventoEvento = this.mountEvento(
+    const recepcaoEvento = helpersRecepcaoEvento.buildEvento({
+      xmlns: this.xmlNamespace["@_xmlns"],
+      cUf: this.cUF,
+      tpAmb: this.tpAmb,
       detEvento,
-      id,
       cpfOrCnpj,
       chNFe,
       dhEvento,
       nSeqEvento,
-    );
-
+    });
     const signedRecepcaoEvento = signXml({
       xmlObject: recepcaoEvento,
       certificate: this.certificate,
-      signId: id,
+      signId: recepcaoEvento.evento.infEvento["@_Id"],
     }) as NfeRecepcaoEventoEventoWithSignature;
-
     const { retEnvEvento } = await this.request<
       NfeRecepcaoEventoRequest,
       { retEnvEvento: NfeRecepcaoEventoResponseRaw }
@@ -638,23 +437,15 @@ export class NfeWebServices {
           description: retEnvEvento.retEvento?.infEvento.xMotivo ?? "",
         }
       : null;
-    const { "@_xmlns": _, ...eventoWithoutXmlns } = signedRecepcaoEvento.evento;
-    const xml = cStatEvento
-      ? makeBuilder().build({
-          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
-          procEventoNFe: {
-            ...this.xmlNamespace,
-            "@_versao": "1.00",
-            evento: eventoWithoutXmlns,
-            retEvento: retEnvEvento.retEvento,
-          },
-        })
-      : null;
+    const xml = helpersRecepcaoEvento.buildProcEventoNfe({
+      xmlns: this.xmlNamespace["@_xmlns"],
+      evento: signedRecepcaoEvento,
+      retEvento: retEnvEvento.retEvento,
+    });
 
     const statusMap: Record<string, NfeRecepcaoEventoStatus> = {
       "128": "lote-processado",
     };
-
     return {
       status: statusMap[retEnvEvento.cStat] ?? "outro",
       description: retEnvEvento.xMotivo ?? "",
