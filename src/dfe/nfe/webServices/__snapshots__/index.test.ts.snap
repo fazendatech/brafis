@@ -25,7 +25,7 @@ exports[`NfeWebServices autorizacao Returns valid response 1`] = `
     "xMotivo": "Lote processado",
   },
   "status": "lote-processado",
-  "xml": "<?xml version="1.0" encoding="UTF-8"?><nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><NFe><infNFe>mock NFe</infNFe><Signature>mock signature</Signature></NFe><protNFe versao="4.00"><infProt><tpAmb>2</tpAmb><verAplic>SVRS202101041234</verAplic><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRecbto>2021-01-04T12:34:56-03:00</dhRecbto><nProt>123456789012345</nProt><digVal>123456789012345</digVal><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo></infProt></protNFe></nfeProc>",
+  "xml": "<?xml version="1.0" encoding="UTF-8"?><nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00"><NFe><infNFe>mock NFe</infNFe><Signature>mock signature</Signature></NFe><protNFe versao="4.00"><infProt><tpAmb>2</tpAmb><verAplic>SVRS202101041234</verAplic><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRecbto>2021-01-04T12:34:56-03:00</dhRecbto><nProt>123456789012345</nProt><digVal>123456789012345</digVal><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo></infProt></protNFe></nfeProc>",
 }
 `;
 
@@ -75,7 +75,7 @@ exports[`NfeWebServices recepcaoEvento Returns valid response 1`] = `
     "status": "evento-registrado-vinculado-a-nfe",
   },
   "status": "lote-processado",
-  "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe"><evento versao="1.00"><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
+  "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe xmlns="http://www.portalfiscal.inf.br/nfe" versao="1.00"><evento versao="1.00"><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
 }
 `;
 
