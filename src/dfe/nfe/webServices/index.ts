@@ -49,7 +49,6 @@ import type {
   NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
 import type {
-  NfeRecepcaoEventoEvento,
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoOptions,
   NfeRecepcaoEventoRequest,
@@ -58,8 +57,6 @@ import type {
   NfeRecepcaoEventoStatus,
   NfeRecepcaoEventoStatusEvento,
   CpfOrCnpj,
-  TpEvento,
-  OptionsDetEvento,
 } from "./requests/recepcaoEvento";
 import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
 import helpersAutorizacao from "./helpers/autorizacao";
@@ -366,191 +363,6 @@ export class NfeWebServices {
       description: retInutNFe.infInut.xMotivo ?? "",
       raw: retInutNFe,
     };
-  }
-
-  //NOTE: O objeto é montado manualmente por tipo de evento devido a ordem dos campos poder invalidar a requisição para SEFAZ.
-  private mountEvento(
-    detEvento: OptionsDetEvento,
-    id: string,
-    cpfOrCnpj: CpfOrCnpj,
-    chNFe: string,
-    dhEvento: string,
-    nSeqEvento: string,
-  ): NfeRecepcaoEventoEvento {
-    if (detEvento.descEvento === "Cancelamento") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110111",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              nProt: detEvento.nProt,
-              xJust: detEvento.xJust,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Cancelamento por Substituição") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110112",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              cOrgaoAutor: this.cUF,
-              tpAutor: "1",
-              verAplic: detEvento.verAplic,
-              nProt: detEvento.nProt,
-              xJust: detEvento.xJust,
-              chNFeRef: detEvento.chNFeRef,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Carta de Correção") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "110110",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              xCorrecao: detEvento.xCorrecao,
-              xCondUso:
-                "A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.",
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Confirmação da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210200",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Ciência da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210210",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Desconhecimento da Operação") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210220",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-            },
-          },
-        },
-      };
-    }
-    if (detEvento.descEvento === "Operação não Realizada") {
-      return {
-        evento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          infEvento: {
-            "@_Id": id,
-            cOrgao: this.cUF,
-            tpAmb: this.tpAmb,
-            ...cpfOrCnpj,
-            chNFe,
-            dhEvento,
-            tpEvento: "210240",
-            nSeqEvento,
-            verEvento: "1.00",
-            detEvento: {
-              "@_versao": "1.00",
-              descEvento: detEvento.descEvento,
-              xJust: detEvento.xJust,
-            },
-          },
-        },
-      };
-    }
-    throw new Error("Evento não suportado");
   }
 
   /**
