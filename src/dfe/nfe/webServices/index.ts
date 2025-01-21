@@ -48,9 +48,7 @@ import type {
   NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
 import { zCustom } from "@/utils/zCustom";
-import { makeBuilder } from "@/utils/xml";
 import type {
-  NfeRecepcaoEventoEvento,
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoOptions,
   NfeRecepcaoEventoRequest,
@@ -61,6 +59,7 @@ import type {
   CpfOrCnpj,
 } from "./requests/recepcaoEvento";
 import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
+import helpersAutorizacao from "./helpers/autorizacao";
 import type {
   NfeConsultaProtocoloOptions,
   NfeConsultaProtocoloRequest,
@@ -275,17 +274,11 @@ export class NfeWebServices {
           description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
         }
       : null;
-    const xml = cStatProtocolo
-      ? makeBuilder().build({
-          "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" },
-          nfeProc: {
-            ...this.xmlNamespace,
-            "@_versao": "4.00",
-            ...signedNfe,
-            protNFe: retEnviNFe.protNFe,
-          },
-        })
-      : null;
+    const xml = helpersAutorizacao.buildNfeProc({
+      xmlns: this.xmlNamespace["@_xmlns"],
+      nfe: signedNfe,
+      retEnviNFe,
+    });
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
       "103": "lote-recebido",
