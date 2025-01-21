@@ -75,6 +75,6 @@ exports[`NfeWebServices recepcaoEvento Returns valid response 1`] = `
     "status": "evento-registrado-vinculado-a-nfe",
   },
   "status": "lote-processado",
-  "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><evento><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
+  "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe"><evento versao="1.00"><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
 }
 `;
