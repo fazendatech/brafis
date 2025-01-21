@@ -286,6 +286,7 @@ describe("NfeWebServices", async () => {
     test("Returns valid response", async () => {
       mockCertificateSignXml({
         evento: {
+          "@_versao": "1.00",
           infEvento: { detEvento: "Mock detEvento" },
           Signature: "mock signature",
         },
