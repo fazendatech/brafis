@@ -58,8 +58,6 @@ import type {
   NfeRecepcaoEventoStatusEvento,
   CpfOrCnpj,
 } from "./requests/recepcaoEvento";
-import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
-import helpersAutorizacao from "./helpers/autorizacao";
 import type {
   NfeConsultaProtocoloOptions,
   NfeConsultaProtocoloRequest,
@@ -67,6 +65,8 @@ import type {
   NfeConsultaProtocoloResponseRaw,
   NfeConsultaProtocoloStatus,
 } from "./requests/consultaProtocolo";
+import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
+import helpersAutorizacao from "./helpers/autorizacao";
 
 export class NfeWebServices {
   private uf: UF;
