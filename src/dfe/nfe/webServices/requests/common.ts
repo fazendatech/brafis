@@ -1,6 +1,7 @@
 export interface NfeRequestOptions<Body> {
   body: Body;
   timeout: number;
+  arrayTags?: string[];
 }
 
 export type NfeWebServiceResponse<Status, Raw, Extra = unknown> = {

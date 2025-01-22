@@ -114,7 +114,7 @@ export class NfeWebServices {
 
   private async request<Body, NfeRequestResponse>(
     url: string,
-    { body, timeout }: NfeRequestOptions<Body>,
+    { body, timeout, arrayTags }: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
     const { cert, key } = this.certificate.asPem();
     const soapBody = buildSoap({ nfeDadosMsg: body });
@@ -136,6 +136,7 @@ export class NfeWebServices {
     const responseBody = await response.text();
     const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
       responseBody,
+      { arrayTags },
     );
     if (!parsedResponse?.nfeResultMsg) {
       throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
@@ -212,6 +213,7 @@ export class NfeWebServices {
           infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
         },
       },
+      arrayTags: ["infCad"],
     });
 
     const statusMap: Record<string, NfeConsultaCadastroStatus> = {
@@ -482,6 +484,7 @@ export class NfeWebServices {
           chNFe,
         },
       },
+      arrayTags: ["procEventoNFe"],
     });
 
     const statusMap: Record<string, NfeConsultaProtocoloStatus> = {

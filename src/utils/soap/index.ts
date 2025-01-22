@@ -1,4 +1,5 @@
 import { makeBuilder, makeParser } from "@/utils/xml";
+import type { X2jOptions } from "fast-xml-parser";
 
 export function buildSoap<Body>(body: Body): string {
   return makeBuilder().build({
@@ -15,12 +16,20 @@ export function buildSoap<Body>(body: Body): string {
   });
 }
 
-export function parseSoap<Body>(xml: string): Body | null {
-  return (
-    makeParser({
-      ignoreDeclaration: true,
-      removeNSPrefix: true,
-      parseTagValue: false,
-    }).parse(xml).Envelope?.Body ?? null
-  );
+export function parseSoap<Body>(
+  xml: string,
+  options?: { arrayTags?: string[] },
+): Body | null {
+  const { arrayTags } = options ?? {};
+
+  const parserOptions: X2jOptions = {
+    ignoreDeclaration: true,
+    removeNSPrefix: true,
+    parseTagValue: false,
+  };
+  if (arrayTags) {
+    parserOptions.isArray = (tagName) => arrayTags.includes(tagName);
+  }
+
+  return makeParser(parserOptions).parse(xml).Envelope?.Body ?? null;
 }
