@@ -152,6 +152,11 @@ describe("NfeWebServices", async () => {
             infCons: {
               cStat: "111",
               xMotivo: "Consulta cadastro com uma ocorrência",
+              infCad: [
+                {
+                  IE: "123456789",
+                },
+              ],
             },
           },
         },
@@ -397,6 +402,9 @@ describe("NfeWebServices", async () => {
                     xMotivo: "Autorizado o uso da NF-e",
                   },
                 },
+                procEventoNFe: [
+                  { evento: "mock evento", retEvento: "mock ret" },
+                ],
               },
             },
           }),

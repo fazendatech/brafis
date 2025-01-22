@@ -1,6 +1,10 @@
 import type { NfeLayout } from "@/dfe/nfe/layout";
 import type { UF } from "@/ufCode/types";
-import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
+import type {
+  WithVersao,
+  WithXmlns,
+  WithXmlnsVersao,
+} from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
@@ -25,8 +29,7 @@ export type NfeAutorizacaoRequest = WithXmlns<{
   }>;
 }>;
 
-export interface ProtNFe {
-  "@_versao": string;
+export type NfeAutorizacaoProtNfe = WithVersao<{
   infProt: {
     "@_Id"?: string;
     tpAmb: string;
@@ -38,7 +41,7 @@ export interface ProtNFe {
     cStat: LiteralStringUnion<"100">;
     xMotivo: string;
   };
-}
+}>;
 
 /**
  * @description Informações da consulta.
@@ -61,7 +64,7 @@ export interface NfeAutorizacaoResponseRaw {
   cUF: UF;
   dhRecbto: string;
   infRec?: { nRec: string; tMed: string };
-  protNFe?: ProtNFe;
+  protNFe?: NfeAutorizacaoProtNfe;
 }
 
 export type NfeAutorizacaoStatus =

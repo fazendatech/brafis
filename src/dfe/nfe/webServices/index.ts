@@ -48,7 +48,6 @@ import type {
   NfeInutilizacaoResponseRaw,
   NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
-import { makeBuilder } from "@/utils/xml";
 import type {
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoOptions,

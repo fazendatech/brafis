@@ -86,6 +86,12 @@ exports[`NfeWebServices consultaProtocolo Returns valid response 1`] = `
     "cStat": "100",
     "cUF": "53",
     "chNFe": "00000000000000000000000000000000000000000000",
+    "procEventoNFe": [
+      {
+        "evento": "mock evento",
+        "retEvento": "mock ret",
+      },
+    ],
     "protNFe": {
       "infProt": {
         "cStat": "100",

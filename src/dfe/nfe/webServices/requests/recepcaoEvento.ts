@@ -1,4 +1,8 @@
-import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
+import type {
+  WithVersao,
+  WithXmlns,
+  WithXmlnsVersao,
+} from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
@@ -30,7 +34,7 @@ type NfeRecepcaoEventoInfEventoBase<
 > = {
   tpEvento: TpEventoKey;
   verEvento: "1.00";
-  detEvento: { "@_versao": "1.00" } & DetEventoBase & ExtraDetEvento;
+  detEvento: WithVersao<DetEventoBase & ExtraDetEvento>;
 };
 
 type NfeRecepcaoEventoInfEvento =
@@ -143,6 +147,52 @@ export type NfeRecepcaoEventoRequest = WithXmlns<{
 }>;
 
 /**
+ * @description Retorno do evento.
+ *
+ * @property {string} @_versao - Versão do evento.
+ * @property {object} infEvento - Informações do evento.
+ * @property {string} infEvento.@_Id - Identificador do evento.
+ * @property {string} infEvento.tpAmb - Tipo de ambiente.
+ * @property {string} infEvento.verAplic - Versão da aplicação.
+ * @property {string} infEvento.cOrgao - Código do órgão.
+ * @property {string} infEvento.cStat - Código do status da resposta.
+ * @property {string} infEvento.xMotivo - Descrição do status da resposta.
+ * @property {string} infEvento.chNFe - Chave da NFe.
+ * @property {string} infEvento.tpEvento - Tipo do evento.
+ * @property {string} infEvento.xEvento - Descrição do evento.
+ * @property {string} infEvento.nSeqEvento - Sequência do evento.
+ * @property {string} infEvento.cOrgaoAutor - Código do órgão autor.
+ * @property {string} infEvento.CNPJDest - CNPJ do destinatário.
+ * @property {string} infEvento.CPFDest - CPF do destinatário.
+ * @property {string} infEvento.emailDest - E-mail do destinatário.
+ * @property {string} infEvento.dhRegEvento - Data e hora do registro do evento.
+ * @property {string} infEvento.nProt - Número do protocolo.
+ * @property {string} infEvento.chNFePend - Chave da NFe pendente.
+ */
+export type NfeRecepcaoEventoRetEvento = WithVersao<{
+  infEvento: {
+    "@_Id"?: string;
+    tpAmb: string;
+    verAplic: string;
+    cOrgao: string;
+    cStat: LiteralStringUnion<"135" | "136">;
+    xMotivo: string;
+    chNFe?: string;
+    tpEvento?: string;
+    xEvento?: string;
+    nSeqEvento?: string;
+    cOrgaoAutor?: string;
+    CNPJDest?: string;
+    CPFDest?: string;
+    emailDest?: string;
+    dhRegEvento: string;
+    nProt?: string;
+    chNFePend?: string;
+  };
+  Signature?: unknown;
+}>;
+
+/**
  * @description Informações da consulta.
  *
  * @property {string} idLote - Identificador do lote.
@@ -152,25 +202,6 @@ export type NfeRecepcaoEventoRequest = WithXmlns<{
  * @property {string} cStat - Código do status da resposta.
  * @property {string} xMotivo - Descrição do status da resposta.
  * @property {object} retEvento - Informações do evento.
- * @property {string} retEvento.@_versao - Versão do evento.
- * @property {object} retEvento.infEvento - Informações do evento.
- * @property {string} retEvento.infEvento.@_Id - Identificador do evento.
- * @property {string} retEvento.infEvento.tpAmb - Tipo de ambiente.
- * @property {string} retEvento.infEvento.verAplic - Versão da aplicação.
- * @property {string} retEvento.infEvento.cOrgao - Código do órgão.
- * @property {string} retEvento.infEvento.cStat - Código do status da resposta.
- * @property {string} retEvento.infEvento.xMotivo - Descrição do status da resposta.
- * @property {string} retEvento.infEvento.chNFe - Chave da NFe.
- * @property {string} retEvento.infEvento.tpEvento - Tipo do evento.
- * @property {string} retEvento.infEvento.xEvento - Descrição do evento.
- * @property {string} retEvento.infEvento.nSeqEvento - Sequência do evento.
- * @property {string} retEvento.infEvento.cOrgaoAutor - Código do órgão autor.
- * @property {string} retEvento.infEvento.CNPJDest - CNPJ do destinatário.
- * @property {string} retEvento.infEvento.CPFDest - CPF do destinatário.
- * @property {string} retEvento.infEvento.emailDest - E-mail do destinatário.
- * @property {string} retEvento.infEvento.dhRegEvento - Data e hora do registro do evento.
- * @property {string} retEvento.infEvento.nProt - Número do protocolo.
- * @property {string} retEvento.infEvento.chNFePend - Chave da NFe pendente.
  */
 export interface NfeRecepcaoEventoResponseRaw {
   idLote: string;
@@ -179,29 +210,7 @@ export interface NfeRecepcaoEventoResponseRaw {
   cOrgao: string;
   cStat: LiteralStringUnion<"128">;
   xMotivo: string;
-  retEvento?: {
-    "@_versao": string;
-    infEvento: {
-      "@_Id"?: string;
-      tpAmb: string;
-      verAplic: string;
-      cOrgao: string;
-      cStat: LiteralStringUnion<"135" | "136">;
-      xMotivo: string;
-      chNFe?: string;
-      tpEvento?: string;
-      xEvento?: string;
-      nSeqEvento?: string;
-      cOrgaoAutor?: string;
-      CNPJDest?: string;
-      CPFDest?: string;
-      emailDest?: string;
-      dhRegEvento: string;
-      nProt?: string;
-      chNFePend?: string;
-    };
-    Signature?: unknown;
-  };
+  retEvento?: NfeRecepcaoEventoRetEvento;
 }
 
 /**
