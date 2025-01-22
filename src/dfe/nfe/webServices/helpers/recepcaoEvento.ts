@@ -228,8 +228,7 @@ function buildProcEventoNfe({
   evento: NfeRecepcaoEventoEventoWithSignature;
   retEvento: NfeRecepcaoEventoResponseRaw["retEvento"];
 }): string | null {
-  const cStatEvento = retEvento?.infEvento.cStat;
-  if (!cStatEvento) {
+  if (!retEvento) {
     return null;
   }
 
