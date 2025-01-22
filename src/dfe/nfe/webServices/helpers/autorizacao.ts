@@ -5,14 +5,13 @@ import type { NfeAutorizacaoResponseRaw } from "../requests/autorizacao";
 function buildNfeProc({
   xmlns,
   nfe,
-  retEnviNFe,
+  protNFe,
 }: {
   xmlns: string;
   nfe: NfeLayoutWithSignature;
-  retEnviNFe: NfeAutorizacaoResponseRaw;
+  protNFe: NfeAutorizacaoResponseRaw["protNFe"];
 }): string | null {
-  const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
-  if (!cStatProtocolo) {
+  if (!protNFe) {
     return null;
   }
 
@@ -22,7 +21,7 @@ function buildNfeProc({
       "@_xmlns": xmlns,
       "@_versao": "4.00",
       ...nfe,
-      protNFe: retEnviNFe.protNFe,
+      protNFe,
     },
   });
 }
