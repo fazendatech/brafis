@@ -270,7 +270,7 @@ export class NfeWebServices {
     const xml = helpersAutorizacao.buildNfeProc({
       xmlns: this.xmlNamespace["@_xmlns"],
       nfe: signedNfe,
-      retEnviNFe,
+      protNFe: retEnviNFe.protNFe,
     });
 
     const statusMap: Record<string, NfeAutorizacaoStatus> = {
