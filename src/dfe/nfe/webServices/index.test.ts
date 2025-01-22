@@ -215,7 +215,7 @@ describe("NfeWebServices", async () => {
       ).toMatchSnapshot();
     });
 
-    test("Webservice throws Zod.ZodError for an invalid NFe", () => {
+    test("Webservice throws ZodError for an invalid NFe", () => {
       const nfe = NFE_TEST_DATA;
       nfe.NFe.infNFe.ide.cUF = "invalid";
 
@@ -265,7 +265,7 @@ describe("NfeWebServices", async () => {
       ).toMatchSnapshot();
     });
 
-    test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
+    test("Webservice throws ZodError for an invalid CNPJ", () => {
       expect(() =>
         service.inutilizacao({
           ano: "2021",
@@ -340,7 +340,7 @@ describe("NfeWebServices", async () => {
     });
   });
 
-  test("Webservice throws Zod.ZodError for an invalid CPF", () => {
+  test("Webservice throws ZodError for an invalid CPF", () => {
     expect(() =>
       service.recepcaoEvento({
         idLote: "1",
@@ -356,7 +356,7 @@ describe("NfeWebServices", async () => {
     ).toThrowError(ZodError);
   });
 
-  test("Webservice throws Zod.ZodError for an invalid CNPJ", () => {
+  test("Webservice throws ZodError for an invalid CNPJ", () => {
     expect(() =>
       service.recepcaoEvento({
         idLote: "1",
