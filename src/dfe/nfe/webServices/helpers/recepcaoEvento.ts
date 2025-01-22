@@ -40,7 +40,7 @@ function buildEvento({
     "Operação não Realizada": "210240",
   };
   const tpEvento = tpEventoMap[descEvento];
-  // NOTE: infEvento."@_Id" é definido na seção 5.8.1
+  // NOTE: Definido na seção 5.8.1 do Manual de Orientação do Contribuinte Versão 7.00
   const id = `ID${tpEvento}${chNFe}${nSeqEvento.padStart(2, "0")}`;
 
   if (descEvento === "Cancelamento") {

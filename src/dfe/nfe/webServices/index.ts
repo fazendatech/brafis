@@ -311,7 +311,7 @@ export class NfeWebServices {
     // TODO: Validar resto do input.
     zCustom.cnpj().parse(cnpj);
 
-    // NOTE: Id definido na seção 5.3.1
+    // NOTE: Definido na seção 5.3.1 do Manual de Orientação do Contribuinte Versão 7.00
     const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}`;
     const inutNfe: NfeInutilizacaoInutNfe = {
       inutNFe: {
