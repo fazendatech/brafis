@@ -16,7 +16,7 @@ import type {
 /**
  * @description Opções para configurar o web service de NFe Consulta Protocolo.
  *
- * @property {string} chNFe - Identificador do lote.
+ * @property {string} chNFe - Chave da NF-e consultada.
  */
 export interface NfeConsultaProtocoloOptions {
   chNFe: string;
