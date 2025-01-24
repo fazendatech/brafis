@@ -543,13 +543,14 @@ export class NfeWebServices {
           "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
         distDFeInt: {
           ...this.xmlNamespace,
-          "@_versao": "4.00",
+          "@_versao": "1.00",
           tpAmb: this.tpAmb,
           cUFAutor: this.cUF,
           ...cpfOrCnpj,
           ...operation,
         },
       },
+      arrayTags: ["docZip"],
     });
 
     const statusMap: Record<string, NfeDistribuicaoDfeStatus> = {
