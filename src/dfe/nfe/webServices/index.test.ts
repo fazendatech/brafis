@@ -415,4 +415,41 @@ describe("NfeWebServices", async () => {
       ).toMatchSnapshot();
     });
   });
+
+  describe("distribuicaoDfe", () => {
+    const url = getWebServiceUrl({ uf, env, service: "NFeDistribuicaoDFe" });
+
+    test("Returns valid response", async () => {
+      mockRequest(url, {
+        method: "POST",
+        response: {
+          data: buildMockResponse({
+            nfeResultMsg: {
+              retDistDFeInt: {
+                tpAmb: "2",
+                cStat: "138",
+                xMotivo: "Documento localizado",
+                dhResp: "2025-01-24T08:00:00-03:00",
+                ultNSU: "0",
+                maxNSU: "0",
+                loteDistDFeInt: {
+                  "@_NSU": "0",
+                  "@_schema": "resNFe_v1.00.xsd",
+                  docZip: "NFe compactada no padrão gZip",
+                },
+              },
+            },
+          }),
+        },
+      });
+      expect(
+        await service.distribuicaoDfe({
+          CNPJ: "12345678901230",
+          consChNFe: {
+            chNFe: "0".repeat(44),
+          },
+        }),
+      ).toMatchSnapshot();
+    });
+  });
 });

@@ -16,13 +16,13 @@ export type NfeDistribuicaoDfeOperation =
       consChNFe?: never;
     }
   | {
-      distNSU: never;
+      distNSU?: never;
       consNSU: { NSU: string };
-      consChNFe: never;
+      consChNFe?: never;
     }
   | {
-      distNSU: never;
-      consNSU: never;
+      distNSU?: never;
+      consNSU?: never;
       consChNFe: { chNFe: string };
     };
 

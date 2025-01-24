@@ -108,3 +108,23 @@ exports[`NfeWebServices consultaProtocolo Returns valid response 1`] = `
   "status": "uso-autorizado",
 }
 `;
+
+exports[`NfeWebServices distribuicaoDfe Returns valid response 1`] = `
+{
+  "description": "Documento localizado",
+  "raw": {
+    "cStat": "138",
+    "dhResp": "2025-01-24T08:00:00-03:00",
+    "loteDistDFeInt": {
+      "@_NSU": "0",
+      "@_schema": "resNFe_v1.00.xsd",
+      "docZip": "NFe compactada no padrão gZip",
+    },
+    "maxNSU": "0",
+    "tpAmb": "2",
+    "ultNSU": "0",
+    "xMotivo": "Documento localizado",
+  },
+  "status": "documento-localizado",
+}
+`;
