@@ -67,6 +67,14 @@ import type {
 } from "./requests/consultaProtocolo";
 import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
 import helpersAutorizacao from "./helpers/autorizacao";
+import type {
+  NfeDistribuicaoDfeOperation,
+  NfeDistribuicaoDfeOptions,
+  NfeDistribuicaoDfeRequest,
+  NfeDistribuicaoDfeResponse,
+  NfeDistribuicaoDfeResponseRaw,
+  NfeDistribuicaoDfeStatus,
+} from "./requests/distribuicaoDfe";
 
 export class NfeWebServices {
   private uf: UF;
@@ -496,6 +504,62 @@ export class NfeWebServices {
       status: statusMap[retConsSitNFe.cStat] ?? "outro",
       description: retConsSitNFe.xMotivo ?? "",
       raw: retConsSitNFe,
+    };
+  }
+
+  async distribuicaoDfe({
+    CPF,
+    CNPJ,
+    distNSU,
+    consNSU,
+    consChNFe,
+  }: NfeDistribuicaoDfeOptions): Promise<NfeDistribuicaoDfeResponse> {
+    let cpfOrCnpj: CpfOrCnpj;
+    if (CPF) {
+      // TODO: Validar resto do input.
+      zCustom.cpf().parse(CPF);
+      cpfOrCnpj = { CPF };
+    } else {
+      zCustom.cnpj().parse(CNPJ);
+      cpfOrCnpj = { CNPJ } as CpfOrCnpj;
+    }
+
+    let operation: NfeDistribuicaoDfeOperation;
+    if (distNSU) {
+      operation = { distNSU };
+    } else if (consNSU) {
+      operation = { consNSU };
+    } else if (consChNFe) {
+      operation = { consChNFe };
+    }
+
+    const { retDistDFeInt } = await this.request<
+      NfeDistribuicaoDfeRequest,
+      { retDistDFeInt: NfeDistribuicaoDfeResponseRaw }
+    >(this.getUrl("NFeDistribuicaoDFe"), {
+      timeout: this.timeout,
+      body: {
+        "@_xmlns":
+          "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
+        distDFeInt: {
+          ...this.xmlNamespace,
+          "@_versao": "4.00",
+          tpAmb: this.tpAmb,
+          cUFAutor: this.cUF,
+          ...cpfOrCnpj,
+          ...operation,
+        },
+      },
+    });
+
+    const statusMap: Record<string, NfeDistribuicaoDfeStatus> = {
+      "137": "nenhum-documento-localizado",
+      "138": "documento-localizado",
+    };
+    return {
+      status: statusMap[retDistDFeInt.cStat] ?? "outro",
+      description: retDistDFeInt.xMotivo ?? "",
+      raw: retDistDFeInt,
     };
   }
 }
