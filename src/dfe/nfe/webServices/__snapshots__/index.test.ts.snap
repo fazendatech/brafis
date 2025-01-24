@@ -118,7 +118,9 @@ exports[`NfeWebServices distribuicaoDfe Returns valid response 1`] = `
     "loteDistDFeInt": {
       "@_NSU": "0",
       "@_schema": "resNFe_v1.00.xsd",
-      "docZip": "NFe compactada no padrão gZip",
+      "docZip": [
+        "NFe compactada no padrão gZip",
+      ],
     },
     "maxNSU": "0",
     "tpAmb": "2",
