@@ -58,7 +58,7 @@ export type NfeDistribuicaoDfeRequest = WithXmlns<{
  * @property [ultNSU] - Último NSU processado.
  * @property [maxNSU] - Maior NSU encontrado.
  * @property [loteDistDFeInt] - Lote de distribuição de DF-e.
- * @property loteDistDFeInt.docZip - Documento zipado.
+ * @property loteDistDFeInt.docZip - Documentos zipados.
  * @property loteDistDFeInt["@_NSU"] - NSU do lote.
  * @property loteDistDFeInt["@_schema"] - Schema do lote.
  */
@@ -71,7 +71,7 @@ export type NfeDistribuicaoDfeResponseRaw = WithVersao<{
   ultNSU?: string;
   maxNSU?: string;
   loteDistDFeInt?: {
-    docZip: string;
+    docZip: string[];
     "@_NSU": string;
     "@_schema": string;
   };
