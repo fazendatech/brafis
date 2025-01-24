@@ -529,7 +529,7 @@ export class NfeWebServices {
       operation = { distNSU };
     } else if (consNSU) {
       operation = { consNSU };
-    } else if (consChNFe) {
+    } else {
       operation = { consChNFe };
     }
 
