@@ -154,7 +154,7 @@ export class NfeWebServices {
   /**
    * @description Consulta o status do serviço do SEFAZ correspondente a uma UF.
    *
-   * @returns {Promise<NfeStatusServicoResponse>} O status do serviço.
+   * @returns {Promise<NfeStatusServicoResponse>} O resultado do serviço.
    *
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
@@ -197,11 +197,11 @@ export class NfeWebServices {
   /**
    * @description Consulta o cadastro de contribuintes do ICMS em uma UF.
    *
-   * @param {NfeConsultaCadastroOptions} options - Opções para a consulta.
+   * @param {NfeConsultaCadastroOptions} options - Opções para o serviço.
    *
-   * @returns {Promise<NfeConsultaCadastroResponse>} Informações sobre o cadastro do contribuinte.
+   * @returns {Promise<NfeConsultaCadastroResponse>} O resultado do serviço.
    *
-   * @throws {Zod.ZodError} Se as opções não forem válidas.
+   * @throws {Zod.ZodError}Se os parâmetros informados não forem válidos.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -245,11 +245,11 @@ export class NfeWebServices {
   /**
    * @description Envia uma NFe para autorização.
    *
-   * @param {NfeAutorizacaoOptions} options - Opções para a autorização.
+   * @param {NfeAutorizacaoOptions} options - Opções para o serviço.
    *
-   * @returns {Promise<NfeAutorizacaoResponse>} O resultado da autorização.
+   * @returns {Promise<NfeAutorizacaoResponse>} O resultado do serviço.
    *
-   * @throws {Zod.ZodError} Se as opções não forem válidas.
+   * @throws {Zod.ZodError} Se os parâmetros informados não forem válidos.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -319,11 +319,11 @@ export class NfeWebServices {
   /**
    * @description Inutiliza um segmento de numerações de NFe.
    *
-   * @param {NfeInutilizacaoOptions} options - Opções para a inutilização.
+   * @param {NfeInutilizacaoOptions} options - Opções para o serviço.
    *
-   * @returns {Promise<NfeInutilizacaoResponse>} O resultado da inutilização.
+   * @returns {Promise<NfeInutilizacaoResponse>} O resultado do serviço.
    *
-   * @throws {Zod.ZodError} Se o CNPJ informado não for válido.
+   * @throws {Zod.ZodError} Se os parâmetros informados não forem válidos.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -393,11 +393,11 @@ export class NfeWebServices {
   /**
    * @description Serviço destinado à recepção de mensagem de Evento da NF-e
    *
-   * @param {NfeRecepcaoEventoOptions} options - Opções para o evento.
+   * @param {NfeRecepcaoEventoOptions} options - Opções para o serviço.
    *
-   * @returns {Promise<NfeRecepcaoEventoResponse>} O resultado da inutilização.
+   * @returns {Promise<NfeRecepcaoEventoResponse>} O resultado do serviço.
    *
-   * @throws {Zod.ZodError} Se o CPF ou CNPJ informado não for válido.
+   * @throws {Zod.ZodError} Se os parâmetros informados não forem válidos.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
@@ -488,7 +488,9 @@ export class NfeWebServices {
   /**
    * @description Consulta a situação atual da NF-e na Base de Dados do Portal da Secretaria de Fazenda Estadual.
    *
-   * @returns {Promise<NfeConsultaProtocoloResponse>} O status do serviço.
+   * @param {NfeConsultaProtocoloOptions} options - Opções para o serviço.
+   *
+   * @returns {Promise<NfeConsultaProtocoloResponse>} O resultado do serviço.
    *
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
@@ -534,7 +536,7 @@ export class NfeWebServices {
   /**
    * @description Consulta a distribuição de informações resumidas e documentos fiscais eletrônicos de interesse de um ator, seja este uma pessoa física ou jurídica.
    *
-   * @param {NfeRecepcaoEventoOptions} options - Opções para o evento.
+   * @param {NfeRecepcaoEventoOptions} options - Opções para o serviço.
    *
    * @returns {Promise<NfeDistribuicaoDfeResponse>} O resultado do serviço.
    *
