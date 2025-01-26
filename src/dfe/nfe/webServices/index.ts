@@ -75,6 +75,7 @@ import type {
   NfeDistribuicaoDfeResponseRaw,
   NfeDistribuicaoDfeStatus,
 } from "./requests/distribuicaoDfe";
+import { updateLanguageServiceSourceFile } from "typescript";
 
 export class NfeWebServices {
   private uf: UF;
@@ -125,12 +126,10 @@ export class NfeWebServices {
     { body, timeout, arrayTags }: NfeRequestOptions<Body>,
   ): Promise<NfeRequestResponse> {
     const { cert, key } = this.certificate.asPem();
-    const soapBody = buildSoap({ nfeDadosMsg: body });
-
     const response = await fetchWithTls(url, {
       method: "POST",
       headers: { "Content-Type": "application/soap+xml; charset=utf-8" },
-      body: soapBody,
+      body: buildSoap(body),
       tls: { cert, key, ca: await this.getCa() },
       signal: AbortSignal.timeout(timeout),
     });
@@ -142,15 +141,15 @@ export class NfeWebServices {
     }
 
     const responseBody = await response.text();
-    const parsedResponse = parseSoap<{ nfeResultMsg?: NfeRequestResponse }>(
-      responseBody,
-      { arrayTags },
-    );
-    if (!parsedResponse?.nfeResultMsg) {
+    const parsedResponse = parseSoap<NfeRequestResponse>(responseBody, {
+      arrayTags,
+    });
+
+    if (!parsedResponse) {
       throw new NfeServiceRequestError(`URL: ${url}\n${responseBody}`);
     }
 
-    return parsedResponse.nfeResultMsg;
+    return parsedResponse;
   }
 
   /**
@@ -162,19 +161,24 @@ export class NfeWebServices {
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
   async statusServico(): Promise<NfeStatusServicoResponse> {
-    const { retConsStatServ } = await this.request<
-      NfeStatusServicoRequest,
-      { retConsStatServ: NfeStatusServicoResponseRaw }
+    const {
+      nfeResultMsg: { retConsStatServ },
+    } = await this.request<
+      { nfeDadosMsg: NfeStatusServicoRequest },
+      { nfeResultMsg: { retConsStatServ: NfeStatusServicoResponseRaw } }
     >(this.getUrl("NfeStatusServico"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
-        consStatServ: {
-          ...this.xmlNamespace,
-          "@_versao": "4.00",
-          tpAmb: this.tpAmb,
-          cUF: this.cUF,
-          xServ: "STATUS",
+        nfeDadosMsg: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
+          consStatServ: {
+            ...this.xmlNamespace,
+            "@_versao": "4.00",
+            tpAmb: this.tpAmb,
+            cUF: this.cUF,
+            xServ: "STATUS",
+          },
         },
       },
     });
@@ -207,18 +211,22 @@ export class NfeWebServices {
   ): Promise<NfeConsultaCadastroResponse> {
     schemaNfeConsultaCadastroOptions.parse(options);
 
-    const { retConsCad } = await this.request<
-      NfeConsultaCadastroRequest,
-      { retConsCad: NfeConsultaCadastroResponseRaw }
+    const {
+      nfeResultMsg: { retConsCad },
+    } = await this.request<
+      { nfeDadosMsg: NfeConsultaCadastroRequest },
+      { nfeResultMsg: { retConsCad: NfeConsultaCadastroResponseRaw } }
     >(this.getUrl("NfeConsultaCadastro"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns":
-          "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
-        ConsCad: {
-          ...this.xmlNamespace,
-          "@_versao": "2.00",
-          infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
+        nfeDadosMsg: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
+          ConsCad: {
+            ...this.xmlNamespace,
+            "@_versao": "2.00",
+            infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
+          },
         },
       },
       arrayTags: ["infCad"],
@@ -257,19 +265,23 @@ export class NfeWebServices {
       certificate: this.certificate,
       signId: nfe.NFe.infNFe["@_Id"],
     }) as NfeLayoutWithSignature;
-    const { retEnviNFe } = await this.request<
-      NfeAutorizacaoRequest,
-      { retEnviNFe: NfeAutorizacaoResponseRaw }
+    const {
+      nfeResultMsg: { retEnviNFe },
+    } = await this.request<
+      { nfeDadosMsg: NfeAutorizacaoRequest },
+      { nfeResultMsg: { retEnviNFe: NfeAutorizacaoResponseRaw } }
     >(this.getUrl("NFeAutorizacao"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4",
-        enviNFe: {
-          ...this.xmlNamespace,
-          "@_versao": "4.00",
-          idLote,
-          indSinc: "1",
-          ...signedNfe,
+        nfeDadosMsg: {
+          "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4",
+          enviNFe: {
+            ...this.xmlNamespace,
+            "@_versao": "4.00",
+            idLote,
+            indSinc: "1",
+            ...signedNfe,
+          },
         },
       },
     });
@@ -354,14 +366,18 @@ export class NfeWebServices {
       certificate: this.certificate,
       signId: id,
     }) as NfeInutilizacaoInutNfeWithSignature;
-    const { retInutNFe } = await this.request<
-      NfeInutilizacaoRequest,
-      { retInutNFe: NfeInutilizacaoResponseRaw }
+    const {
+      nfeResultMsg: { retInutNFe },
+    } = await this.request<
+      { nfeDadosMsg: NfeInutilizacaoRequest },
+      { nfeResultMsg: { retInutNFe: NfeInutilizacaoResponseRaw } }
     >(this.getUrl("NfeInutilizacao"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
-        ...signedInutNfe,
+        nfeDadosMsg: {
+          "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
+          ...signedInutNfe,
+        },
       },
     });
     const statusMap: Record<string, NfeInutilizacaoStatus> = {
@@ -420,18 +436,23 @@ export class NfeWebServices {
       certificate: this.certificate,
       signId: recepcaoEvento.evento.infEvento["@_Id"],
     }) as NfeRecepcaoEventoEventoWithSignature;
-    const { retEnvEvento } = await this.request<
-      NfeRecepcaoEventoRequest,
-      { retEnvEvento: NfeRecepcaoEventoResponseRaw }
+    const {
+      nfeResultMsg: { retEnvEvento },
+    } = await this.request<
+      { nfeDadosMsg: NfeRecepcaoEventoRequest },
+      { nfeResultMsg: { retEnvEvento: NfeRecepcaoEventoResponseRaw } }
     >(this.getUrl("RecepcaoEvento"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4",
-        envEvento: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          idLote,
-          ...signedRecepcaoEvento,
+        nfeDadosMsg: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4",
+          envEvento: {
+            ...this.xmlNamespace,
+            "@_versao": "1.00",
+            idLote,
+            ...signedRecepcaoEvento,
+          },
         },
       },
     });
@@ -476,20 +497,24 @@ export class NfeWebServices {
   async consultaProtocolo({
     chNFe,
   }: NfeConsultaProtocoloOptions): Promise<NfeConsultaProtocoloResponse> {
-    const { retConsSitNFe } = await this.request<
-      NfeConsultaProtocoloRequest,
-      { retConsSitNFe: NfeConsultaProtocoloResponseRaw }
+    const {
+      nfeResultMsg: { retConsSitNFe },
+    } = await this.request<
+      { nfeDadosMsg: NfeConsultaProtocoloRequest },
+      { nfeResultMsg: { retConsSitNFe: NfeConsultaProtocoloResponseRaw } }
     >(this.getUrl("NfeConsultaProtocolo"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns":
-          "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
-        consSitNFe: {
-          ...this.xmlNamespace,
-          "@_versao": "4.00",
-          tpAmb: this.tpAmb,
-          xServ: "CONSULTAR",
-          chNFe,
+        nfeDadosMsg: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
+          consSitNFe: {
+            ...this.xmlNamespace,
+            "@_versao": "4.00",
+            tpAmb: this.tpAmb,
+            xServ: "CONSULTAR",
+            chNFe,
+          },
         },
       },
       arrayTags: ["procEventoNFe"],
@@ -526,28 +551,47 @@ export class NfeWebServices {
 
     let operation: NfeDistribuicaoDfeOperation;
     if (distNSU) {
-      operation = { distNSU };
+      operation = { distNSU: { ultNSU: distNSU.ultNSU.padStart(15, "0") } };
     } else if (consNSU) {
       operation = { consNSU };
     } else {
       operation = { consChNFe };
     }
 
-    const { retDistDFeInt } = await this.request<
-      NfeDistribuicaoDfeRequest,
-      { retDistDFeInt: NfeDistribuicaoDfeResponseRaw }
+    const {
+      nfeDistDFeInteresseResponse: {
+        nfeDistDFeInteresseResult: { retDistDFeInt },
+      },
+    } = await this.request<
+      {
+        nfeDistDFeInteresse: {
+          "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe";
+          nfeDadosMsg: NfeDistribuicaoDfeRequest;
+        };
+      },
+      {
+        nfeDistDFeInteresseResponse: {
+          nfeDistDFeInteresseResult: {
+            retDistDFeInt: NfeDistribuicaoDfeResponseRaw;
+          };
+        };
+      }
     >(this.getUrl("NFeDistribuicaoDFe"), {
       timeout: this.timeout,
       body: {
-        "@_xmlns":
-          "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
-        distDFeInt: {
-          ...this.xmlNamespace,
-          "@_versao": "1.00",
-          tpAmb: this.tpAmb,
-          cUFAutor: this.cUF,
-          ...cpfOrCnpj,
-          ...operation,
+        nfeDistDFeInteresse: {
+          "@_xmlns":
+            "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe",
+          nfeDadosMsg: {
+            distDFeInt: {
+              "@_versao": "1.00",
+              ...this.xmlNamespace,
+              tpAmb: this.tpAmb,
+              cUFAutor: this.cUF,
+              ...cpfOrCnpj,
+              ...operation,
+            },
+          },
         },
       },
       arrayTags: ["docZip"],

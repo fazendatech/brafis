@@ -424,18 +424,20 @@ describe("NfeWebServices", async () => {
         method: "POST",
         response: {
           data: buildMockResponse({
-            nfeResultMsg: {
-              retDistDFeInt: {
-                tpAmb: "2",
-                cStat: "138",
-                xMotivo: "Documento localizado",
-                dhResp: "2025-01-24T08:00:00-03:00",
-                ultNSU: "0",
-                maxNSU: "0",
-                loteDistDFeInt: {
-                  "@_NSU": "0",
-                  "@_schema": "resNFe_v1.00.xsd",
-                  docZip: "NFe compactada no padrão gZip",
+            nfeDistDFeInteresseResponse: {
+              nfeDistDFeInteresseResult: {
+                retDistDFeInt: {
+                  tpAmb: "2",
+                  cStat: "138",
+                  xMotivo: "Documento localizado",
+                  dhResp: "2025-01-24T08:00:00-03:00",
+                  ultNSU: "0",
+                  maxNSU: "0",
+                  loteDistDFeInt: {
+                    "@_NSU": "0",
+                    "@_schema": "resNFe_v1.00.xsd",
+                    docZip: "NFe compactada no padrão gZip",
+                  },
                 },
               },
             },
