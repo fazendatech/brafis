@@ -48,7 +48,7 @@ export type NfeDistribuicaoDfeRequest = {
 };
 
 /**
- * @description Resposta completa da consulta de status serviço.
+ * @description Resposta completa da distribuição DFe.
  *
  * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
  * @property verAplic - Versão do aplicativo que processou a consulta.
