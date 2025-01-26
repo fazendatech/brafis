@@ -75,7 +75,6 @@ import type {
   NfeDistribuicaoDfeResponseRaw,
   NfeDistribuicaoDfeStatus,
 } from "./requests/distribuicaoDfe";
-import { updateLanguageServiceSourceFile } from "typescript";
 
 export class NfeWebServices {
   private uf: UF;
