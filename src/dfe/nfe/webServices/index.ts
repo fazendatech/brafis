@@ -531,6 +531,17 @@ export class NfeWebServices {
     };
   }
 
+  /**
+   * @description Consulta a distribuição de informações resumidas e documentos fiscais eletrônicos de interesse de um ator, seja este uma pessoa física ou jurídica.
+   *
+   * @param {NfeRecepcaoEventoOptions} options - Opções para o evento.
+   *
+   * @returns {Promise<NfeDistribuicaoDfeResponse>} O resultado do serviço.
+   *
+   * @throws {Zod.ZodError} Se os parâmetros informados não forem válidos.
+   * @throws {TimeoutError} Se a requisição exceder o tempo limite.
+   * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
+   */
   async distribuicaoDfe({
     CPF,
     CNPJ,
