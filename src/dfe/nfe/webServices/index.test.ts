@@ -453,5 +453,27 @@ describe("NfeWebServices", async () => {
         }),
       ).toMatchSnapshot();
     });
+
+    test("Webservice throws ZodError for an invalid CPF", () => {
+      expect(() =>
+        service.distribuicaoDfe({
+          CPF: "12345678999",
+          consChNFe: {
+            chNFe: "0".repeat(44),
+          },
+        }),
+      ).toThrowError(ZodError);
+    });
+
+    test("Webservice throws ZodError for an invalid CNPJ", () => {
+      expect(() =>
+        service.distribuicaoDfe({
+          CNPJ: "12345678901299",
+          consChNFe: {
+            chNFe: "0".repeat(44),
+          },
+        }),
+      ).toThrowError(ZodError);
+    });
   });
 });
