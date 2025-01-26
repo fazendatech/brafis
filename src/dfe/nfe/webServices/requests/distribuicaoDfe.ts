@@ -37,7 +37,7 @@ export type NfeDistribuicaoDfeOperation =
  */
 export type NfeDistribuicaoDfeOptions = CpfOrCnpj & NfeDistribuicaoDfeOperation;
 
-export type NfeDistribuicaoDfeRequest = WithXmlns<{
+export type NfeDistribuicaoDfeRequest = {
   distDFeInt: WithXmlnsVersao<
     {
       tpAmb: "1" | "2";
@@ -45,7 +45,7 @@ export type NfeDistribuicaoDfeRequest = WithXmlns<{
     } & CpfOrCnpj &
       NfeDistribuicaoDfeOperation
   >;
-}>;
+};
 
 /**
  * @description Resposta completa da consulta de status serviço.
@@ -58,7 +58,7 @@ export type NfeDistribuicaoDfeRequest = WithXmlns<{
  * @property [ultNSU] - Último NSU processado.
  * @property [maxNSU] - Maior NSU encontrado.
  * @property [loteDistDFeInt] - Lote de distribuição de DF-e.
- * @property loteDistDFeInt.docZip - Documentos zipados.
+ * @property loteDistDFeInt.docZip - Array de documentos zipados.
  * @property loteDistDFeInt["@_NSU"] - NSU do lote.
  * @property loteDistDFeInt["@_schema"] - Schema do lote.
  */
