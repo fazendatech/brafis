@@ -30,9 +30,6 @@ import type {
   NfeAutorizacaoOptions,
   NfeAutorizacaoRequest,
   NfeAutorizacaoResponse,
-  NfeAutorizacaoResponseRaw,
-  NfeAutorizacaoStatus,
-  NfeAutorizacaoStatusProtocolo,
 } from "./requests/autorizacao";
 import type { NfeWebServicesOptions } from "./types";
 import type {
@@ -235,11 +232,9 @@ export class NfeWebServices {
       certificate: this.certificate,
       signId: nfe.NFe.infNFe["@_Id"],
     }) as NfeLayoutWithSignature;
-    const {
-      nfeResultMsg: { retEnviNFe },
-    } = await this.request<
-      { nfeDadosMsg: NfeAutorizacaoRequest },
-      { nfeResultMsg: { retEnviNFe: NfeAutorizacaoResponseRaw } }
+    const response = await this.request<
+      NfeAutorizacaoRequest,
+      NfeAutorizacaoResponse
     >(this.getUrl("NFeAutorizacao"), {
       timeout: this.timeout,
       body: {
@@ -255,34 +250,13 @@ export class NfeWebServices {
         },
       },
     });
-
-    const statusProtocoloMap: Record<string, NfeAutorizacaoStatusProtocolo> = {
-      "100": "uso-autorizado",
-    };
-    const cStatProtocolo = retEnviNFe.protNFe?.infProt.cStat;
-    const protNFe = cStatProtocolo
-      ? {
-          status: statusProtocoloMap[cStatProtocolo] ?? "erro",
-          description: retEnviNFe.protNFe?.infProt.xMotivo ?? "",
-        }
-      : null;
     const xml = helpersAutorizacao.buildNfeProc({
       xmlns: this.xmlNamespace["@_xmlns"],
       nfe: signedNfe,
-      protNFe: retEnviNFe.protNFe,
+      protNFe: response.nfeResultMsg.retEnviNFe.protNFe,
     });
-
-    const statusMap: Record<string, NfeAutorizacaoStatus> = {
-      "103": "lote-recebido",
-      "104": "lote-processado",
-      "105": "lote-em-processamento",
-      "106": "lote-nao-localizado",
-    };
     return {
-      status: statusMap[retEnviNFe.cStat] ?? "outro",
-      description: retEnviNFe.xMotivo ?? "",
-      raw: retEnviNFe,
-      protNFe,
+      ...response,
       xml,
     };
   }
