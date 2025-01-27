@@ -7,7 +7,7 @@ import type {
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-import type { NfeWebServiceResponse } from "./common";
+import type { NfeResultMsg } from "./common";
 
 /**
  * @description Opções para configurar o web service de NFe autorização.
@@ -20,14 +20,16 @@ export type NfeAutorizacaoOptions = {
   nfe: NfeLayout;
 };
 
-export type NfeAutorizacaoRequest = WithXmlns<{
-  enviNFe: WithXmlnsVersao<{
-    idLote: string;
-    // NOTE: Envio assíncrono em lote se tornará obsoleto para NF-e. Estamos tratando apenas o caso síncrono (indSinc=1).
-    indSinc: "1";
-    NFe: NfeLayout["NFe"];
+export interface NfeAutorizacaoRequest {
+  nfeDadosMsg: WithXmlns<{
+    enviNFe: WithXmlnsVersao<{
+      idLote: string;
+      // NOTE: Envio assíncrono em lote se tornará obsoleto para NF-e. Estamos tratando apenas o caso síncrono (indSinc=1).
+      indSinc: "1";
+      NFe: NfeLayout["NFe"];
+    }>;
   }>;
-}>;
+}
 
 export type NfeAutorizacaoProtNfe = WithVersao<{
   infProt: {
@@ -56,36 +58,17 @@ export type NfeAutorizacaoProtNfe = WithVersao<{
  * @property infRec.nRec - Número do Recibo gerado.
  * @property infRec.tMed - Tempo médio de resposta do serviço (em segundos) dos últimos 5 minutos.
  */
-export interface NfeAutorizacaoResponseRaw {
-  tpAmb: string;
-  verAplic: string;
-  cStat: LiteralStringUnion<"103" | "104" | "105" | "106">;
-  xMotivo: string;
-  cUF: Uf;
-  dhRecbto: string;
-  infRec?: { nRec: string; tMed: string };
-  protNFe?: NfeAutorizacaoProtNfe;
-}
-
-export type NfeAutorizacaoStatus =
-  | "lote-recebido"
-  | "lote-processado"
-  | "lote-em-processamento"
-  | "lote-nao-localizado";
-
-/**
- * @description Status do protocolo. cStat 100 = "uso-autorizado". Qualquer outro valor é considerado erro.
- */
-export type NfeAutorizacaoStatusProtocolo = "uso-autorizado" | "erro";
-
-export type NfeAutorizacaoResponse = NfeWebServiceResponse<
-  NfeAutorizacaoStatus,
-  NfeAutorizacaoResponseRaw,
-  {
-    protNFe: {
-      status: NfeAutorizacaoStatusProtocolo;
-      description: string;
-    } | null;
-    xml: string | null;
-  }
->;
+export type NfeAutorizacaoResponse = NfeResultMsg<{
+  retEnviNFe: {
+    tpAmb: string;
+    verAplic: string;
+    cStat: LiteralStringUnion<"103" | "104" | "105" | "106">;
+    xMotivo: string;
+    cUF: Uf;
+    dhRecbto: string;
+    infRec?: { nRec: string; tMed: string };
+    protNFe?: NfeAutorizacaoProtNfe;
+  };
+}> & {
+  xml: string | null;
+};
