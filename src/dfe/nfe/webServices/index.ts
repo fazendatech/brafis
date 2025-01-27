@@ -536,7 +536,7 @@ export class NfeWebServices {
   /**
    * @description Consulta a distribuição de informações resumidas e documentos fiscais eletrônicos de interesse de um ator, seja este uma pessoa física ou jurídica.
    *
-   * @param {NfeRecepcaoEventoOptions} options - Opções para o serviço.
+   * @param {NfeDistribuicaoDfeOptions} options - Opções para o serviço.
    *
    * @returns {Promise<NfeDistribuicaoDfeResponse>} O resultado do serviço.
    *
