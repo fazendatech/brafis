@@ -27,8 +27,6 @@ import {
 import type {
   NfeStatusServicoRequest,
   NfeStatusServicoResponse,
-  NfeStatusServicoResponseRaw,
-  NfeStatusServicoStatus,
 } from "./requests/statusServico";
 import type {
   NfeAutorizacaoOptions,
@@ -160,11 +158,9 @@ export class NfeWebServices {
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
   async statusServico(): Promise<NfeStatusServicoResponse> {
-    const {
-      nfeResultMsg: { retConsStatServ },
-    } = await this.request<
-      { nfeDadosMsg: NfeStatusServicoRequest },
-      { nfeResultMsg: { retConsStatServ: NfeStatusServicoResponseRaw } }
+    return await this.request<
+      NfeStatusServicoRequest,
+      NfeStatusServicoResponse
     >(this.getUrl("NfeStatusServico"), {
       timeout: this.timeout,
       body: {
@@ -181,17 +177,6 @@ export class NfeWebServices {
         },
       },
     });
-
-    const statusMap: Record<string, NfeStatusServicoStatus> = {
-      "107": "operando",
-      "108": "paralisado-temporariamente",
-      "109": "paralisado",
-    };
-    return {
-      status: statusMap[retConsStatServ.cStat] ?? "outro",
-      description: retConsStatServ.xMotivo ?? "",
-      raw: retConsStatServ,
-    };
   }
 
   /**

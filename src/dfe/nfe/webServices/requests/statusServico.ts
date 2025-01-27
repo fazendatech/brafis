@@ -2,15 +2,15 @@ import type { UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-import type { NfeWebServiceResponse } from "./common";
-
-export type NfeStatusServicoRequest = WithXmlns<{
-  consStatServ: WithXmlnsVersao<{
-    tpAmb: "1" | "2";
-    cUF: UfCode;
-    xServ: "STATUS";
+export type NfeStatusServicoRequest = {
+  nfeDadosMsg: WithXmlns<{
+    consStatServ: WithXmlnsVersao<{
+      tpAmb: "1" | "2";
+      cUF: UfCode;
+      xServ: "STATUS";
+    }>;
   }>;
-}>;
+};
 
 /**
  * @description Resposta completa da consulta de status serviço.
@@ -25,24 +25,18 @@ export type NfeStatusServicoRequest = WithXmlns<{
  * @property [dhRetorno] - Data e hora previstas para o retorno do serviço.
  * @property [xObs] - Informações adicionais para o contribuinte.
  */
-export interface NfeStatusServicoResponseRaw {
-  tpAmb: "1" | "2";
-  verAplic: string;
-  cStat: LiteralStringUnion<"107" | "108" | "109">;
-  xMotivo: string;
-  cUF: UfCode;
-  dhRecbto: string;
-  tMed?: string;
-  dhRetorno?: string;
-  xObs?: string;
+export interface NfeStatusServicoResponse {
+  nfeResultMsg: {
+    retConsStatServ: {
+      tpAmb: "1" | "2";
+      verAplic: string;
+      cStat: LiteralStringUnion<"107" | "108" | "109">;
+      xMotivo: string;
+      cUF: UfCode;
+      dhRecbto: string;
+      tMed?: string;
+      dhRetorno?: string;
+      xObs?: string;
+    };
+  };
 }
-
-export type NfeStatusServicoStatus =
-  | "operando"
-  | "paralisado-temporariamente"
-  | "paralisado";
-
-export type NfeStatusServicoResponse = NfeWebServiceResponse<
-  NfeStatusServicoStatus,
-  NfeStatusServicoResponseRaw
->;
