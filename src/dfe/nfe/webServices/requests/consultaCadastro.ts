@@ -155,7 +155,7 @@ export interface RetConsCad {
 }
 
 /**
- * @description Resposta da consulta de cadastro.
+ * @description Resposta completa da consulta de cadastro.
  *
  * @property {RetConsCad} nfeResultMsg.retConsCad - Informações da consulta.
  */
