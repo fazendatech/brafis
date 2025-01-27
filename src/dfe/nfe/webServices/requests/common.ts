@@ -9,3 +9,5 @@ export type NfeWebServiceResponse<Status, Raw, Extra = unknown> = {
   description: string;
   raw: Raw;
 } & Extra;
+
+export type NfeResultMsg<Result> = { nfeResultMsg: Result };

@@ -21,8 +21,6 @@ import {
   type NfeConsultaCadastroOptions,
   type NfeConsultaCadastroRequest,
   type NfeConsultaCadastroResponse,
-  type NfeConsultaCadastroResponseRaw,
-  type NfeConsultaCadastroStatus,
 } from "./requests/consultaCadastro";
 import type {
   NfeStatusServicoRequest,
@@ -195,11 +193,9 @@ export class NfeWebServices {
   ): Promise<NfeConsultaCadastroResponse> {
     schemaNfeConsultaCadastroOptions.parse(options);
 
-    const {
-      nfeResultMsg: { retConsCad },
-    } = await this.request<
-      { nfeDadosMsg: NfeConsultaCadastroRequest },
-      { nfeResultMsg: { retConsCad: NfeConsultaCadastroResponseRaw } }
+    return await this.request<
+      NfeConsultaCadastroRequest,
+      NfeConsultaCadastroResponse
     >(this.getUrl("NfeConsultaCadastro"), {
       timeout: this.timeout,
       body: {
@@ -215,16 +211,6 @@ export class NfeWebServices {
       },
       arrayTags: ["infCad"],
     });
-
-    const statusMap: Record<string, NfeConsultaCadastroStatus> = {
-      "111": "uma-ocorrencia",
-      "112": "multiplas-ocorrencias",
-    };
-    return {
-      status: statusMap[retConsCad.infCons.cStat] ?? "outro",
-      description: retConsCad.infCons.xMotivo ?? "",
-      raw: retConsCad,
-    };
   }
 
   /**
