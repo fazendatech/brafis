@@ -1,4 +1,4 @@
-import type { UFCode } from "@/ufCode/types";
+import type { UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
@@ -7,7 +7,7 @@ import type { NfeWebServiceResponse } from "./common";
 export type NfeStatusServicoRequest = WithXmlns<{
   consStatServ: WithXmlnsVersao<{
     tpAmb: "1" | "2";
-    cUF: UFCode;
+    cUF: UfCode;
     xServ: "STATUS";
   }>;
 }>;
@@ -30,7 +30,7 @@ export interface NfeStatusServicoResponseRaw {
   verAplic: string;
   cStat: LiteralStringUnion<"107" | "108" | "109">;
   xMotivo: string;
-  cUF: UFCode;
+  cUF: UfCode;
   dhRecbto: string;
   tMed?: string;
   dhRetorno?: string;
