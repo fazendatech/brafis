@@ -565,7 +565,7 @@ export class NfeWebServices {
     if (distNSU) {
       operation = { distNSU: { ultNSU: distNSU.ultNSU.padStart(15, "0") } };
     } else if (consNSU) {
-      operation = { consNSU };
+      operation = { consNSU: { NSU: consNSU.NSU.padStart(15, "0") } };
     } else {
       operation = { consChNFe };
     }
@@ -596,7 +596,7 @@ export class NfeWebServices {
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe",
           nfeDadosMsg: {
             distDFeInt: {
-              "@_versao": "1.00",
+              "@_versao": "1.01",
               ...this.xmlNamespace,
               tpAmb: this.tpAmb,
               cUFAutor: this.cUF,
