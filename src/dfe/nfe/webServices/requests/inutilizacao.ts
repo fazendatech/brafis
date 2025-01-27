@@ -1,4 +1,4 @@
-import type { UFCode } from "@/ufCode/types";
+import type { UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 
 import type { NfeWebServiceResponse } from "./common";
@@ -24,7 +24,7 @@ export interface NfeInutilizacaoInutNfe {
       "@_Id": string;
       tpAmb: "1" | "2";
       xServ: "INUTILIZAR";
-      cUF: UFCode;
+      cUF: UfCode;
       ano: string;
       CNPJ: string;
       mod: string;

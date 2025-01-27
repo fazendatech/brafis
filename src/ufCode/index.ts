@@ -1,6 +1,6 @@
-import type { UF, UFCode } from "./types";
+import type { Uf, UfCode } from "./types";
 
-export const ufCodeMap: Record<UF, UFCode> = {
+export const ufCodeMap: Record<Uf, UfCode> = {
   AC: "12",
   AL: "27",
   AP: "16",
@@ -32,7 +32,7 @@ export const ufCodeMap: Record<UF, UFCode> = {
 
 export const ufCodeMapInverse = Object.fromEntries(
   Object.entries(ufCodeMap).map(([uf, code]) => [code, uf]),
-) as Record<UFCode, UF>;
+) as Record<UfCode, Uf>;
 
 /**
  * @description Retorna o código numérico de uma UF.
@@ -42,11 +42,11 @@ export const ufCodeMapInverse = Object.fromEntries(
  * getUfCode("SP") // "35"
  * ```
  *
- * @param {UF} uf - Sigla de uma UF.
+ * @param {Uf} uf - Sigla de uma UF.
  *
- * @returns {UFCode} Código numérico de uma UF.
+ * @returns {UfCode} Código numérico de uma UF.
  */
-export function getUfCode(uf: UF): UFCode {
+export function getUfCode(uf: Uf): UfCode {
   return ufCodeMap[uf];
 }
 
@@ -58,10 +58,10 @@ export function getUfCode(uf: UF): UFCode {
  * getUfFromCode("35") // "SP"
  * ```
  *
- * @param {UF} code - Código numérico de uma UF.
+ * @param {UfCode} code - Código numérico de uma UF.
  *
- * @returns {UFCode} Sigla de uma UF.
+ * @returns {Uf} Sigla de uma UF.
  */
-export function getUfFromCode(code: UFCode): UF {
+export function getUfFromCode(code: UfCode): Uf {
   return ufCodeMapInverse[code];
 }

@@ -1,4 +1,4 @@
-import type { UF } from "@/ufCode/types";
+import type { Uf } from "@/ufCode/types";
 
 import { NfeWebServiceNotFoundError } from "./errors";
 import type {
@@ -20,7 +20,7 @@ import type {
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
 const ufEnvMap = {
-  self: new Set<UF>([
+  self: new Set<Uf>([
     "AM",
     "BA",
     "GO",
@@ -32,9 +32,9 @@ const ufEnvMap = {
     "RS",
     "SP",
   ]),
-  SVAN: new Set<UF>(["MA"]),
-  SVRS_CC: new Set<UF>(["AC", "ES", "RN", "PB", "SC"]),
-  SVRS: new Set<UF>([
+  SVAN: new Set<Uf>(["MA"]),
+  SVRS_CC: new Set<Uf>(["AC", "ES", "RN", "PB", "SC"]),
+  SVRS: new Set<Uf>([
     "AC",
     "AL",
     "AP",
@@ -52,7 +52,7 @@ const ufEnvMap = {
     "SE",
     "TO",
   ]),
-  SVCAN: new Set<UF>([
+  SVCAN: new Set<Uf>([
     "AC",
     "AL",
     "AP",
@@ -72,7 +72,7 @@ const ufEnvMap = {
     "SP",
     "TO",
   ]),
-  SVCRS: new Set<UF>(["AM", "BA", "GO", "MA", "MS", "MT", "PE", "PR"]),
+  SVCRS: new Set<Uf>(["AM", "BA", "GO", "MA", "MS", "MT", "PE", "PR"]),
 };
 
 /**
@@ -518,7 +518,7 @@ const webServices: WebServiceUrls = {
  * - UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, GO, MA, MS, MT, PE, PI (Homologação), PR
  */
 function getWebServiceUrlContingencia(
-  uf: UF,
+  uf: Uf,
   service: NfeWebService,
   env: Environment,
 ): string | null {
@@ -547,7 +547,7 @@ function getWebServiceUrlContingencia(
  * - Para demais serviços relacionados com o sistema da NF-e: AC, AL, AP, CE, DF, ES, PA, PB, PI, RJ, RN, RO, RR, SC, SE, TO
  */
 function getWebServiceUrlNormal(
-  uf: UF,
+  uf: Uf,
   service: NfeWebService,
   env: Environment,
 ): string | null {

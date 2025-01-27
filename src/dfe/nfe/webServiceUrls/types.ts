@@ -1,4 +1,4 @@
-import type { UF } from "@/ufCode/types";
+import type { Uf } from "@/ufCode/types";
 
 /**
  * @description Ambiente de emissão da NF-e (tpAmb).
@@ -46,7 +46,7 @@ export type WebServiceUrls = {
 };
 
 export interface GetWebServiceUrlOptions {
-  uf: UF;
+  uf: Uf;
   service: NfeWebService;
   env: Environment;
   contingency?: boolean;

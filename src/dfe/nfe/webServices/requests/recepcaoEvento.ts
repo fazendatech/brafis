@@ -6,7 +6,7 @@ import type {
 import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
-import type { UFCode } from "@/ufCode/types";
+import type { UfCode } from "@/ufCode/types";
 
 export type DescEvento =
   | "Cancelamento"
@@ -43,7 +43,7 @@ type NfeRecepcaoEventoInfEvento =
       "110112",
       OptionsCancelamentoPorSubstituicao,
       {
-        cOrgaoAutor: UFCode;
+        cOrgaoAutor: UfCode;
         tpAutor: "1";
       }
     >
