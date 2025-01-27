@@ -541,8 +541,8 @@ export class NfeWebServices {
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe",
           nfeDadosMsg: {
             distDFeInt: {
-              "@_versao": "1.01",
               ...this.xmlNamespace,
+              "@_versao": "1.01",
               tpAmb: this.tpAmb,
               cUFAutor: this.cUF,
               ...cpfOrCnpj,
