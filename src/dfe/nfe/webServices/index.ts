@@ -8,7 +8,7 @@ import type {
   NfeWebService,
 } from "@/dfe/nfe/webServiceUrls/types";
 import { getUfCode } from "@/ufCode";
-import type { UF, UFCode } from "@/ufCode/types";
+import type { Uf, UfCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import type { WithXmlns } from "@/utils/soap/types";
@@ -77,14 +77,14 @@ import type {
 } from "./requests/distribuicaoDfe";
 
 export class NfeWebServices {
-  private uf: UF;
+  private uf: Uf;
   private env: Environment;
   private certificate: CertificateP12;
   private contingency: boolean;
   private timeout: number;
   private ca: string;
   private tpAmb: "1" | "2";
-  private cUF: UFCode;
+  private cUF: UfCode;
   private xmlNamespace: WithXmlns;
 
   constructor(options: NfeWebServicesOptions) {

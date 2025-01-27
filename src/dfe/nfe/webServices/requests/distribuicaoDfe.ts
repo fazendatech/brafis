@@ -1,9 +1,5 @@
-import type { UFCode } from "@/ufCode/types";
-import type {
-  WithVersao,
-  WithXmlns,
-  WithXmlnsVersao,
-} from "@/utils/soap/types";
+import type { UfCode } from "@/ufCode/types";
+import type { WithVersao, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
 import type { NfeWebServiceResponse } from "./common";
@@ -41,7 +37,7 @@ export type NfeDistribuicaoDfeRequest = {
   distDFeInt: WithXmlnsVersao<
     {
       tpAmb: "1" | "2";
-      cUFAutor: UFCode;
+      cUFAutor: UfCode;
     } & CpfOrCnpj &
       NfeDistribuicaoDfeOperation
   >;

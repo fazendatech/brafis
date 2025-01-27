@@ -1,5 +1,5 @@
 import type { NfeLayout } from "@/dfe/nfe/layout";
-import type { UF } from "@/ufCode/types";
+import type { Uf } from "@/ufCode/types";
 import type {
   WithVersao,
   WithXmlns,
@@ -61,7 +61,7 @@ export interface NfeAutorizacaoResponseRaw {
   verAplic: string;
   cStat: LiteralStringUnion<"103" | "104" | "105" | "106">;
   xMotivo: string;
-  cUF: UF;
+  cUF: Uf;
   dhRecbto: string;
   infRec?: { nRec: string; tMed: string };
   protNFe?: NfeAutorizacaoProtNfe;

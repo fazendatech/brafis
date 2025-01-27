@@ -1,6 +1,6 @@
 import type { LiteralStringUnion } from "@/utils/types";
 
-export type UF = LiteralStringUnion<
+export type Uf = LiteralStringUnion<
   | "AC"
   | "AL"
   | "AP"
@@ -33,7 +33,7 @@ export type UF = LiteralStringUnion<
 /**
  * @description Código numérico de uma UF
  */
-export type UFCode = LiteralStringUnion<
+export type UfCode = LiteralStringUnion<
   | "12"
   | "27"
   | "16"

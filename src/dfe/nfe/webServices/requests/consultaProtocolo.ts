@@ -1,4 +1,4 @@
-import type { UFCode } from "@/ufCode/types";
+import type { UfCode } from "@/ufCode/types";
 import type {
   WithVersao,
   WithXmlns,
@@ -56,7 +56,7 @@ export type NfeConsultaProtocoloResponseRaw = WithVersao<{
   verAplic: string;
   cStat: LiteralStringUnion<"100" | "101" | "110">;
   xMotivo: string;
-  cUF: UFCode;
+  cUF: UfCode;
   dhRecbto: string;
   chNFe: string;
   protNFe?: NfeAutorizacaoProtNfe;

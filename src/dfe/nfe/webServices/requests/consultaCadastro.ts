@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { UF, UFCode } from "@/ufCode/types";
+import type { Uf, UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 import { zCustom } from "@/utils/zCustom";
@@ -33,7 +33,7 @@ export type NfeConsultaCadastroRequest = WithXmlns<{
   ConsCad: WithXmlnsVersao<{
     infCons: {
       xServ: "CONS-CAD";
-      UF: UFCode;
+      UF: Uf;
       IE?: string;
       CNPJ?: string;
       CPF?: string;
@@ -87,7 +87,7 @@ export interface InfCad {
   IE: string;
   CNPJ?: string;
   CPF?: string;
-  UF: UF;
+  UF: Uf;
   cSit: "0" | "1";
   indCredNFe: "0" | "1" | "2" | "3" | "4";
   indCredCTe: "0" | "1" | "2" | "3" | "4";
@@ -122,12 +122,12 @@ export interface NfeConsultaCadastroResponseRaw {
     verAplic: string;
     cStat: LiteralStringUnion<"111" | "112">;
     xMotivo: string;
-    UF: UF;
+    UF: Uf;
     IE?: string;
     CNPJ?: string;
     CPF?: string;
     dhCons: string;
-    cUF: UFCode;
+    cUF: UfCode;
     infCad: InfCad[];
   };
 }
