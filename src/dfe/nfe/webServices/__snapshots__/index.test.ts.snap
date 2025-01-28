@@ -2,131 +2,125 @@
 
 exports[`NfeWebServices autorizacao Returns valid response 1`] = `
 {
-  "description": "Lote processado",
-  "protNFe": {
-    "description": "Autorizado o uso da NF-e",
-    "status": "uso-autorizado",
-  },
-  "raw": {
-    "cStat": "104",
-    "protNFe": {
-      "@_versao": "4.00",
-      "infProt": {
-        "cStat": "100",
-        "chNFe": "00000000000000000000000000000000000000000000",
-        "dhRecbto": "2021-01-04T12:34:56-03:00",
-        "digVal": "123456789012345",
-        "nProt": "123456789012345",
-        "tpAmb": "2",
-        "verAplic": "SVRS202101041234",
-        "xMotivo": "Autorizado o uso da NF-e",
+  "nfeResultMsg": {
+    "retEnviNFe": {
+      "cStat": "104",
+      "protNFe": {
+        "@_versao": "4.00",
+        "infProt": {
+          "cStat": "100",
+          "chNFe": "00000000000000000000000000000000000000000000",
+          "dhRecbto": "2021-01-04T12:34:56-03:00",
+          "digVal": "123456789012345",
+          "nProt": "123456789012345",
+          "tpAmb": "2",
+          "verAplic": "SVRS202101041234",
+          "xMotivo": "Autorizado o uso da NF-e",
+        },
       },
+      "xMotivo": "Lote processado",
     },
-    "xMotivo": "Lote processado",
   },
-  "status": "lote-processado",
   "xml": "<?xml version="1.0" encoding="UTF-8"?><nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00"><NFe><infNFe>mock NFe</infNFe><Signature>mock signature</Signature></NFe><protNFe versao="4.00"><infProt><tpAmb>2</tpAmb><verAplic>SVRS202101041234</verAplic><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRecbto>2021-01-04T12:34:56-03:00</dhRecbto><nProt>123456789012345</nProt><digVal>123456789012345</digVal><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo></infProt></protNFe></nfeProc>",
 }
 `;
 
 exports[`NfeWebServices inutilizacao Returns valid response 1`] = `
 {
-  "description": "Inutilização de número homologado",
-  "raw": {
-    "infInut": {
-      "cStat": "102",
-      "cUF": "53",
-      "dhRecbto": "2021-01-01T00:00:00-03:00",
-      "nProt": "123456789",
-      "xMotivo": "Inutilização de número homologado",
+  "nfeResultMsg": {
+    "retInutNFe": {
+      "infInut": {
+        "cStat": "102",
+        "cUF": "53",
+        "dhRecbto": "2021-01-01T00:00:00-03:00",
+        "nProt": "123456789",
+        "xMotivo": "Inutilização de número homologado",
+      },
     },
   },
-  "status": "homologada",
 }
 `;
 
 exports[`NfeWebServices recepcaoEvento Returns valid response 1`] = `
 {
-  "description": "Lote processado",
-  "raw": {
-    "@_versao": "1.00",
-    "cOrgao": "91",
-    "cStat": "128",
-    "idLote": "1",
-    "retEvento": {
+  "nfeResultMsg": {
+    "retEnvEvento": {
       "@_versao": "1.00",
-      "infEvento": {
-        "@_Id": "ID123",
-        "cStat": "135",
-        "chNFe": "00000000000000000000000000000000000000000000",
-        "dhRegEvento": "2025-01-01T00:00:00-03:00",
-        "nProt": "123456789",
-        "tpEvento": "110110",
-        "xEvento": "Carta de Correção aplicada",
-        "xMotivo": "Evento registrado e vinculado a NF-e",
+      "cOrgao": "91",
+      "cStat": "128",
+      "idLote": "1",
+      "retEvento": {
+        "@_versao": "1.00",
+        "infEvento": {
+          "@_Id": "ID123",
+          "cStat": "135",
+          "chNFe": "00000000000000000000000000000000000000000000",
+          "dhRegEvento": "2025-01-01T00:00:00-03:00",
+          "nProt": "123456789",
+          "tpEvento": "110110",
+          "xEvento": "Carta de Correção aplicada",
+          "xMotivo": "Evento registrado e vinculado a NF-e",
+        },
       },
+      "tpAmb": "2",
+      "verAplic": "SVRS202101041234",
+      "xMotivo": "Lote processado",
     },
-    "tpAmb": "2",
-    "verAplic": "SVRS202101041234",
-    "xMotivo": "Lote processado",
   },
-  "retEvento": {
-    "description": "Evento registrado e vinculado a NF-e",
-    "status": "evento-registrado-vinculado-a-nfe",
-  },
-  "status": "lote-processado",
   "xml": "<?xml version="1.0" encoding="UTF-8"?><procEventoNFe xmlns="http://www.portalfiscal.inf.br/nfe" versao="1.00"><evento versao="1.00"><infEvento><detEvento>Mock detEvento</detEvento></infEvento><Signature>mock signature</Signature></evento><retEvento versao="1.00"><infEvento Id="ID123"><tpEvento>110110</tpEvento><xEvento>Carta de Correção aplicada</xEvento><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo><chNFe>00000000000000000000000000000000000000000000</chNFe><dhRegEvento>2025-01-01T00:00:00-03:00</dhRegEvento><nProt>123456789</nProt></infEvento></retEvento></procEventoNFe>",
 }
 `;
 
 exports[`NfeWebServices consultaProtocolo Returns valid response 1`] = `
 {
-  "description": "Autorizado o uso da NF-e",
-  "raw": {
-    "cStat": "100",
-    "cUF": "53",
-    "chNFe": "00000000000000000000000000000000000000000000",
-    "procEventoNFe": [
-      {
-        "evento": "mock evento",
-        "retEvento": "mock ret",
+  "nfeResultMsg": {
+    "retConsSitNFe": {
+      "cStat": "100",
+      "cUF": "53",
+      "chNFe": "00000000000000000000000000000000000000000000",
+      "procEventoNFe": [
+        {
+          "evento": "mock evento",
+          "retEvento": "mock ret",
+        },
+      ],
+      "protNFe": {
+        "infProt": {
+          "cStat": "100",
+          "chNFe": "00000000000000000000000000000000000000000000",
+          "digVal": "123456789012345",
+          "nProt": "123456789012345",
+          "tpAmb": "2",
+          "xMotivo": "Autorizado o uso da NF-e",
+        },
       },
-    ],
-    "protNFe": {
-      "infProt": {
-        "cStat": "100",
-        "chNFe": "00000000000000000000000000000000000000000000",
-        "digVal": "123456789012345",
-        "nProt": "123456789012345",
-        "tpAmb": "2",
-        "xMotivo": "Autorizado o uso da NF-e",
-      },
+      "tpAmb": "2",
+      "xMotivo": "Autorizado o uso da NF-e",
     },
-    "tpAmb": "2",
-    "xMotivo": "Autorizado o uso da NF-e",
   },
-  "status": "uso-autorizado",
 }
 `;
 
 exports[`NfeWebServices distribuicaoDfe Returns valid response 1`] = `
 {
-  "description": "Documento localizado",
-  "raw": {
-    "cStat": "138",
-    "dhResp": "2025-01-24T08:00:00-03:00",
-    "loteDistDFeInt": {
-      "@_NSU": "0",
-      "@_schema": "resNFe_v1.00.xsd",
-      "docZip": [
-        "NFe compactada no padrão gZip",
-      ],
+  "nfeDistDFeInteresseResponse": {
+    "nfeDistDFeInteresseResult": {
+      "retDistDFeInt": {
+        "cStat": "138",
+        "dhResp": "2025-01-24T08:00:00-03:00",
+        "loteDistDFeInt": {
+          "@_NSU": "0",
+          "@_schema": "resNFe_v1.00.xsd",
+          "docZip": [
+            "NFe compactada no padrão gZip",
+          ],
+        },
+        "maxNSU": "0",
+        "tpAmb": "2",
+        "ultNSU": "0",
+        "xMotivo": "Documento localizado",
+      },
     },
-    "maxNSU": "0",
-    "tpAmb": "2",
-    "ultNSU": "0",
-    "xMotivo": "Documento localizado",
   },
-  "status": "documento-localizado",
 }
 `;
