@@ -6,7 +6,7 @@ import type {
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-import type { NfeWebServiceResponse } from "./common";
+import type { NfeResultMsg } from "./common";
 import type { NfeAutorizacaoProtNfe } from "./autorizacao";
 import type {
   NfeRecepcaoEventoEventoWithSignature,
@@ -22,13 +22,15 @@ export interface NfeConsultaProtocoloOptions {
   chNFe: string;
 }
 
-export type NfeConsultaProtocoloRequest = WithXmlns<{
-  consSitNFe: WithXmlnsVersao<{
-    tpAmb: "1" | "2";
-    xServ: "CONSULTAR";
-    chNFe: string;
+export type NfeConsultaProtocoloRequest = {
+  nfeDadosMsg: WithXmlns<{
+    consSitNFe: WithXmlnsVersao<{
+      tpAmb: "1" | "2";
+      xServ: "CONSULTAR";
+      chNFe: string;
+    }>;
   }>;
-}>;
+};
 
 type ProcEventoNfe = {
   evento: NfeRecepcaoEventoEventoWithSignature;
@@ -38,37 +40,44 @@ type ProcEventoNfe = {
 /**
  * @description Resposta completa da consulta de status serviço.
  *
- * @property tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
- * @property verAplic - Versão do aplicativo que processou a consulta.
- * @property cStat - `"100"->"uso-autorizado"`, `"101"->"cancelamento-de-nfe-homologado"`, `"110"->"uso-denegado"`.
- * @property xMotivo - Descrição da resposta.
- * @property cUF - Código da UF que atendeu a solicitação.
- * @property dhRecbto - Data e hora do processamento.
- * @property chNFe - Chave de acesso da NF-e.
- * @property [protNFe] - Protocolo de autorização ou denegação da NF-e.
- * • Informar se localizada uma NF-e com cStat = 100-
-uso autorizado, 150-uso autorizado fora de prazo ou
-110-uso denegado. (NT 2012.003)
-  * @property [procEventoNFe] - Informação do evento e respectivo protocolo do evento.
+ * @property {"1" | "2"}nfeResultMsg.retConsSitNFe.tpAmb - Tipo de ambiente: 1-Produção 2-Homologação.
+ * @property {string} nfeResultMsg.retConsSitNFe.verAplic - Versão do aplicativo que processou a consulta.
+ * @property {string} nfeResultMsg.retConsSitNFe.cStat - `"100"->"uso-autorizado"`, `"101"->"cancelamento-de-nfe-homologado"`, `"110"->"uso-denegado"`.
+ * @property {string} nfeResultMsg.retConsSitNFe.xMotivo - Descrição da resposta.
+ * @property {UfCode} nfeResultMsg.retConsSitNFe.cUF - Código da UF que atendeu a solicitação.
+ * @property {string} nfeResultMsg.retConsSitNFe.dhRecbto - Data e hora do processamento.
+ * @property {string} nfeResultMsg.retConsSitNFe.chNFe - Chave de acesso da NF-e.
+ * @property {NfeAutorizacaoProtNfe} [nfeResultMsg.retConsSitNFe.protNFe] - Protocolo de autorização ou denegação da NF-e.
+ * @property {ProcEventoNfe[]} [nfeResultMsg.retConsSitNFe.procEventoNFe] - Informações do evento e respectivo protocolo do evento.
  */
-export type NfeConsultaProtocoloResponseRaw = WithVersao<{
-  tpAmb: "1" | "2";
-  verAplic: string;
-  cStat: LiteralStringUnion<"100" | "101" | "110">;
-  xMotivo: string;
-  cUF: UfCode;
-  dhRecbto: string;
-  chNFe: string;
-  protNFe?: NfeAutorizacaoProtNfe;
-  procEventoNFe?: ProcEventoNfe[];
+export type NfeConsultaProtocoloResponse = NfeResultMsg<{
+  retConsSitNFe: WithVersao<{
+    tpAmb: "1" | "2";
+    verAplic: string;
+    cStat: LiteralStringUnion<
+      | "100"
+      | "101"
+      | "110"
+      | "217"
+      | "226"
+      | "236"
+      | "252"
+      | "526"
+      | "561"
+      | "562"
+      | "613"
+      | "614"
+      | "615"
+      | "616"
+      | "617"
+      | "618"
+      | "619"
+    >;
+    xMotivo: string;
+    cUF: UfCode;
+    dhRecbto: string;
+    chNFe: string;
+    protNFe?: NfeAutorizacaoProtNfe;
+    procEventoNFe?: ProcEventoNfe[];
+  }>;
 }>;
-
-export type NfeConsultaProtocoloStatus =
-  | "uso-autorizado"
-  | "cancelamento-de-nfe-homologado"
-  | "uso-denegado";
-
-export type NfeConsultaProtocoloResponse = NfeWebServiceResponse<
-  NfeConsultaProtocoloStatus,
-  NfeConsultaProtocoloResponseRaw
->;
