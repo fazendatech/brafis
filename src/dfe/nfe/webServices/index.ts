@@ -63,6 +63,7 @@ import type {
   NfeDistribuicaoDfeRequest,
   NfeDistribuicaoDfeResponse,
 } from "./requests/distribuicaoDfe";
+import { isValidAccessCode } from "@/utils/validators/isValidAccessCode";
 
 export class NfeWebServices {
   private uf: Uf;
@@ -402,13 +403,17 @@ export class NfeWebServices {
    *
    * @returns {Promise<NfeConsultaProtocoloResponse>} O resultado do serviço.
    *
+   * @throws {Zod.ZodError} Se os parâmetros informados não forem válidos.
    * @throws {TimeoutError} Se a requisição exceder o tempo limite.
    * @throws {NfeServiceRequestError} Se ocorrer um erro durante a requisição.
    */
   async consultaProtocolo({
     chNFe,
   }: NfeConsultaProtocoloOptions): Promise<NfeConsultaProtocoloResponse> {
-    const schemaChNfe = zCustom.numeric().length(44);
+    const schemaChNfe = zCustom
+      .numeric()
+      .length(44)
+      .refine((value) => isValidAccessCode(value));
     schemaChNfe.parse(chNFe);
 
     return await this.request<
@@ -466,7 +471,10 @@ export class NfeWebServices {
       schema.parse(distNSU.ultNSU);
       operation = { distNSU: { ultNSU: distNSU.ultNSU.padStart(15, "0") } };
     } else if (consNSU) {
-      const schema = zCustom.numeric().length(15);
+      const schema = zCustom
+        .numeric()
+        .length(15)
+        .refine((value) => isValidAccessCode(value));
       schema.parse(consNSU.NSU);
       operation = { consNSU: { NSU: consNSU.NSU.padStart(15, "0") } };
     } else {
