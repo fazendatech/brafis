@@ -47,9 +47,6 @@ import type {
   NfeRecepcaoEventoOptions,
   NfeRecepcaoEventoRequest,
   NfeRecepcaoEventoResponse,
-  NfeRecepcaoEventoResponseRaw,
-  NfeRecepcaoEventoStatus,
-  NfeRecepcaoEventoStatusEvento,
   CpfOrCnpj,
   NfeRecepcaoEventoEvento,
 } from "./requests/recepcaoEvento";
@@ -372,11 +369,9 @@ export class NfeWebServices {
       certificate: this.certificate,
       signId: recepcaoEvento.evento.infEvento["@_Id"],
     });
-    const {
-      nfeResultMsg: { retEnvEvento },
-    } = await this.request<
-      { nfeDadosMsg: NfeRecepcaoEventoRequest },
-      { nfeResultMsg: { retEnvEvento: NfeRecepcaoEventoResponseRaw } }
+    const response = await this.request<
+      NfeRecepcaoEventoRequest,
+      NfeRecepcaoEventoResponse
     >(this.getUrl("RecepcaoEvento"), {
       timeout: this.timeout,
       body: {
@@ -393,31 +388,13 @@ export class NfeWebServices {
       },
     });
 
-    const statusEventoMap: Record<string, NfeRecepcaoEventoStatusEvento> = {
-      "135": "evento-registrado-vinculado-a-nfe",
-      "136": "evento-registrado-nao-vinculado-a-nfe",
-    };
-    const cStatEvento = retEnvEvento.retEvento?.infEvento.cStat;
-    const retEvento = cStatEvento
-      ? {
-          status: statusEventoMap[cStatEvento] ?? "erro",
-          description: retEnvEvento.retEvento?.infEvento.xMotivo ?? "",
-        }
-      : null;
     const xml = helpersRecepcaoEvento.buildProcEventoNfe({
       xmlns: "http://www.portalfiscal.inf.br/nfe",
       evento: signedRecepcaoEvento,
-      retEvento: retEnvEvento.retEvento,
+      retEvento: response.nfeResultMsg.retEnvEvento.retEvento,
     });
-
-    const statusMap: Record<string, NfeRecepcaoEventoStatus> = {
-      "128": "lote-processado",
-    };
     return {
-      status: statusMap[retEnvEvento.cStat] ?? "outro",
-      description: retEnvEvento.xMotivo ?? "",
-      raw: retEnvEvento,
-      retEvento,
+      ...response,
       xml,
     };
   }
