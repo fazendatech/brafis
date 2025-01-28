@@ -4,12 +4,6 @@ export interface NfeRequestOptions<Body> {
   arrayTags?: string[];
 }
 
-export type NfeWebServiceResponse<Status, Raw, Extra = unknown> = {
-  status: Status | "outro";
-  description: string;
-  raw: Raw;
-} & Extra;
-
 export interface NfeResultMsg<Result> {
   nfeResultMsg: Result;
 }
