@@ -54,8 +54,6 @@ import type {
   NfeConsultaProtocoloOptions,
   NfeConsultaProtocoloRequest,
   NfeConsultaProtocoloResponse,
-  NfeConsultaProtocoloResponseRaw,
-  NfeConsultaProtocoloStatus,
 } from "./requests/consultaProtocolo";
 import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
 import helpersAutorizacao from "./helpers/autorizacao";
@@ -412,11 +410,12 @@ export class NfeWebServices {
   async consultaProtocolo({
     chNFe,
   }: NfeConsultaProtocoloOptions): Promise<NfeConsultaProtocoloResponse> {
-    const {
-      nfeResultMsg: { retConsSitNFe },
-    } = await this.request<
-      { nfeDadosMsg: NfeConsultaProtocoloRequest },
-      { nfeResultMsg: { retConsSitNFe: NfeConsultaProtocoloResponseRaw } }
+    const schemaChNfe = zCustom.numeric().length(44);
+    schemaChNfe.parse(chNFe);
+
+    return await this.request<
+      NfeConsultaProtocoloRequest,
+      NfeConsultaProtocoloResponse
     >(this.getUrl("NfeConsultaProtocolo"), {
       timeout: this.timeout,
       body: {
@@ -434,17 +433,6 @@ export class NfeWebServices {
       },
       arrayTags: ["procEventoNFe"],
     });
-
-    const statusMap: Record<string, NfeConsultaProtocoloStatus> = {
-      "100": "uso-autorizado",
-      "101": "cancelamento-de-nfe-homologado",
-      "110": "uso-denegado",
-    };
-    return {
-      status: statusMap[retConsSitNFe.cStat] ?? "outro",
-      description: retConsSitNFe.xMotivo ?? "",
-      raw: retConsSitNFe,
-    };
   }
 
   /**
