@@ -62,8 +62,6 @@ import type {
   NfeDistribuicaoDfeOptions,
   NfeDistribuicaoDfeRequest,
   NfeDistribuicaoDfeResponse,
-  NfeDistribuicaoDfeResponseRaw,
-  NfeDistribuicaoDfeStatus,
 } from "./requests/distribuicaoDfe";
 
 export class NfeWebServices {
@@ -455,7 +453,6 @@ export class NfeWebServices {
   }: NfeDistribuicaoDfeOptions): Promise<NfeDistribuicaoDfeResponse> {
     let cpfOrCnpj: CpfOrCnpj;
     if (CPF) {
-      // TODO: Validar resto do input.
       zCustom.cpf().parse(CPF);
       cpfOrCnpj = { CPF };
     } else {
@@ -472,24 +469,9 @@ export class NfeWebServices {
       operation = { consChNFe };
     }
 
-    const {
-      nfeDistDFeInteresseResponse: {
-        nfeDistDFeInteresseResult: { retDistDFeInt },
-      },
-    } = await this.request<
-      {
-        nfeDistDFeInteresse: {
-          "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe";
-          nfeDadosMsg: NfeDistribuicaoDfeRequest;
-        };
-      },
-      {
-        nfeDistDFeInteresseResponse: {
-          nfeDistDFeInteresseResult: {
-            retDistDFeInt: NfeDistribuicaoDfeResponseRaw;
-          };
-        };
-      }
+    return await this.request<
+      NfeDistribuicaoDfeRequest,
+      NfeDistribuicaoDfeResponse
     >(this.getUrl("NFeDistribuicaoDFe"), {
       timeout: this.timeout,
       body: {
@@ -510,15 +492,5 @@ export class NfeWebServices {
       },
       arrayTags: ["docZip"],
     });
-
-    const statusMap: Record<string, NfeDistribuicaoDfeStatus> = {
-      "137": "nenhum-documento-localizado",
-      "138": "documento-localizado",
-    };
-    return {
-      status: statusMap[retDistDFeInt.cStat] ?? "outro",
-      description: retDistDFeInt.xMotivo ?? "",
-      raw: retDistDFeInt,
-    };
   }
 }

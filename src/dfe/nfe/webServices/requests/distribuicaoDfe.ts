@@ -1,8 +1,10 @@
 import type { UfCode } from "@/ufCode/types";
-import type { WithVersao, WithXmlnsVersao } from "@/utils/soap/types";
+import type {
+  WithVersao,
+  WithXmlns,
+  WithXmlnsVersao,
+} from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
-
-import type { NfeWebServiceResponse } from "./common";
 import type { CpfOrCnpj } from "./recepcaoEvento";
 
 export type NfeDistribuicaoDfeOperation =
@@ -34,13 +36,17 @@ export type NfeDistribuicaoDfeOperation =
 export type NfeDistribuicaoDfeOptions = CpfOrCnpj & NfeDistribuicaoDfeOperation;
 
 export type NfeDistribuicaoDfeRequest = {
-  distDFeInt: WithXmlnsVersao<
-    {
-      tpAmb: "1" | "2";
-      cUFAutor: UfCode;
-    } & CpfOrCnpj &
-      NfeDistribuicaoDfeOperation
-  >;
+  nfeDistDFeInteresse: WithXmlns<{
+    nfeDadosMsg: {
+      distDFeInt: WithXmlnsVersao<
+        {
+          tpAmb: "1" | "2";
+          cUFAutor: UfCode;
+        } & CpfOrCnpj &
+          NfeDistribuicaoDfeOperation
+      >;
+    };
+  }>;
 };
 
 /**
@@ -58,26 +64,23 @@ export type NfeDistribuicaoDfeRequest = {
  * @property loteDistDFeInt["@_NSU"] - NSU do lote.
  * @property loteDistDFeInt["@_schema"] - Schema do lote.
  */
-export type NfeDistribuicaoDfeResponseRaw = WithVersao<{
-  tpAmb: "1" | "2";
-  verAplic: string;
-  cStat: LiteralStringUnion<"137" | "138">;
-  xMotivo: string;
-  dhResp: string;
-  ultNSU?: string;
-  maxNSU?: string;
-  loteDistDFeInt?: {
-    docZip: string[];
-    "@_NSU": string;
-    "@_schema": string;
+export type NfeDistribuicaoDfeResponse = {
+  nfeDistDFeInteresseResponse: {
+    nfeDistDFeInteresseResult: {
+      retDistDFeInt: WithVersao<{
+        tpAmb: "1" | "2";
+        verAplic: string;
+        cStat: LiteralStringUnion<"137" | "138">;
+        xMotivo: string;
+        dhResp: string;
+        ultNSU?: string;
+        maxNSU?: string;
+        loteDistDFeInt?: {
+          docZip: string[];
+          "@_NSU": string;
+          "@_schema": string;
+        };
+      }>;
+    };
   };
-}>;
-
-export type NfeDistribuicaoDfeStatus =
-  | "documento-localizado"
-  | "nenhum-documento-localizado";
-
-export type NfeDistribuicaoDfeResponse = NfeWebServiceResponse<
-  NfeDistribuicaoDfeStatus,
-  NfeDistribuicaoDfeResponseRaw
->;
+};
