@@ -10,4 +10,6 @@ export type NfeWebServiceResponse<Status, Raw, Extra = unknown> = {
   raw: Raw;
 } & Extra;
 
-export type NfeResultMsg<Result> = { nfeResultMsg: Result };
+export interface NfeResultMsg<Result> {
+  nfeResultMsg: Result;
+}
