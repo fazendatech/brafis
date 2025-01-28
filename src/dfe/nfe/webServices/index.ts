@@ -471,14 +471,14 @@ export class NfeWebServices {
       schema.parse(distNSU.ultNSU);
       operation = { distNSU: { ultNSU: distNSU.ultNSU.padStart(15, "0") } };
     } else if (consNSU) {
-      const schema = zCustom
-        .numeric()
-        .length(15)
-        .refine((value) => isValidAccessCode(value));
+      const schema = zCustom.numeric().length(15);
       schema.parse(consNSU.NSU);
       operation = { consNSU: { NSU: consNSU.NSU.padStart(15, "0") } };
     } else {
-      const schema = zCustom.numeric().length(44);
+      const schema = zCustom
+        .numeric()
+        .length(44)
+        .refine((value) => isValidAccessCode(value));
       schema.parse(consChNFe.chNFe);
       operation = { consChNFe };
     }
