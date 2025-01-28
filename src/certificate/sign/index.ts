@@ -10,9 +10,9 @@ import { makeBuilder, makeParser } from "@/utils/xml";
  * @property {unknown} xml - O conteúdo do documento XML a ser assinado
  * @property {string} signId - O ID do elemento a ser assinado
  */
-export interface signXmlOptions {
+export interface signXmlOptions<Xml> {
   certificate: CertificateP12;
-  xmlObject: unknown;
+  xmlObject: Xml;
   signId: string;
 }
 
@@ -23,11 +23,11 @@ export interface signXmlOptions {
  *
  * @returns Objeto XML assinado.
  */
-export function signXml({
+export function signXml<XmlObject, SignedXmlObject>({
   certificate,
   xmlObject,
   signId,
-}: signXmlOptions): unknown {
+}: signXmlOptions<XmlObject>): SignedXmlObject {
   const xml = makeBuilder().build(xmlObject);
 
   const { key, cert } = certificate.asPem();
