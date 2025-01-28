@@ -41,7 +41,7 @@ export interface RetConsStatServ {
 /**
  * @description Resposta completa da consulta de status serviço.
  *
- * @property {RetConsCad} nfeResultMsg.retConsStatServ - Informações da consulta.
+ * @property {RetConsStatServ} nfeResultMsg.retConsStatServ - Informações da consulta.
  */
 export type NfeStatusServicoResponse = NfeResultMsg<{
   retConsStatServ: RetConsStatServ;
