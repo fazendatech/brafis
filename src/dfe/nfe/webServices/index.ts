@@ -11,7 +11,6 @@ import { getUfCode } from "@/ufCode";
 import type { Uf, UfCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
-import type { WithXmlns } from "@/utils/soap/types";
 import { zCustom } from "@/utils/zCustom";
 
 import { NfeServiceRequestError } from "./errors";
@@ -78,7 +77,6 @@ export class NfeWebServices {
   private ca: string;
   private tpAmb: "1" | "2";
   private cUF: UfCode;
-  private xmlNamespace: WithXmlns;
 
   constructor(options: NfeWebServicesOptions) {
     this.uf = options.uf;
@@ -90,10 +88,6 @@ export class NfeWebServices {
 
     this.tpAmb = options.env === "producao" ? "1" : "2";
     this.cUF = getUfCode(options.uf);
-
-    this.xmlNamespace = {
-      "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
-    };
   }
 
   // TODO(#17) - Mudar estratégia de carregar o arquivo `nfe-ca.pem`
@@ -163,7 +157,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
           consStatServ: {
-            ...this.xmlNamespace,
+            "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
             "@_versao": "4.00",
             tpAmb: this.tpAmb,
             cUF: this.cUF,
@@ -200,7 +194,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro4",
           ConsCad: {
-            ...this.xmlNamespace,
+            "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
             "@_versao": "2.00",
             infCons: { xServ: "CONS-CAD", UF: this.uf, ...options },
           },
@@ -241,7 +235,7 @@ export class NfeWebServices {
         nfeDadosMsg: {
           "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4",
           enviNFe: {
-            ...this.xmlNamespace,
+            "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
             "@_versao": "4.00",
             idLote,
             indSinc: "1",
@@ -251,7 +245,7 @@ export class NfeWebServices {
       },
     });
     const xml = helpersAutorizacao.buildNfeProc({
-      xmlns: this.xmlNamespace["@_xmlns"],
+      xmlns: "http://www.portalfiscal.inf.br/nfe",
       nfe: signedNfe,
       protNFe: response.nfeResultMsg.retEnviNFe.protNFe,
     });
@@ -288,7 +282,7 @@ export class NfeWebServices {
     const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}`;
     const inutNfe: NfeInutilizacaoInutNfe = {
       inutNFe: {
-        ...this.xmlNamespace,
+        "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
         "@_versao": "4.00",
         infInut: {
           "@_Id": id,
@@ -366,7 +360,7 @@ export class NfeWebServices {
     }
 
     const recepcaoEvento = helpersRecepcaoEvento.buildEvento({
-      xmlns: this.xmlNamespace["@_xmlns"],
+      xmlns: "http://www.portalfiscal.inf.br/nfe",
       cUf: this.cUF,
       tpAmb: this.tpAmb,
       detEvento,
@@ -392,7 +386,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4",
           envEvento: {
-            ...this.xmlNamespace,
+            "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
             "@_versao": "1.00",
             idLote,
             ...signedRecepcaoEvento,
@@ -413,7 +407,7 @@ export class NfeWebServices {
         }
       : null;
     const xml = helpersRecepcaoEvento.buildProcEventoNfe({
-      xmlns: this.xmlNamespace["@_xmlns"],
+      xmlns: "http://www.portalfiscal.inf.br/nfe",
       evento: signedRecepcaoEvento,
       retEvento: retEnvEvento.retEvento,
     });
@@ -455,7 +449,7 @@ export class NfeWebServices {
           "@_xmlns":
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4",
           consSitNFe: {
-            ...this.xmlNamespace,
+            "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
             "@_versao": "4.00",
             tpAmb: this.tpAmb,
             xServ: "CONSULTAR",
@@ -541,7 +535,7 @@ export class NfeWebServices {
             "http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe",
           nfeDadosMsg: {
             distDFeInt: {
-              ...this.xmlNamespace,
+              "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
               "@_versao": "1.01",
               tpAmb: this.tpAmb,
               cUFAutor: this.cUF,
