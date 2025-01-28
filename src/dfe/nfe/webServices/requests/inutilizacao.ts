@@ -1,7 +1,6 @@
 import type { UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
-
-import type { NfeWebServiceResponse } from "./common";
+import type { NfeResultMsg } from "./common";
 
 /**
  * @description Opções para configurar o web service de NFe inutilização.
@@ -10,11 +9,11 @@ import type { NfeWebServiceResponse } from "./common";
  */
 export interface NfeInutilizacaoOptions {
   ano: string;
-  cnpj: string;
+  CNPJ: string;
   mod: "55" | "65";
   serie: string;
-  nNfIni: string;
-  nNfFin: string;
+  nNFIni: string;
+  nNFFin: string;
   xJust: string;
 }
 
@@ -36,7 +35,9 @@ export interface NfeInutilizacaoInutNfe {
   }>;
 }
 
-export type NfeInutilizacaoRequest = WithXmlns<NfeInutilizacaoInutNfe>;
+export type NfeInutilizacaoRequest = {
+  nfeDadosMsg: WithXmlns<NfeInutilizacaoInutNfe>;
+};
 
 export type NfeInutilizacaoInutNfeWithSignature = {
   inutNFe: NfeInutilizacaoInutNfe["inutNFe"] & { Signature: unknown };
@@ -45,22 +46,22 @@ export type NfeInutilizacaoInutNfeWithSignature = {
 /**
  * @description Informações da consulta.
  *
- * @property {string} Id - Identificador do lote.
- * @property {string} tpAmb - Tipo de ambiente.
- * @property {string} verAplic - Versão da aplicação.
- * @property {string} cStat - Código do status da resposta.
- * @property {string} xMotivo - Descrição do status da resposta.
- * @property {string} cUF - Código da UF.
- * @property {string} ano - Ano da inutilização.
- * @property {string} CNPJ - CNPJ do emitente.
- * @property {string} mod - Modelo da NFe.
- * @property {string} serie - Série da NFe.
- * @property {string} nNFIni - Número inicial da NFe.
- * @property {string} nNFFin - Número final da NFe.
- * @property {string} dhRecbto - Data e hora de recebimento.
- * @property {string} nProt - Número do protocolo.
+ * @property {string} infInut.Id - Identificador do lote.
+ * @property {string} infInut.tpAmb - Tipo de ambiente.
+ * @property {string} infInut.verAplic - Versão da aplicação.
+ * @property {string} infInut.cStat - Código do status da resposta.
+ * @property {string} infInut.xMotivo - Descrição do status da resposta.
+ * @property {string} infInut.cUF - Código da UF.
+ * @property {string} infInut.ano - Ano da inutilização.
+ * @property {string} infInut.CNPJ - CNPJ do emitente.
+ * @property {string} infInut.mod - Modelo da NFe.
+ * @property {string} infInut.serie - Série da NFe.
+ * @property {string} infInut.nNFIni - Número inicial da NFe.
+ * @property {string} infInut.nNFFin - Número final da NFe.
+ * @property {string} infInut.dhRecbto - Data e hora de recebimento.
+ * @property {string} infInut.nProt - Número do protocolo.
  */
-export interface NfeInutilizacaoResponseRaw {
+interface RetInutNfe {
   infInut: {
     "@_Id"?: string;
     tpAmb: "1" | "2";
@@ -79,9 +80,11 @@ export interface NfeInutilizacaoResponseRaw {
   };
 }
 
-export type NfeInutilizacaoStatus = "homologada";
-
-export type NfeInutilizacaoResponse = NfeWebServiceResponse<
-  NfeInutilizacaoStatus,
-  NfeInutilizacaoResponseRaw
->;
+/**
+ * @description Resposta completa da inutilização.
+ *
+ * @property {RetInutNfe} nfeResultMsg.retInutNFe - retorno da inutilização.
+ */
+export type NfeInutilizacaoResponse = NfeResultMsg<{
+  retInutNFe: RetInutNfe;
+}>;

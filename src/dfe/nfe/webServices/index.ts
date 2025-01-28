@@ -1,6 +1,10 @@
 import type { CertificateP12 } from "@/certificate";
 import { loadNfeCa } from "@/dfe/nfe/ca";
-import { parseNfe, type NfeLayoutWithSignature } from "@/dfe/nfe/layout";
+import {
+  parseNfe,
+  type NfeLayout,
+  type NfeLayoutWithSignature,
+} from "@/dfe/nfe/layout";
 import { signXml } from "@/certificate/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
@@ -37,8 +41,6 @@ import type {
   NfeInutilizacaoOptions,
   NfeInutilizacaoRequest,
   NfeInutilizacaoResponse,
-  NfeInutilizacaoResponseRaw,
-  NfeInutilizacaoStatus,
 } from "./requests/inutilizacao";
 import type {
   NfeRecepcaoEventoEventoWithSignature,
@@ -49,6 +51,7 @@ import type {
   NfeRecepcaoEventoStatus,
   NfeRecepcaoEventoStatusEvento,
   CpfOrCnpj,
+  NfeRecepcaoEventoEvento,
 } from "./requests/recepcaoEvento";
 import type {
   NfeConsultaProtocoloOptions,
@@ -221,11 +224,11 @@ export class NfeWebServices {
   }: NfeAutorizacaoOptions): Promise<NfeAutorizacaoResponse> {
     parseNfe(nfe);
 
-    const signedNfe = signXml({
+    const signedNfe = signXml<NfeLayout, NfeLayoutWithSignature>({
       xmlObject: nfe,
       certificate: this.certificate,
       signId: nfe.NFe.infNFe["@_Id"],
-    }) as NfeLayoutWithSignature;
+    });
     const response = await this.request<
       NfeAutorizacaoRequest,
       NfeAutorizacaoResponse
@@ -268,65 +271,57 @@ export class NfeWebServices {
    */
   async inutilizacao({
     ano,
-    cnpj,
+    CNPJ,
     mod,
     serie,
-    nNfIni,
-    nNfFin,
+    nNFIni,
+    nNFFin,
     xJust,
   }: NfeInutilizacaoOptions): Promise<NfeInutilizacaoResponse> {
     // TODO: Validar resto do input.
-    zCustom.cnpj().parse(cnpj);
+    zCustom.cnpj().parse(CNPJ);
 
     // NOTE: Definido na seção 5.3.1 do Manual de Orientação do Contribuinte Versão 7.00
-    const id = `ID${this.cUF}${ano}${cnpj}${mod}${serie}${nNfIni}${nNfFin}`;
-    const inutNfe: NfeInutilizacaoInutNfe = {
-      inutNFe: {
-        "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
-        "@_versao": "4.00",
-        infInut: {
-          "@_Id": id,
-          tpAmb: this.tpAmb,
-          xServ: "INUTILIZAR",
-          cUF: this.cUF,
-          ano,
-          CNPJ: cnpj,
-          mod,
-          serie,
-          nNFIni: nNfIni,
-          nNFFin: nNfFin,
-          xJust,
-        },
-      },
-    };
-    const signedInutNfe = signXml({
-      xmlObject: inutNfe,
+    const id = `ID${this.cUF}${ano}${CNPJ}${mod}${serie}${nNFIni}${nNFFin}`;
+    const signedInutNfe = signXml<
+      NfeInutilizacaoInutNfe,
+      NfeInutilizacaoInutNfeWithSignature
+    >({
       certificate: this.certificate,
       signId: id,
-    }) as NfeInutilizacaoInutNfeWithSignature;
-    const {
-      nfeResultMsg: { retInutNFe },
-    } = await this.request<
-      { nfeDadosMsg: NfeInutilizacaoRequest },
-      { nfeResultMsg: { retInutNFe: NfeInutilizacaoResponseRaw } }
-    >(this.getUrl("NfeInutilizacao"), {
-      timeout: this.timeout,
-      body: {
-        nfeDadosMsg: {
-          "@_xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
-          ...signedInutNfe,
+      xmlObject: {
+        inutNFe: {
+          "@_xmlns": "http://www.portalfiscal.inf.br/nfe",
+          "@_versao": "4.00",
+          infInut: {
+            "@_Id": id,
+            tpAmb: this.tpAmb,
+            xServ: "INUTILIZAR",
+            cUF: this.cUF,
+            ano,
+            CNPJ,
+            mod,
+            serie,
+            nNFIni,
+            nNFFin,
+            xJust,
+          },
         },
       },
     });
-    const statusMap: Record<string, NfeInutilizacaoStatus> = {
-      "102": "homologada",
-    };
-
-    return {
-      status: statusMap[retInutNFe.infInut.cStat] ?? "outro",
-      description: retInutNFe.infInut.xMotivo ?? "",
-      raw: retInutNFe,
-    };
+    return await this.request<NfeInutilizacaoRequest, NfeInutilizacaoResponse>(
+      this.getUrl("NfeInutilizacao"),
+      {
+        timeout: this.timeout,
+        body: {
+          nfeDadosMsg: {
+            "@_xmlns":
+              "http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4",
+            ...signedInutNfe,
+          },
+        },
+      },
+    );
   }
 
   /**
@@ -369,11 +364,14 @@ export class NfeWebServices {
       dhEvento,
       nSeqEvento,
     });
-    const signedRecepcaoEvento = signXml({
+    const signedRecepcaoEvento = signXml<
+      NfeRecepcaoEventoEvento,
+      NfeRecepcaoEventoEventoWithSignature
+    >({
       xmlObject: recepcaoEvento,
       certificate: this.certificate,
       signId: recepcaoEvento.evento.infEvento["@_Id"],
-    }) as NfeRecepcaoEventoEventoWithSignature;
+    });
     const {
       nfeResultMsg: { retEnvEvento },
     } = await this.request<

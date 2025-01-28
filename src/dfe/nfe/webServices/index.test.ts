@@ -260,11 +260,11 @@ describe("NfeWebServices", async () => {
       expect(
         await service.inutilizacao({
           ano: "2021",
-          cnpj: "12345678901230",
+          CNPJ: "12345678901230",
           mod: "55",
           serie: "1",
-          nNfIni: "1",
-          nNfFin: "10",
+          nNFIni: "1",
+          nNFFin: "10",
           xJust: "justificativa",
         }),
       ).toMatchSnapshot();
@@ -274,11 +274,11 @@ describe("NfeWebServices", async () => {
       expect(() =>
         service.inutilizacao({
           ano: "2021",
-          cnpj: "12345678901231",
+          CNPJ: "12345678901231",
           mod: "55",
           serie: "1",
-          nNfIni: "1",
-          nNfFin: "10",
+          nNFIni: "1",
+          nNFFin: "10",
           xJust: "justificativa",
         }),
       ).toThrowError(ZodError);
