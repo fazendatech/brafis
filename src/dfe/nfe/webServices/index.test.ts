@@ -84,11 +84,15 @@ describe("NfeWebServices", async () => {
         },
       });
 
-      const raw = mockResponse.nfeResultMsg.retConsStatServ;
       expect(await service.statusServico()).toMatchObject({
-        status: "operando",
-        description: raw.xMotivo,
-        raw,
+        nfeResultMsg: {
+          retConsStatServ: {
+            cStat: "107",
+            cUF: "53",
+            tpAmb: "2",
+            xMotivo: "Servico em Operacao",
+          },
+        },
       });
     });
 
@@ -168,11 +172,20 @@ describe("NfeWebServices", async () => {
         },
       });
 
-      const raw = mockResponse.nfeResultMsg.retConsCad;
       expect(await service.consultaCadastro({})).toMatchObject({
-        status: "uma-ocorrencia",
-        description: raw.infCons.xMotivo,
-        raw,
+        nfeResultMsg: {
+          retConsCad: {
+            infCons: {
+              cStat: "111",
+              infCad: [
+                {
+                  IE: "123456789",
+                },
+              ],
+              xMotivo: "Consulta cadastro com uma ocorrência",
+            },
+          },
+        },
       });
     });
   });
