@@ -5,7 +5,7 @@ import type {
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-import type { NfeWebServiceResponse } from "./common";
+import type { NfeResultMsg } from "./common";
 import type { UfCode } from "@/ufCode/types";
 
 export type DescEvento =
@@ -139,12 +139,14 @@ export type NfeRecepcaoEventoEventoWithSignature = {
   };
 };
 
-export type NfeRecepcaoEventoRequest = WithXmlns<{
-  envEvento: WithXmlnsVersao<{
-    idLote: string;
-    evento: NfeRecepcaoEventoEventoWithSignature["evento"];
+export type NfeRecepcaoEventoRequest = {
+  nfeDadosMsg: WithXmlns<{
+    envEvento: WithXmlnsVersao<{
+      idLote: string;
+      evento: NfeRecepcaoEventoEventoWithSignature["evento"];
+    }>;
   }>;
-}>;
+};
 
 /**
  * @description Retorno do evento.
@@ -201,39 +203,19 @@ export type NfeRecepcaoEventoRetEvento = WithVersao<{
  * @property {string} cOrgao - Código do órgão.
  * @property {string} cStat - Código do status da resposta.
  * @property {string} xMotivo - Descrição do status da resposta.
- * @property {object} retEvento - Informações do evento.
+ * @property {NfeRecepcaoEventoRetEvento} retEvento - Informações do evento.
+ * @property {string | null} xml - XML da resposta.
  */
-export interface NfeRecepcaoEventoResponseRaw {
-  idLote: string;
-  tpAmb: string;
-  verAplic: string;
-  cOrgao: string;
-  cStat: LiteralStringUnion<"128">;
-  xMotivo: string;
-  retEvento?: NfeRecepcaoEventoRetEvento;
-}
-
-/**
- * @description Status do evento. cStat 128 = "lote-processado".
- */
-export type NfeRecepcaoEventoStatus = "lote-processado";
-
-/**
- * @description Status do evento. cStat 135 = "evento-registrado-vinculado-a-nfe" ou "136" = "evento-registrado-nao-vinculado-a-nfe". Qualquer outro valor é considerado erro.
- */
-export type NfeRecepcaoEventoStatusEvento =
-  | "evento-registrado-vinculado-a-nfe"
-  | "evento-registrado-nao-vinculado-a-nfe"
-  | "erro";
-
-export type NfeRecepcaoEventoResponse = NfeWebServiceResponse<
-  NfeRecepcaoEventoStatus,
-  NfeRecepcaoEventoResponseRaw,
-  {
-    retEvento: {
-      status: NfeRecepcaoEventoStatusEvento;
-      description: string;
-    } | null;
-    xml: string | null;
-  }
->;
+export type NfeRecepcaoEventoResponse = NfeResultMsg<{
+  retEnvEvento: {
+    idLote: string;
+    tpAmb: string;
+    verAplic: string;
+    cOrgao: string;
+    cStat: LiteralStringUnion<"128">;
+    xMotivo: string;
+    retEvento?: NfeRecepcaoEventoRetEvento;
+  };
+}> & {
+  xml: string | null;
+};
