@@ -1,0 +1,41 @@
+name: Run Tests on PR
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Read Bun Version from package.json
+        id: bun_version
+        run: echo "BUN_VERSION=$(node -p "require('./package.json').devDependencies['@types/bun'].replace('^', '')")" >> $GITHUB_ENV
+
+      - name: Cache Bun Installation
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: ${{ runner.os }}-bun-${{ github.env.BUN_VERSION }}
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ github.env.BUN_VERSION }}
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-deps-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-deps-
+
+      - name: Install All Dependencies
+        run: bun install
+
+      - name: Run Tests
+        run: bun test
