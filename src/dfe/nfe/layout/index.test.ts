@@ -5,13 +5,13 @@ import { NFE_TEST_DATA } from "./misc";
 
 import { schemaNfeInfNfe } from "./groupA";
 import { schemaNfeIde } from "./groupB";
-import { schemaNfeNfRef } from "./groupBA";
+import { schemaNfeNfRef } from "./groupBa";
 import { schemaNfeEmit } from "./groupC";
 import { schemaNfeAvulsa } from "./groupD";
 import { schemaNfeDest } from "./groupE";
 import { schemaNfeRetirada } from "./groupF";
 import { schemaNfeEntrega } from "./groupG";
-import { schemaNfeAutXml } from "./groupGA";
+import { schemaNfeAutXml } from "./groupGa";
 import { schemaNfeDet } from "./groupH";
 import { schemaNfeProd } from "./groupI";
 import { schemaNfeDi } from "./groupI01";
@@ -24,10 +24,10 @@ import { schemaNfeIssqnTot } from "./groupW01";
 import { schemaNfeRetTrib } from "./groupW02";
 import { schemaNfeTransp } from "./groupX";
 import { schemaNfeCobr } from "./groupY";
-import { schemaNfePag } from "./groupYA";
-import { schemaNfeInfIntermed } from "./groupYB";
+import { schemaNfePag } from "./groupYa";
+import { schemaNfeInfIntermed } from "./groupYb";
 import { schemaNfeInfAdic } from "./groupZ";
-import { schemaNfeInfRespTec } from "./groupZD";
+import { schemaNfeInfRespTec } from "./groupZd";
 import { parseNfe } from ".";
 
 describe("layout", () => {

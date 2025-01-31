@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
 import { zUfCode } from "./misc";
-import { schemaNfeNfRef } from "./groupBA";
+import { schemaNfeNfRef } from "./groupBa";
 
 const invalidCnfs = new Set([
   "00000000",
