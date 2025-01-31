@@ -8,15 +8,15 @@ import { schemaNfeAvulsa } from "./groupD";
 import { schemaNfeDest } from "./groupE";
 import { schemaNfeRetirada } from "./groupF";
 import { schemaNfeEntrega } from "./groupG";
-import { schemaNfeAutXml } from "./groupGA";
+import { schemaNfeAutXml } from "./groupGa";
 import { schemaNfeDet } from "./groupH";
 import { schemaNfeTotal } from "./groupW";
 import { schemaNfeTransp } from "./groupX";
 import { schemaNfeCobr } from "./groupY";
-import { schemaNfePag } from "./groupYA";
-import { schemaNfeInfIntermed } from "./groupYB";
+import { schemaNfePag } from "./groupYa";
+import { schemaNfeInfIntermed } from "./groupYb";
 import { schemaNfeInfAdic } from "./groupZ";
-import { schemaNfeInfRespTec } from "./groupZD";
+import { schemaNfeInfRespTec } from "./groupZd";
 
 const schemaNfeInfNfe = z
   .object({
