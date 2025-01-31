@@ -6,12 +6,12 @@ import type {
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 
-import type { NfeResultMsg } from "./common";
-import type { NfeAutorizacaoProtNfe } from "./autorizacao";
 import type {
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoRetEvento,
 } from "@/dfe/nfe/webServices/requests/recepcaoEvento";
+import type { NfeAutorizacaoProtNfe } from "./autorizacao";
+import type { NfeResultMsg } from "./common";
 
 /**
  * @description Opções para configurar o web service de NFe Consulta Protocolo.

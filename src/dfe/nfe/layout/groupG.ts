@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
+import { z } from "zod";
 import { zUf } from "./misc";
 
 const schemaNfeEntrega = z

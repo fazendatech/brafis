@@ -2,11 +2,11 @@ import type { Uf } from "@/ufCode/types";
 
 import { NfeWebServiceNotFoundError } from "./errors";
 import type {
-  Environment,
   AuthServer,
+  Environment,
+  GetWebServiceUrlOptions,
   NfeWebService,
   WebServiceUrls,
-  GetWebServiceUrlOptions,
 } from "./types";
 
 /**

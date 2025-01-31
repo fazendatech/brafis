@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
+import { z } from "zod";
 import { schemaNfeIssqnTot } from "./groupW01";
 import { schemaNfeRetTrib } from "./groupW02";
 

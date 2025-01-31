@@ -1,7 +1,7 @@
 import {
-  XMLParser,
-  XMLBuilder,
   type X2jOptions,
+  XMLBuilder,
+  XMLParser,
   type XmlBuilderOptions,
 } from "fast-xml-parser";
 

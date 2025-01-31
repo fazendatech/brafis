@@ -1,22 +1,22 @@
 import {
-  describe,
-  test,
-  expect,
   afterEach,
   beforeEach,
-  spyOn,
+  describe,
+  expect,
   mock,
+  spyOn,
+  test,
 } from "bun:test";
-import { mock as mockRequest, clearMocks } from "bun-bagel";
+import { clearMocks, mock as mockRequest } from "bun-bagel";
 import { XMLBuilder } from "fast-xml-parser";
 
 import { CertificateP12 } from "@/certificate";
 import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 
+import { ZodError } from "zod";
 import { NfeWebServices } from ".";
 import { NfeServiceRequestError } from "./errors";
-import { ZodError } from "zod";
 
 function buildMockResponse<Obj>(obj: Obj): string {
   const xmlBuilder = new XMLBuilder({

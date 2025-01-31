@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { makeBuilder, makeParser } from ".";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { makeBuilder, makeParser } from ".";
 
 describe("xml", () => {
   describe("parseXml", () => {

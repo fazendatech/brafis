@@ -11,11 +11,11 @@ import {
   NoPrivateKeyFoundError,
 } from "./errors";
 import type {
+  CertificateFields,
+  CertificateP12AsPemOptions,
   CertificateP12Options,
   P12Payload,
   PemPayload,
-  CertificateFields,
-  CertificateP12AsPemOptions,
 } from "./types";
 
 /**

@@ -1,6 +1,6 @@
-import { z } from "zod";
 import { ufCodeMap } from "@/ufCode";
 import type { Uf, UfCode } from "@/ufCode/types";
+import { z } from "zod";
 import type { NfeLayout } from ".";
 
 // NOTE: Hack pro zod aceitar tipos customizados (https://stackoverflow.com/a/73825370)
