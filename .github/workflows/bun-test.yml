@@ -11,20 +11,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Read Bun Version from package.json
-        id: bun_version
-        run: echo "BUN_VERSION=$(node -p "require('./package.json').devDependencies['@types/bun'].replace('^', '')")" >> $GITHUB_ENV
-
       - name: Cache Bun Installation
         uses: actions/cache@v3
         with:
           path: ~/.bun
-          key: ${{ runner.os }}-bun-${{ github.env.BUN_VERSION }}
+          key: ${{ runner.os }}-bun
 
       - name: Install Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: ${{ github.env.BUN_VERSION }}
+        uses: oven-sh/setup-bun@v2
 
       - name: Cache Dependencies
         uses: actions/cache@v3
