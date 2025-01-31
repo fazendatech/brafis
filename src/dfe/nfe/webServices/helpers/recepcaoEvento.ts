@@ -5,7 +5,7 @@ import type {
   TpEvento,
   OptionsDetEvento,
   NfeRecepcaoEventoEvento,
-  NfeRecepcaoEventoResponseRaw,
+  NfeRecepcaoEventoResponse,
   NfeRecepcaoEventoEventoWithSignature,
 } from "../requests/recepcaoEvento";
 
@@ -226,7 +226,7 @@ function buildProcEventoNfe({
 }: {
   xmlns: string;
   evento: NfeRecepcaoEventoEventoWithSignature;
-  retEvento: NfeRecepcaoEventoResponseRaw["retEvento"];
+  retEvento: NfeRecepcaoEventoResponse["nfeResultMsg"]["retEnvEvento"]["retEvento"];
 }): string | null {
   if (!retEvento) {
     return null;

@@ -1,6 +1,6 @@
 import { makeBuilder } from "@/utils/xml";
 import type { NfeLayoutWithSignature } from "../../layout";
-import type { NfeAutorizacaoResponseRaw } from "../requests/autorizacao";
+import type { NfeAutorizacaoResponse } from "../requests/autorizacao";
 
 function buildNfeProc({
   xmlns,
@@ -9,7 +9,7 @@ function buildNfeProc({
 }: {
   xmlns: string;
   nfe: NfeLayoutWithSignature;
-  protNFe: NfeAutorizacaoResponseRaw["protNFe"];
+  protNFe: NfeAutorizacaoResponse["nfeResultMsg"]["retEnviNFe"]["protNFe"];
 }): string | null {
   if (!protNFe) {
     return null;
