@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
+import { z } from "zod";
 import { schemaNfeDi } from "./groupI01";
 import { schemaNfeDetExport } from "./groupI03";
 import { schemaNfeRastro } from "./groupI80";

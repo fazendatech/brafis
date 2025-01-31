@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { zCustom } from "@/utils/zCustom";
+import { z } from "zod";
 import { schemaNfeIcms } from "./groupN01";
 
 const schemaNfeImposto = z

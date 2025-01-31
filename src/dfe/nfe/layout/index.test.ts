@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 
 import { NFE_TEST_DATA } from "./misc";
 
+import { parseNfe } from ".";
 import { schemaNfeInfNfe } from "./groupA";
 import { schemaNfeIde } from "./groupB";
 import { schemaNfeNfRef } from "./groupBa";
@@ -28,7 +29,6 @@ import { schemaNfePag } from "./groupYa";
 import { schemaNfeInfIntermed } from "./groupYb";
 import { schemaNfeInfAdic } from "./groupZ";
 import { schemaNfeInfRespTec } from "./groupZd";
-import { parseNfe } from ".";
 
 describe("layout", () => {
   describe("zod schemas", () => {

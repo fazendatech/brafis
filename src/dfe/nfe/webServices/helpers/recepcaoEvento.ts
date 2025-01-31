@@ -2,11 +2,11 @@ import { makeBuilder } from "@/utils/xml";
 import type {
   CpfOrCnpj,
   DescEvento,
-  TpEvento,
-  OptionsDetEvento,
   NfeRecepcaoEventoEvento,
-  NfeRecepcaoEventoResponse,
   NfeRecepcaoEventoEventoWithSignature,
+  NfeRecepcaoEventoResponse,
+  OptionsDetEvento,
+  TpEvento,
 } from "../requests/recepcaoEvento";
 
 function buildEvento({

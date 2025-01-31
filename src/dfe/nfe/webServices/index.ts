@@ -1,11 +1,11 @@
 import type { CertificateP12 } from "@/certificate";
+import { signXml } from "@/certificate/sign";
 import { loadNfeCa } from "@/dfe/nfe/ca";
 import {
-  parseNfe,
   type NfeLayout,
   type NfeLayoutWithSignature,
+  parseNfe,
 } from "@/dfe/nfe/layout";
-import { signXml } from "@/certificate/sign";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
 import type {
   Environment,
@@ -17,24 +17,33 @@ import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
 import { zCustom } from "@/utils/zCustom";
 
+import { isValidAccessCode } from "@/utils/validators/isValidAccessCode";
 import { NfeServiceRequestError } from "./errors";
-import type { NfeRequestOptions } from "./requests/common";
-import {
-  schemaNfeConsultaCadastroOptions,
-  type NfeConsultaCadastroOptions,
-  type NfeConsultaCadastroRequest,
-  type NfeConsultaCadastroResponse,
-} from "./requests/consultaCadastro";
-import type {
-  NfeStatusServicoRequest,
-  NfeStatusServicoResponse,
-} from "./requests/statusServico";
+import helpersAutorizacao from "./helpers/autorizacao";
+import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
 import type {
   NfeAutorizacaoOptions,
   NfeAutorizacaoRequest,
   NfeAutorizacaoResponse,
 } from "./requests/autorizacao";
-import type { NfeWebServicesOptions } from "./types";
+import type { NfeRequestOptions } from "./requests/common";
+import {
+  type NfeConsultaCadastroOptions,
+  type NfeConsultaCadastroRequest,
+  type NfeConsultaCadastroResponse,
+  schemaNfeConsultaCadastroOptions,
+} from "./requests/consultaCadastro";
+import type {
+  NfeConsultaProtocoloOptions,
+  NfeConsultaProtocoloRequest,
+  NfeConsultaProtocoloResponse,
+} from "./requests/consultaProtocolo";
+import type {
+  NfeDistribuicaoDfeOperation,
+  NfeDistribuicaoDfeOptions,
+  NfeDistribuicaoDfeRequest,
+  NfeDistribuicaoDfeResponse,
+} from "./requests/distribuicaoDfe";
 import type {
   NfeInutilizacaoInutNfe,
   NfeInutilizacaoInutNfeWithSignature,
@@ -43,27 +52,18 @@ import type {
   NfeInutilizacaoResponse,
 } from "./requests/inutilizacao";
 import type {
+  CpfOrCnpj,
+  NfeRecepcaoEventoEvento,
   NfeRecepcaoEventoEventoWithSignature,
   NfeRecepcaoEventoOptions,
   NfeRecepcaoEventoRequest,
   NfeRecepcaoEventoResponse,
-  CpfOrCnpj,
-  NfeRecepcaoEventoEvento,
 } from "./requests/recepcaoEvento";
 import type {
-  NfeConsultaProtocoloOptions,
-  NfeConsultaProtocoloRequest,
-  NfeConsultaProtocoloResponse,
-} from "./requests/consultaProtocolo";
-import helpersRecepcaoEvento from "./helpers/recepcaoEvento";
-import helpersAutorizacao from "./helpers/autorizacao";
-import type {
-  NfeDistribuicaoDfeOperation,
-  NfeDistribuicaoDfeOptions,
-  NfeDistribuicaoDfeRequest,
-  NfeDistribuicaoDfeResponse,
-} from "./requests/distribuicaoDfe";
-import { isValidAccessCode } from "@/utils/validators/isValidAccessCode";
+  NfeStatusServicoRequest,
+  NfeStatusServicoResponse,
+} from "./requests/statusServico";
+import type { NfeWebServicesOptions } from "./types";
 
 export class NfeWebServices {
   private uf: Uf;
