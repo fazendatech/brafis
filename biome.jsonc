@@ -26,6 +26,7 @@
       "performance": {
         "useTopLevelRegex": "off"
       }
-    }
+    },
+    "include": ["src/**/*.ts"]
   }
 }
