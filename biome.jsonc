@@ -4,10 +4,12 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineEnding": "lf"
+    "lineEnding": "lf",
+    "include": ["src/**/*.ts"]
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": true,
+    "include": ["src/**/*.ts"]
   },
   "linter": {
     "enabled": true,
