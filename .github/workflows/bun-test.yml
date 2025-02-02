@@ -27,7 +27,6 @@ jobs:
           key: ${{ runner.os }}-bun-deps-${{ hashFiles('bun.lockb') }}
           restore-keys: |
             ${{ runner.os }}-bun-deps-
-          timeout-minutes: 5
 
       - name: Install All Dependencies
         run: bun install
