@@ -7,13 +7,11 @@ import {
   spyOn,
   test,
 } from "bun:test";
-import { clearMocks, mock as mockRequest } from "bun-bagel";
-import { XMLBuilder } from "fast-xml-parser";
-
 import { CertificateP12 } from "@/certificate";
 import { NFE_TEST_DATA } from "@/dfe/nfe/layout/misc";
 import { getWebServiceUrl } from "@/dfe/nfe/webServiceUrls";
-
+import { clearMocks, mock as mockRequest } from "bun-bagel";
+import { XMLBuilder } from "fast-xml-parser";
 import { ZodError } from "zod";
 import { NfeWebServices } from ".";
 import { NfeServiceRequestError } from "./errors";

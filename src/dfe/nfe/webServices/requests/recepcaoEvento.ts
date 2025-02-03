@@ -1,11 +1,10 @@
+import type { UfCode } from "@/ufCode/types";
 import type {
   WithVersao,
   WithXmlns,
   WithXmlnsVersao,
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
-
-import type { UfCode } from "@/ufCode/types";
 import type { NfeResultMsg } from "./common";
 
 export type DescEvento =

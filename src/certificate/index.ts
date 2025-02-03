@@ -1,8 +1,6 @@
+import { errorHasMessage } from "@/utils/errors";
 import { file } from "bun";
 import forge from "node-forge";
-
-import { errorHasMessage } from "@/utils/errors";
-
 import {
   CertificateExpiredError,
   InvalidPasswordError,

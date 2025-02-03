@@ -6,7 +6,6 @@ import type {
   WithXmlnsVersao,
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
-
 import type { NfeResultMsg } from "./common";
 
 /**

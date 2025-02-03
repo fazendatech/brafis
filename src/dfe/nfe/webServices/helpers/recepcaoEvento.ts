@@ -1,4 +1,3 @@
-import { makeBuilder } from "@/utils/xml";
 import type {
   CpfOrCnpj,
   DescEvento,
@@ -7,7 +6,8 @@ import type {
   NfeRecepcaoEventoResponse,
   OptionsDetEvento,
   TpEvento,
-} from "../requests/recepcaoEvento";
+} from "@/dfe/nfe/webServices/requests/recepcaoEvento";
+import { makeBuilder } from "@/utils/xml";
 
 function buildEvento({
   xmlns,
