@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-
 import { getWebServiceUrl } from ".";
 import { NfeWebServiceNotFoundError } from "./errors";
 

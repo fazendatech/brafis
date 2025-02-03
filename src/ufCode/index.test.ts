@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-
 import { getUfCode, getUfFromCode } from ".";
 
 describe("getUfCode", () => {

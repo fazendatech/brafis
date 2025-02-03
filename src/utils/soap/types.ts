@@ -1,4 +1,4 @@
-import type { LiteralStringUnion } from "../types";
+import type { LiteralStringUnion } from "@/utils/types";
 
 export type WithXmlns<T = unknown> = {
   "@_xmlns": LiteralStringUnion<

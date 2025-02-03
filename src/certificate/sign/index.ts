@@ -1,7 +1,6 @@
-import { SignedXml } from "xml-crypto";
-
 import type { CertificateP12 } from "@/certificate";
 import { makeBuilder, makeParser } from "@/utils/xml";
+import { SignedXml } from "xml-crypto";
 
 /**
  * @description Opções para assinar objetos XML.

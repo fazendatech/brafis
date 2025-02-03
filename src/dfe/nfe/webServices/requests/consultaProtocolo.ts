@@ -1,3 +1,7 @@
+import type {
+  NfeRecepcaoEventoEventoWithSignature,
+  NfeRecepcaoEventoRetEvento,
+} from "@/dfe/nfe/webServices/requests/recepcaoEvento";
 import type { UfCode } from "@/ufCode/types";
 import type {
   WithVersao,
@@ -5,11 +9,6 @@ import type {
   WithXmlnsVersao,
 } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
-
-import type {
-  NfeRecepcaoEventoEventoWithSignature,
-  NfeRecepcaoEventoRetEvento,
-} from "@/dfe/nfe/webServices/requests/recepcaoEvento";
 import type { NfeAutorizacaoProtNfe } from "./autorizacao";
 import type { NfeResultMsg } from "./common";
 

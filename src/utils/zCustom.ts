@@ -1,8 +1,7 @@
-import { z } from "zod";
-
 import { isValidCnpj } from "@/utils/validators/isValidCnpj";
 import { isValidCpf } from "@/utils/validators/isValidCpf";
 import { isValidIe } from "@/utils/validators/isValidIe";
+import { z } from "zod";
 
 const length = (min: number, max: number) => z.string().min(min).max(max);
 const numeric = () => z.string().regex(/^\d+$/, "Deve possuir apenas dígitos.");

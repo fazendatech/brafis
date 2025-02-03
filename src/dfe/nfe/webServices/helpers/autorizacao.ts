@@ -1,6 +1,6 @@
+import type { NfeLayoutWithSignature } from "@/dfe/nfe/layout";
+import type { NfeAutorizacaoResponse } from "@/dfe/nfe/webServices/requests/autorizacao";
 import { makeBuilder } from "@/utils/xml";
-import type { NfeLayoutWithSignature } from "../../layout";
-import type { NfeAutorizacaoResponse } from "../requests/autorizacao";
 
 function buildNfeProc({
   xmlns,

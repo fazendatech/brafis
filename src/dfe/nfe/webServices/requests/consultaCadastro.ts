@@ -1,10 +1,8 @@
-import { z } from "zod";
-
 import type { Uf, UfCode } from "@/ufCode/types";
 import type { WithXmlns, WithXmlnsVersao } from "@/utils/soap/types";
 import type { LiteralStringUnion } from "@/utils/types";
 import { zCustom } from "@/utils/zCustom";
-
+import { z } from "zod";
 import type { NfeResultMsg } from "./common";
 
 export const schemaNfeConsultaCadastroOptions = z

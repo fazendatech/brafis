@@ -1,5 +1,4 @@
 import type { Uf } from "@/ufCode/types";
-
 import { NfeWebServiceNotFoundError } from "./errors";
 import type {
   AuthServer,

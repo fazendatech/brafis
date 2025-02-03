@@ -15,9 +15,8 @@ import { getUfCode } from "@/ufCode";
 import type { Uf, UfCode } from "@/ufCode/types";
 import { fetchWithTls } from "@/utils/fetch";
 import { buildSoap, parseSoap } from "@/utils/soap";
-import { zCustom } from "@/utils/zCustom";
-
 import { isValidAccessCode } from "@/utils/validators/isValidAccessCode";
+import { zCustom } from "@/utils/zCustom";
 import { NfeServiceRequestError } from "./errors";
 import helpersAutorizacao from "./helpers/autorizacao";
 import helpersRecepcaoEvento from "./helpers/recepcaoEvento";

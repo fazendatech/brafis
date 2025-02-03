@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test";
 import { file } from "bun";
 import forge from "node-forge";
-
 import { CertificateP12 } from ".";
 import {
   CertificateExpiredError,

@@ -1,6 +1,5 @@
-import type { BunFile } from "bun";
-
 import { TimeoutError } from "@/utils/errors";
+import type { BunFile } from "bun";
 
 type CertFile = string | Buffer | BunFile;
 

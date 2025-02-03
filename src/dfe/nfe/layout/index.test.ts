@@ -1,8 +1,5 @@
 import { describe, expect, test } from "bun:test";
 import { ZodError } from "zod";
-
-import { NFE_TEST_DATA } from "./misc";
-
 import { parseNfe } from ".";
 import { schemaNfeInfNfe } from "./groupA";
 import { schemaNfeIde } from "./groupB";
@@ -29,6 +26,7 @@ import { schemaNfePag } from "./groupYa";
 import { schemaNfeInfIntermed } from "./groupYb";
 import { schemaNfeInfAdic } from "./groupZ";
 import { schemaNfeInfRespTec } from "./groupZd";
+import { NFE_TEST_DATA } from "./misc";
 
 describe("layout", () => {
   describe("zod schemas", () => {
