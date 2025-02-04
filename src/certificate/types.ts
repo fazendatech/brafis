@@ -1,11 +1,11 @@
 /**
  * @description Opções para configurar um certificado.
  *
- * @property {Uint8Array} pfx - Dados PFX (Personal Information Exchange) para o certificado.
+ * @property {Buffer} pfx - Dados PFX (Personal Information Exchange) para o certificado.
  * @property {string} password - Senha para descriptografar os dados PFX.
  */
 export interface CertificateP12Options {
-  pfx: Uint8Array;
+  pfx: Buffer;
   password: string;
 }
 

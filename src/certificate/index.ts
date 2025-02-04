@@ -1,5 +1,6 @@
+// biome-ignore lint/correctness/noNodejsModules: <explanation>
+import fs from "node:fs/promises";
 import { errorHasMessage } from "@/utils/errors";
-import { file } from "bun";
 import forge from "node-forge";
 import {
   CertificateExpiredError,
@@ -27,7 +28,7 @@ export class CertificateP12 {
    */
   constructor(options: CertificateP12Options) {
     this.payload = {
-      raw: options.pfx,
+      raw: new Uint8Array(options.pfx),
       password: options.password,
     };
   }
@@ -43,7 +44,7 @@ export class CertificateP12 {
     filepath: string;
     password: string;
   }): Promise<CertificateP12> {
-    const pfx = await file(options.filepath).bytes();
+    const pfx = await fs.readFile(options.filepath);
     return new CertificateP12({ pfx, password: options.password });
   }
 

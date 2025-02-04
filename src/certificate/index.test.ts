@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test";
-import { file } from "bun";
+// biome-ignore lint/correctness/noNodejsModules: <explanation>
+import fs from "node:fs/promises";
 import forge from "node-forge";
 import { CertificateP12 } from ".";
 import {
@@ -14,21 +15,26 @@ describe("CertificateP12", async () => {
   const sampleCertificatesPath = "./misc/sample-certificates/";
   const pfxPassword = "senha";
 
-  const pfxCertificate = await file(
-    `${sampleCertificatesPath}cert.pfx`,
-  ).bytes();
-  const pemCertificate = await file(`${sampleCertificatesPath}cert.pem`).text();
-  const pemKey = await file(`${sampleCertificatesPath}key.pem`).text();
+  const pfxCertificate = await fs.readFile(`${sampleCertificatesPath}cert.pfx`);
+  const pemCertificate = await fs.readFile(
+    `${sampleCertificatesPath}cert.pem`,
+    { encoding: "utf-8" },
+  );
+  const pemKey = await fs.readFile(`${sampleCertificatesPath}key.pem`, {
+    encoding: "utf-8",
+  });
 
-  const pfxCertificateExpired = await file(
+  const pfxCertificateExpired = await fs.readFile(
     `${sampleCertificatesPath}cert-expired.pfx`,
-  ).bytes();
-  const pemCertificateExpired = await file(
+  );
+  const pemCertificateExpired = await fs.readFile(
     `${sampleCertificatesPath}cert-expired.pem`,
-  ).text();
-  const pemKeyExpired = await file(
+    { encoding: "utf-8" },
+  );
+  const pemKeyExpired = await fs.readFile(
     `${sampleCertificatesPath}key-expired.pem`,
-  ).text();
+    { encoding: "utf-8" },
+  );
 
   afterEach(() => {
     mock.restore();
@@ -60,7 +66,7 @@ describe("CertificateP12", async () => {
     });
 
     test("Throws InvalidPfxError", () => {
-      const invalidPfx = new Uint8Array();
+      const invalidPfx = Buffer.from("");
       const certificate = new CertificateP12({
         pfx: invalidPfx,
         password: pfxPassword,
