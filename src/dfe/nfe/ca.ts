@@ -1,4 +1,5 @@
-import { file } from "bun";
+// biome-ignore lint/correctness/noNodejsModules: <explanation>
+import fs from "node:fs/promises";
 
 /**
  * @description Carrega o certificado da cadeia de certificação da NF-e (www1.nfe.fazenda.gov.br).
@@ -9,5 +10,5 @@ import { file } from "bun";
  * @returns {Promise<string>}
  */
 export async function loadNfeCa(): Promise<string> {
-  return await file("./misc/nfe-ca.pem").text();
+  return await fs.readFile("./misc/nfe-ca.pem", { encoding: "utf-8" });
 }
