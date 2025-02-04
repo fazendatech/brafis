@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "bun --watch src/test.ts",
-    "build": "bun run bundler.ts",
+    "build": "bun run scripts/bundler.ts",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {

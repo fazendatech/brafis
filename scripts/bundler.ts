@@ -4,8 +4,7 @@ const result = await Bun.build({
   entrypoints : ["src/index.ts"],
   outdir: "./dist",
   target: "node",
-  plugins: [isolatedDecl()],
-  // drop: ["console", "debugger"]
+  plugins: [isolatedDecl({forceGenerate: true})],
 });
 
 if(!result.success) {
