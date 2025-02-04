@@ -5,7 +5,13 @@ import type { NfeResultMsg } from "./common";
 /**
  * @description Opções para configurar o web service de NFe inutilização.
  *
- * @property {string} idLote - Identificador do lote.
+ * @property {string} ano - Ano de inutilização da numeração.
+ * @property {string} CNPJ - CNPJ do emitente.
+ * @property {string} mod - Modelo da NFe: "55" ou "65".
+ * @property {string} serie - Série da NFe.
+ * @property {string} nNFIni - Número inicial da NFe a ser inutilizada.
+ * @property {string} nNFFin - Número final da NFe a ser inutilizada.
+ * @property {string} xJust - Justificativa da inutilização.
  */
 export interface NfeInutilizacaoOptions {
   ano: string;
