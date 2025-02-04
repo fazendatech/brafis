@@ -1,13 +1,13 @@
-import isolatedDecl from 'bun-plugin-isolated-decl';
+import dts from "bun-plugin-dts";
 
 const result = await Bun.build({
-  entrypoints : ["src/index.ts"],
+  entrypoints: ["src/index.ts"],
   outdir: "./dist",
   target: "node",
-  plugins: [isolatedDecl({forceGenerate: true})],
+  plugins: [dts()],
 });
 
-if(!result.success) {
+if (!result.success) {
   console.error(result.logs);
   process.exit(1);
 }
