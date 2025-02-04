@@ -1,4 +1,4 @@
-// biome-ignore lint/correctness/noNodejsModules: <explanation>
+// biome-ignore lint/correctness/noNodejsModules:
 import fs from "node:fs/promises";
 import { errorHasMessage } from "@/utils/errors";
 import forge from "node-forge";

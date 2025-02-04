@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test";
-// biome-ignore lint/correctness/noNodejsModules: <explanation>
+// biome-ignore lint/correctness/noNodejsModules:
 import fs from "node:fs/promises";
 import forge from "node-forge";
 import { CertificateP12 } from ".";
