@@ -15,8 +15,10 @@
     "url": "https://github.com/fazendatech/brafis"
   },
   "scripts": {
-    "dev": "bun --watch src/test.ts",
     "build": "bun run scripts/bundler.ts",
+    "dev": "bun --watch src/test.ts",
+    "lint": "bun biome check",
+    "format": "bun biome check --write",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
