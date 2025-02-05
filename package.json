@@ -14,6 +14,9 @@
     "type": "git",
     "url": "https://github.com/fazendatech/brafis"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "bun run scripts/bundler.ts",
     "dev": "bun --watch src/test.ts",
