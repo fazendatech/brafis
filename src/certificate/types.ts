@@ -50,6 +50,11 @@ export interface CertificateFields {
   signatureAlgorithm: string;
 }
 
+/**
+ * @description Opções para converter um certificado P12 para PEM.
+ *
+ * @property {boolean} [allowExpired] - Se `true`, permite a conversão de certificados expirados.
+ */
 export interface CertificateP12AsPemOptions {
   allowExpired?: boolean;
 }
