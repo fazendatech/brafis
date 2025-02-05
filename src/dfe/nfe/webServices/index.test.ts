@@ -45,7 +45,7 @@ function mockCertificateSignXml(signedObject: unknown) {
 
 describe("NfeWebServices", async () => {
   const certificate = new CertificateP12({
-    pfx: new Uint8Array(),
+    pfx: Buffer.from(""),
     password: "",
   });
 
