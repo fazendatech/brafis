@@ -1,17 +1,39 @@
 name: Release version
-
 on:
   push:
     tags:
       - 'v*'
 
 jobs:
-  release:
+  publish-release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Extract version and tag from pushed Git tag
+        id: version
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          VERSION="${TAG_NAME#v}"
+          if [[ "$VERSION" =~ - ]]; then
+            TAG=$(echo "$VERSION" | awk -F '-' '{print $2}')
+          else
+            TAG="latest"
+          fi
+          if [[ "$TAG" == "latest" ]]; then
+            echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+          else
+            echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Debug extracted values
+        run: |
+          echo "Extracted Version: $VERSION"
+          echo "Extracted Tag: $TAG"
+          echo "Is Prerelease: $IS_PRERELEASE"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -21,31 +43,23 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Update package.json version
+        run: |
+          jq '.version = env.VERSION' package.json > package.tmp.json && mv package.tmp.json package.json
+          cat package.json
+
+      - name: Authenticate with npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Build Project
         run: bun run build
 
-      - name: Generate Changelog
-        id: changelog
+      - name: Publish package
         run: |
-          echo "## Changes in this release" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          git log $(git describe --tags --abbrev=0 @^)..@ --pretty=format:"- %s" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-
-      - name: Publish Package
-        run: bun publish --tag beta
+          if [[ "$IS_PRERELEASE" == "true" ]]; then
+            bun publish --tag $TAG
+          else
+            bun publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref }}
-          body_path: CHANGELOG.md
-          draft: false
-          prerelease: false
-          files: |
-            dist/**
-            CHANGELOG.md
