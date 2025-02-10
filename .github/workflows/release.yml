@@ -36,7 +36,7 @@ jobs:
           echo "Is Prerelease: $IS_PRERELEASE"
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
@@ -57,6 +57,7 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ env.NODE_AUTH_TOKEN }}" > ~/.npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build Project
         run: bun run build
@@ -70,3 +71,4 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
