@@ -64,9 +64,9 @@ jobs:
       - name: Publish package
         run: |
           if [[ "$IS_PRERELEASE" == "true" ]]; then
-            bun publish --tag $TAG
+            bun publish --verbose --tag $TAG
           else
-            bun publish
+            bun publish --verbose
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
