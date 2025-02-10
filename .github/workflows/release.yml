@@ -49,6 +49,7 @@ jobs:
           cat package.json
 
       - name: Publish package
+        # FIXME(42): Configurar o token do NPM quando o `bunfig.toml` passar a dar suporte a isso.
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
           if [[ "$IS_PRERELEASE" == "true" ]]; then
