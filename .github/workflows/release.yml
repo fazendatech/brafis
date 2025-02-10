@@ -58,9 +58,6 @@ jobs:
 
       - name: Publish package
         run: |
-          echo "npmrc file contents:"
-          ll .
-          ll ~
           cp .npmrc ~/
           if [[ "$IS_PRERELEASE" == "true" ]]; then
             bun publish --verbose --tag $TAG
