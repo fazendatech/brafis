@@ -54,10 +54,7 @@ jobs:
             echo "NPM_TOKEN is not set"
             exit 1
           fi
-          echo "//registry.npmjs.org/:_authToken=${{ env.NODE_AUTH_TOKEN }}" > ~/.npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Build Project
         run: bun run build
@@ -69,6 +66,3 @@ jobs:
           else
             bun publish --verbose
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
