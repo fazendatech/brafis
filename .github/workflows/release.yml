@@ -56,9 +56,6 @@ jobs:
           fi
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
-      - name: Build Project
-        run: bun run build
-
       - name: Publish package
         run: |
           if [[ "$IS_PRERELEASE" == "true" ]]; then
